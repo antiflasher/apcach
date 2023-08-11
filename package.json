@@ -1,0 +1,19 @@
+{
+  "devDependencies": {
+    "@logux/eslint-config": "^51.0.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-prefer-let": "^3.0.1",
+    "eslint-plugin-perfectionist": "^1.5.1",
+    "eslint": "^8.46.0"
+  },
+  "eslintConfig": {
+    "extends": "@logux/eslint-config"
+  },
+  "scripts": {
+    "test:lint": "eslint .",
+    "test": "pnpm run /^test:/"
+  }
+}
