@@ -1,6 +1,6 @@
 {
   "name": "apcach",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "JS tool for color manipulation using using APCA contrast ratio and OKLCH",
   "keywords": [
     "A11y",
