@@ -30,8 +30,8 @@ function apcach(contrast, chroma, hue, alpha = 100, fgIsBlack = true) {
 function maxChroma(color, chromaCap = 0.4) {
   let fgColor = color.fgIsBlack ? "oklch(0% 0 0)" : "oklch(100% 0 0)";
   let allSetUp = false;
-  let iteration = 0;
   let checkingColor = color;
+  let iteration = 0;
   while (!allSetUp && iteration < 20) {
     iteration++;
     // Calculate max valid chroma
@@ -95,7 +95,7 @@ function calcLightess(targetContrast, chroma, hue, fgIsBlack) {
   let lightness = 0.5;
   let lightnessPatch = 0.5;
   let iteration = 0;
-  while (Math.abs(factContrast - targetContrast) > 0.01 && iteration < 20) {
+  while (Math.abs(lightnessPatch) > 0.001 && iteration < 20) {
     iteration++;
     let oldLightness = lightness;
     let bgColor = formatCss({
@@ -126,7 +126,7 @@ function calcLightess(targetContrast, chroma, hue, fgIsBlack) {
 }
 
 function calcMaxValidChroma(color, desiredChroma) {
-  let chroma = desiredChroma;
+  let chroma = 0.4;
   let searchPatch = 0.2;
   let validColor = false;
   let chromaFound = false;
