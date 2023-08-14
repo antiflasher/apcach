@@ -1,4 +1,7 @@
 {
+  "repository": "antiflasher/apcach",
+  "license": "MIT",
+  "sideEffects": false,
   "devDependencies": {
     "@logux/eslint-config": "^51.0.1",
     "eslint-config-standard": "^17.1.0",
