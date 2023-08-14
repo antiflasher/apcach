@@ -1,7 +1,7 @@
 {
   "name": "apcach",
   "version": "0.0.0",
-  "description": "Color composer using APCA contrast ration for calculating lightness",
+  "description": "JS tool for color manipulation using using APCA contrast ratio and OKLCH",
   "keywords": [
     "A11y",
     "Accessibility",
