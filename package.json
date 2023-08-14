@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "repository": "antiflasher/apcach",
   "license": "MIT",
+  "type": "module",
   "sideEffects": false,
   "devDependencies": {
     "@logux/eslint-config": "^51.0.1",
@@ -32,5 +33,9 @@
   "dependencies": {
     "apca-w3": "^0.1.9",
     "culori": "^3.2.0"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
   }
 }
