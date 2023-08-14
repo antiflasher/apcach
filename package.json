@@ -1,4 +1,6 @@
 {
+  "name": "apcach",
+  "version": "0.0.0",
   "repository": "antiflasher/apcach",
   "license": "MIT",
   "sideEffects": false,
