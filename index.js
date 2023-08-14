@@ -1,4 +1,4 @@
-import { calcAPCA } from "https://cdn.skypack.dev/apca-w3";
+import { calcAPCA } from "apca-w3";
 import {
   converter,
   formatCss,
@@ -6,7 +6,7 @@ import {
   formatRgb,
   inGamut,
   parse,
-} from "https://cdn.skypack.dev/culori";
+} from "culori";
 
 // API
 
