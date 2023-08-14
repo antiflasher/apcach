@@ -1,10 +1,19 @@
 {
   "name": "apcach",
   "version": "0.0.0",
+  "description": "Color composer using APCA contrast ration for calculating lightness",
+  "keywords": [
+    "A11y",
+    "Accessibility",
+    "APCA",
+    "Colors",
+    "Composer",
+    "Contrast",
+    "OKLCH"
+  ],
   "repository": "antiflasher/apcach",
   "type": "module",
   "license": "MIT",
-  "type": "module",
   "sideEffects": false,
   "devDependencies": {
     "@logux/eslint-config": "^51.0.1",
