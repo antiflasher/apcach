@@ -5,8 +5,14 @@ import {
   formatHex,
   formatRgb,
   inGamut,
+  modeOklch,
+  modeP3,
   parse,
-} from "culori";
+  useMode,
+} from "culori/fn";
+
+useMode(modeP3);
+useMode(modeOklch);
 
 // API
 
