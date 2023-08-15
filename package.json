@@ -40,7 +40,7 @@
   },
   "size-limit": [
     {
-      "limit": "30 kB"
+      "limit": "15 kB"
     }
   ],
   "dependencies": {
