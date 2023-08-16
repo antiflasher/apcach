@@ -18,18 +18,24 @@ useMode(modeOklch);
 
 function apcach(contrast, chroma, hue, alpha = 100) {
   let contrastConfig = contrastToConfig(contrast);
-  let lightness = calcLightess(
-    contrastConfig,
-    parseFloat(chroma),
-    parseFloat(hue)
-  );
-  return {
-    alpha,
-    chroma,
-    contrastConfig,
-    hue,
-    lightness,
-  };
+  if (typeof chroma === "function") {
+    // Max chroma case
+    return chroma(contrastConfig, parseFloat(hue), alpha);
+  } else {
+    // Constant chroma case
+    let lightness = calcLightess(
+      contrastConfig,
+      parseFloat(chroma),
+      parseFloat(hue)
+    );
+    return {
+      alpha,
+      chroma,
+      contrastConfig,
+      hue,
+      lightness,
+    };
+  }
 }
 
 function crToBg(bgColor, cr) {
@@ -85,30 +91,39 @@ function adjustHue(colorInApcach, hueDiff) {
   );
 }
 
-function maxChroma(color, chromaCap = 0.4) {
-  let fgColor = color.fgIsBlack ? "oklch(0% 0 0)" : "oklch(100% 0 0)";
-  let allSetUp = false;
-  let checkingColor = color;
-  let iteration = 0;
-  while (!allSetUp && iteration < 20) {
-    iteration++;
-    // Calculate max valid chroma
-    let chroma = calcMaxValidChroma(checkingColor, chromaCap);
-    checkingColor = apcach(
-      checkingColor.contrast,
-      chroma,
-      checkingColor.hue,
-      checkingColor.alpha,
-      checkingColor.fgIsBlack
-    );
-    // Check the contrast ration
-    let factContrast = p3contrast(fgColor, apcachToCss(checkingColor, "oklch"));
-    let contrastDiff = color.contrast - factContrast;
-    if (Math.abs(contrastDiff) <= 0.01) {
-      allSetUp = true;
+function maxChroma(chromaCap = 0.4) {
+  return function (contrastConfig, hue, alpha) {
+    let checkingChroma = chromaCap;
+    let searchPatch = 0.2;
+    let color;
+    let colorIsValid = false;
+    let chromaFound = false;
+    let iteration = 0;
+    while (!chromaFound && iteration < 30) {
+      iteration++;
+      let oldChroma = checkingChroma;
+      let newPatchedChroma = oldChroma + searchPatch;
+      checkingChroma = Math.min(newPatchedChroma, chromaCap);
+      color = apcach(contrastConfig, checkingChroma, hue, alpha);
+      // Check if the new color is valid
+      let newColorIsValid = inP3(color);
+      if (iteration === 1 && !newColorIsValid) {
+        searchPatch *= -1;
+      } else if (newColorIsValid !== colorIsValid) {
+        // Over shooot
+        searchPatch = searchPatch / 2;
+        searchPatch *= -1;
+      }
+      colorIsValid = newColorIsValid;
+      if (
+        (Math.abs(searchPatch) <= 0.001 || checkingChroma === chromaCap) &&
+        colorIsValid
+      ) {
+        chromaFound = true;
+      }
     }
-  }
-  return checkingColor;
+    return color;
+  };
 }
 
 function apcachToCss(color, format) {
@@ -231,7 +246,7 @@ function calcLightess(contrastConfig, chroma, hue) {
   }
   return lightness;
 }
-
+/*
 function calcMaxValidChroma(color, desiredChroma) {
   let chroma = 0.4;
   let searchPatch = 0.2;
@@ -264,7 +279,7 @@ function calcMaxValidChroma(color, desiredChroma) {
     }
   }
   return chroma;
-}
+}*/
 
 function signOf(number) {
   return number / Math.abs(number);
