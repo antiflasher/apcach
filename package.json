@@ -1,7 +1,7 @@
 {
   "name": "apcach",
-  "version": "0.1.0",
-  "description": "JS tool for color manipulation using using APCA contrast ratio and OKLCH",
+  "version": "0.1.1",
+  "description": "JS color calculator for composing colors with consistent APCA contrast ratio",
   "keywords": [
     "A11y",
     "Accessibility",
