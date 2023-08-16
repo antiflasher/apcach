@@ -121,17 +121,6 @@ function maxChroma(chromaCap = 0.4) {
       ) {
         chromaFound = true;
       }
-
-      console.log(
-        "checkingChroma: " +
-          checkingChroma +
-          " / color: " +
-          apcachToCss(color) +
-          " / newColorIsValid " +
-          newColorIsValid +
-          " / searchPatch: " +
-          searchPatch
-      );
     }
     return color;
   };
