@@ -1,6 +1,6 @@
 {
   "name": "apcach",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "JS color calculator for composing colors with consistent APCA contrast ratio",
   "keywords": [
     "A11y",
