@@ -157,12 +157,6 @@ function anyColorCssToOklch(srt) {
 function сolorIsLighterThenAnother(fgColor, bgColor) {
   let fgColorComponents = parse(fgColor);
   let bgColorComponents = parse(bgColor);
-  // console.log(
-  //   "fgColorComponents.l: " +
-  //     fgColorComponents.l +
-  //     " / bgColorComponents.l: " +
-  //     bgColorComponents.l
-  // );
   return fgColorComponents.l > bgColorComponents.l;
 }
 
@@ -181,14 +175,6 @@ function contrastToConfig(rawContrast) {
 }
 
 function calcLightess(contrastConfig, chroma, hue) {
-  console.log(
-    "contrastConfig: " +
-      JSON.stringify(contrastConfig) +
-      " /// chroma: " +
-      chroma +
-      " /// hue: " +
-      hue
-  );
   let apcachIsOnBgPosition = contrastConfig.fgColor === "apcach";
   let factContrast = 0;
   let deltaContrast = 0;
@@ -216,16 +202,6 @@ function calcLightess(contrastConfig, chroma, hue) {
 
     factContrast = Math.abs(p3contrast(fgColor, bgColor));
     let newDeltaContrast = contrastConfig.cr - factContrast;
-    // console.log(
-    //   "checkingColor: " +
-    //     checkingColor +
-    //     " /// desired contrast: " +
-    //     contrastConfig.cr +
-    //     " /// newDeltaContrast: " +
-    //     newDeltaContrast +
-    //     " /// lightnessPatch: " +
-    //     lightnessPatch
-    // );
 
     let apcachIsLighter = apcachIsOnBgPosition
       ? сolorIsLighterThenAnother(bgColor, fgColor)
@@ -245,7 +221,6 @@ function calcLightess(contrastConfig, chroma, hue) {
     bgColor = formatCss({ c: chroma, h: hue, l: lightness, mode: "oklch" });
     factContrast = p3contrast(fgColor, bgColor);
   }
-  console.log("factContrast: " + factContrast);
   return lightness;
 }
 
