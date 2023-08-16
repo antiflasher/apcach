@@ -32,6 +32,10 @@ function apcach(contrast, chroma, hue, alpha = 100) {
   };
 }
 
+function crToBg(bgColor, cr) {
+  return { bgColor: stringToColor(bgColor), cr, fgColor: "apcach" };
+}
+
 function crTo(bgColor, cr) {
   return crToBg(bgColor, cr);
 }
@@ -40,12 +44,16 @@ function crToBlack(cr) {
   return crToBg("black", cr);
 }
 
-function crToBg(bgColor, cr) {
-  return { bgColor: stringToColor(bgColor), cr, fgColor: "apcach" };
-}
-
 function crToFg(fgColor, cr) {
   return { bgColor: "apcach", cr, fgColor: stringToColor(fgColor) };
+}
+
+function crToFgWhite(cr) {
+  return crToFg("white", cr);
+}
+
+function crToFgBlack(cr) {
+  return crToFg("black", cr);
 }
 
 function adjustContrast(colorInApcach, crDiff) {
@@ -272,6 +280,8 @@ export {
   crToBg,
   crToBlack,
   crToFg,
+  crToFgBlack,
+  crToFgWhite,
   inP3,
   maxChroma,
   p3contrast,
