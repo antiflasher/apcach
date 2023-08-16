@@ -1,20 +1,45 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>apcach demo</title>
+    <style>
+      * {
+        background: #ffffff;
+      }
+      body {
+        padding: 20px;
+        margin: 20px;
+        background: #ffffff;
+      }
+      .colorSlot {
+        background: rgb(0, 0, 0);
+        width: 200px;
+        height: 100px;
+      }
+    </style>
+    <script defer src="./index.js" type="module"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>apcach demo</title>
-  <style>
-    * {
-      padding: 0;
-      margin: 0;
-    }
-  </style>
-  <script defer src="./index.js" type="module"></script>
-</head>
-
-<body>
-  
-</body>
-
-</html> 
+  <body>
+    <label for="input2">Enter apcach</label>
+    <input
+      type="text"
+      id="inputApcach"
+      value='apcach(crToBg("#E8E8E8", 70), 0.2, 145)'
+      name="inputApcach"
+      style="width: 400px"
+    />
+    <button id="submitButton">Parse apcach</button>
+    <br /><br />
+    <button id="increaseContrastButton">+ Lc</button>
+    <button id="decreaseContrastButton">− Lc</button>
+    <button id="increaseChromaButton">+ C</button>
+    <button id="decreaseChromaButton">− C</button>
+    <button id="restoreButton">Restore</button>
+    <button id="maxChromaButton">Max Chroma</button>
+    <div id="contrastSlot">Lc</div>
+    <br /><br />
+    <div class="colorSlot" id="colorSlot"></div>
+  </body>
+</html>
