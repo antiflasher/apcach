@@ -136,6 +136,18 @@ function apcachToCss(color, format) {
       return formatRgb(parse(apcachToCss(color, "oklch")));
     case "hex":
       return formatHex(parse(apcachToCss(color, "oklch")));
+    case "p3": {
+      let p3 = converter("p3");
+      return p3(apcachToCss(color, "oklch"));
+    }
+    case "figma-p3": {
+      let p3Parsed = apcachToCss(color, "p3");
+      return (
+        floatingPointToHex(p3Parsed.r) +
+        floatingPointToHex(p3Parsed.g) +
+        floatingPointToHex(p3Parsed.b)
+      );
+    }
   }
   return apcachToCss(color, "oklch");
 }
@@ -264,6 +276,12 @@ function calcLightess(contrastConfig, chroma, hue) {
 
 function signOf(number) {
   return number / Math.abs(number);
+}
+
+function floatingPointToHex(float) {
+  return Math.round(255 * float)
+    .toString(16)
+    .padStart(2, "0");
 }
 
 export {
