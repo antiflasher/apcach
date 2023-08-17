@@ -156,3 +156,22 @@ Parameters in `apcachToCss()` function are:
 
 - color in apcach format you want to convert
 - format (supported: `oklch`, `rgb`, `hex`)
+
+### CSS color convertation to apcach
+
+The apcach fomat can be restored from a color in CSS format using function `cssToApcach()`:
+
+```js
+import { apcach, cssToApcach } from "apcach";
+let cssColor = "oklch(70% 0.1 200)";
+let comparingColor = "#fff";
+let apcachColor = cssToApcach(cssColor, { bg: comparingColor });
+apcachToCss(apcachColor, "oklch"); // oklch(70.00953125% 0.1 200)
+```
+
+Parameters in `cssToApcach()` function are:
+
+- color in CSS fomat that you want to convert to apcach format
+- commaring color:
+  - if it's on the background position: `bg : comparingColor` (supported formats: `oklch`, `oklab`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
+  - if it's on the foreground position: `fg : comparingColor`
