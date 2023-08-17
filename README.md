@@ -143,7 +143,7 @@ Parameters in `adjustHue()` function are:
 
 ### apcach color conversion to CSS
 
-Once the color is composed, convert it into one of the CSS formats and use as usual
+Once the color is composed, convert it into one of the CSS formats and use it as usual
 
 ```js
 import { apcach, apcachToCss } from "apcach";
