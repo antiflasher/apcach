@@ -31,7 +31,7 @@ Parameters are:
 
 ### Color on a black background
 
-For composing a forground color on black background, use `crToBlack()` function:
+For composing a foreground color on black background, use `crToBlack()` function:
 
 ```js
 import { apcach, crToBlack } from "apcach";
@@ -40,7 +40,7 @@ apcach(crToBlack(60), 0.2, 145); // oklch(73.14 0.2 145)
 
 ### Color on a custom background
 
-For custom composing a foreground color on a custom hackground, use `crToBg()` function:
+For custom composing a foreground color on a custom background, use `crToBg()` function:
 
 ```js
 import { apcach, crToBg } from "apcach";
@@ -54,7 +54,7 @@ Parameters in `crToBg()` function are:
 
 ### Background color
 
-APCA calculates contrast differently depanding on color position – on the background or in the foreground. So if you want to compose a color and use in on background, use `crToFg()` function:
+APCA calculates contrast differently depending on color position – on the background or in the foreground. So if you want to compose a color and use in on background, use `crToFg()` function:
 
 ```js
 import { apcach, crToFg } from "apcach";
@@ -68,7 +68,7 @@ Parameters in `crToFg()` function are:
 
 ### Maximum chroma
 
-Use `maxChroma()` function insted of a static value for finding the most saturated color with given hue and contrast ratio:
+Use `maxChroma()` function instead of a static value for finding the most saturated color with given hue and contrast ratio:
 
 ```js
 import { apcach, maxChroma } from "apcach";
@@ -141,9 +141,9 @@ Parameters in `adjustHue()` function are:
   - Absolute: `Number` 0...360
   - Relative: `h => h + DELTA`. The resulting value will be auto-clipped by range 0...360
 
-### apcach color convertation to CSS
+### apcach color conversion to CSS
 
-Once the color is composed, convert it into one of the CSS formats and use as usial
+Once the color is composed, convert it into one of the CSS formats and use as usual
 
 ```js
 import { apcach, apcachToCss } from "apcach";

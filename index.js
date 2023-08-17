@@ -23,7 +23,7 @@ function apcach(contrast, chroma, hue, alpha = 100) {
     return chroma(contrastConfig, parseFloat(hue), alpha);
   } else {
     // Constant chroma case
-    let lightness = calcLightess(
+    let lightness = calcLightness(
       contrastConfig,
       parseFloat(chroma),
       parseFloat(hue)
@@ -234,7 +234,7 @@ function contrastToConfig(rawContrast) {
   }
 }
 
-function calcLightess(contrastConfig, chroma, hue) {
+function calcLightness(contrastConfig, chroma, hue) {
   let apcachIsOnBgPosition = contrastConfig.bgColor === "apcach";
   let factContrast = 0;
   let deltaContrast = 0;
