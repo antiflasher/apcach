@@ -16,7 +16,7 @@ npm install apcach
 
 ### Color on a white background
 
-For composing a color you are going to use as a foreground color (for text or icons) on white background, use a short notation:
+For composing a color that you are going to use as a foreground color (for text or icons) on white background, use a short notation:
 
 ```js
 import { apcach } from "apcach";
@@ -31,7 +31,7 @@ Parameters are:
 
 ### Color on a black background
 
-For composing a forground color on black background, use `crToBlack()` function:
+For composing a foreground color on black background, use `crToBlack()` function:
 
 ```js
 import { apcach, crToBlack } from "apcach";
@@ -40,7 +40,7 @@ apcach(crToBlack(60), 0.2, 145); // oklch(73.14 0.2 145)
 
 ### Color on a custom background
 
-For custom composing a foreground color on a custom hackground, use `crToBg()` function:
+For custom composing a foreground color on a custom background, use `crToBg()` function:
 
 ```js
 import { apcach, crToBg } from "apcach";
@@ -54,7 +54,7 @@ Parameters in `crToBg()` function are:
 
 ### Background color
 
-APCA calculates contrast differently depanding on color position – on the background or in the foreground. So if you want to compose a color and use in on background, use `crToFg()` function:
+APCA calculates the contrast differently depending on the color position – on the background or in the foreground. So if you want to compose a color and use it on the background, use `crToFg()` function:
 
 ```js
 import { apcach, crToFg } from "apcach";
@@ -68,7 +68,7 @@ Parameters in `crToFg()` function are:
 
 ### Maximum chroma
 
-Use `maxChroma()` function insted of a static value for finding the most saturated color with given hue and contrast ratio:
+Use `maxChroma()` function instead of a static value for finding the most saturated color with a given hue and contrast ratio:
 
 ```js
 import { apcach, maxChroma } from "apcach";
@@ -85,7 +85,7 @@ apcach(crToFg("white", 60), maxChroma(0.25), 200); // oklch(65.71% 0.15 200)
 
 ### Color manipulations
 
-Having a color in apcach format, you can adjust its contrast, chroma or hue by using these functions:
+Having a color in apcach format, you can adjust its contrast, chroma, or hue by using these functions:
 
 **Contrast**
 
@@ -141,9 +141,9 @@ Parameters in `adjustHue()` function are:
   - Absolute: `Number` 0...360
   - Relative: `h => h + DELTA`. The resulting value will be auto-clipped by range 0...360
 
-### apcach color convertation to CSS
+### apcach color conversion to CSS
 
-Once the color is composed, convert it into one of the CSS formats and use as usial
+Once the color is composed, convert it into one of the CSS formats and use it as usual:
 
 ```js
 import { apcach, apcachToCss } from "apcach";
@@ -154,12 +154,12 @@ apcachToCss(color, "hex"); // #00a22b
 
 Parameters in `apcachToCss()` function are:
 
-- color in apcach format you want to convert
+- color in the apcach format you want to convert
 - format (supported: `oklch`, `rgb`, `hex`)
 
-### CSS color convertation to apcach
+### CSS color conversion to apcach
 
-The apcach fomat can be restored from a color in CSS format using function `cssToApcach()`:
+The apcach format can be restored from color in CSS format using the function `cssToApcach()`:
 
 ```js
 import { apcach, cssToApcach } from "apcach";
@@ -171,7 +171,7 @@ apcachToCss(apcachColor, "oklch"); // oklch(70.00953125% 0.1 200)
 
 Parameters in `cssToApcach()` function are:
 
-- color in CSS fomat that you want to convert to apcach format
+- color in CSS format that you want to convert to apcach format
 - commaring color:
   - if it's on the background position: `bg : comparingColor` (supported formats: `oklch`, `oklab`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
-  - if it's on the foreground position: `fg : comparingColor`
+  - if it's in the foreground position: `fg : comparingColor`
