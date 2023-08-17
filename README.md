@@ -66,6 +66,23 @@ Parameters in `crToFg()` function are:
 - foreground color (opaque colors only in one of these formats: `oklch`, `oklab`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
 - desired contrast ratio (the same with APCA 0...108)
 
+### Maximum chroma
+
+Use `maxChroma()` function insted of a static value for finding the most saturated color with given hue and contrast ratio:
+
+```js
+import { apcach, maxChroma } from "apcach";
+apcach(crToFg("white", 60), maxChroma(), 145); // oklch(64.35% 0.27 145)
+```
+
+The `maxChroma()` accepts a value for limiting the highest possible value:
+
+```js
+import { apcach, maxChroma } from "apcach";
+apcach(crToFg("white", 60), maxChroma(0.25), 145); // oklch(64.35% 0.25 145)
+apcach(crToFg("white", 60), maxChroma(0.25), 200); // oklch(65.71% 0.15 200)
+```
+
 ### Color manipulations
 
 Having a color in apcach format, you can adjust its contrast, chroma or hue by using these functions:
