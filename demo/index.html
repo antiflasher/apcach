@@ -26,7 +26,7 @@
     <input
       type="text"
       id="inputApcach"
-      value='apcach(crToBg("#E8E8E8", 70), 0.2, 145)'
+      value="apcach(crToFgWhite(70), 0.1, 145)"
       name="inputApcach"
       style="width: 400px"
     />
@@ -36,8 +36,11 @@
     <button id="decreaseContrastButton">− Lc</button>
     <button id="increaseChromaButton">+ C</button>
     <button id="decreaseChromaButton">− C</button>
+    <button id="increaseHueButton">+ H</button>
+    <button id="decreaseHueButton">− H</button>
     <button id="restoreButton">Restore</button>
     <button id="maxChromaButton">Max Chroma</button>
+    <input type="range" id="hueSlider" min="0" max="360" value="50" />
     <div id="contrastSlot">Lc</div>
     <br /><br />
     <div class="colorSlot" id="colorSlot"></div>
