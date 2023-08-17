@@ -214,7 +214,7 @@ function anyColorCssToOklch(srt) {
   return formatCss(olkch(parse(srt)));
 }
 
-function сolorIsLighterThenAnother(fgColor, bgColor) {
+function colorIsLighterThenAnother(fgColor, bgColor) {
   let fgColorComponents = parse(fgColor);
   let bgColorComponents = parse(bgColor);
   return fgColorComponents.l > bgColorComponents.l;
@@ -264,8 +264,8 @@ function calcLightess(contrastConfig, chroma, hue) {
     let newDeltaContrast = contrastConfig.cr - factContrast;
 
     let apcachIsLighter = apcachIsOnBgPosition
-      ? сolorIsLighterThenAnother(bgColor, fgColor)
-      : сolorIsLighterThenAnother(fgColor, bgColor);
+      ? colorIsLighterThenAnother(bgColor, fgColor)
+      : colorIsLighterThenAnother(fgColor, bgColor);
     //console.log("apcachIsLighter: " + apcachIsLighter);
     if (
       iteration === 1 &&
