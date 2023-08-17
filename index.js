@@ -62,9 +62,16 @@ function crToFgBlack(cr) {
   return crToFg("black", cr);
 }
 
-function adjustContrast(colorInApcach, crDiff) {
+function setContrast(colorInApcach, cr) {
   let newContrastConfig = colorInApcach.contrastConfig;
-  newContrastConfig.cr += crDiff;
+  if (typeof cr === "number") {
+    newContrastConfig.cr = clipContrast(cr);
+  } else if (typeof cr === "function") {
+    let newCr = cr(newContrastConfig.cr);
+    newContrastConfig.cr = clipContrast(newCr);
+  } else {
+    throw new Error("Invalid format of contrast value");
+  }
   return apcach(
     newContrastConfig,
     colorInApcach.chroma,
@@ -73,20 +80,38 @@ function adjustContrast(colorInApcach, crDiff) {
   );
 }
 
-function adjustChroma(colorInApcach, chromaDiff) {
+function setChroma(colorInApcach, c) {
+  let newChroma;
+  if (typeof c === "number") {
+    newChroma = clipChroma(c);
+  } else if (typeof c === "function") {
+    let newRawChroma = c(colorInApcach.chroma);
+    newChroma = clipChroma(newRawChroma);
+  } else {
+    throw new Error("Invalid format of chroma value");
+  }
   return apcach(
     colorInApcach.contrastConfig,
-    colorInApcach.chroma + chromaDiff,
+    newChroma,
     colorInApcach.hue,
     colorInApcach.alpha
   );
 }
 
-function adjustHue(colorInApcach, hueDiff) {
+function setHue(colorInApcach, h) {
+  let newHue;
+  if (typeof h === "number") {
+    newHue = clipHue(h);
+  } else if (typeof h === "function") {
+    let newRawHue = h(colorInApcach.hue);
+    newHue = clipHue(newRawHue);
+  } else {
+    throw new Error("Invalid format of hue value");
+  }
   return apcach(
     colorInApcach.contrastConfig,
     colorInApcach.chroma,
-    colorInApcach.hue + hueDiff,
+    newHue,
     colorInApcach.alpha
   );
 }
@@ -278,6 +303,18 @@ function signOf(number) {
   return number / Math.abs(number);
 }
 
+function clipContrast(cr) {
+  return Math.max(Math.min(cr, 108), 0);
+}
+
+function clipChroma(c) {
+  return Math.max(Math.min(c, 0.37), 0);
+}
+
+function clipHue(h) {
+  return Math.max(Math.min(h, 360), 0);
+}
+
 function floatingPointToHex(float) {
   return Math.round(255 * float)
     .toString(16)
@@ -285,9 +322,6 @@ function floatingPointToHex(float) {
 }
 
 export {
-  adjustChroma,
-  adjustContrast,
-  adjustHue,
   apcach,
   apcachToCss,
   crTo,
@@ -299,4 +333,7 @@ export {
   inP3,
   maxChroma,
   p3contrast,
+  setChroma,
+  setContrast,
+  setHue,
 };
