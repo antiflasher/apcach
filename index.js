@@ -136,8 +136,7 @@ function maxChroma(chromaCap = 0.4) {
         searchPatch *= -1;
       } else if (newColorIsValid !== colorIsValid) {
         // Over shooot
-        searchPatch = searchPatch / 2;
-        searchPatch *= -1;
+        searchPatch /= -2;
       }
       colorIsValid = newColorIsValid;
       if (
