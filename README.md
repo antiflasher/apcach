@@ -93,12 +93,12 @@ Having a color in apcach format, you can adjust its contrast, chroma, or hue by 
 import { apcach, setContrast } from "apcach";
 let color = apcach(60, 0.2, 145); // oklch(62.01% 0.2 145)
 // Absolute value
-adjustContrast(color, 70); // oklch(54.98% 0.2 145)
+setContrast(color, 70); // oklch(54.98% 0.2 145)
 // Relative value
-adjustContrast(color, (cr) => cr + 10); // oklch(54.98% 0.2 145)
+setContrast(color, (cr) => cr + 10); // oklch(54.98% 0.2 145)
 ```
 
-Parameters in `adjustContrast()` function are:
+Parameters in `setContrast()` function are:
 
 - color you want to adjust
 - contrast value:
@@ -108,15 +108,15 @@ Parameters in `adjustContrast()` function are:
 **Chroma**
 
 ```js
-import { apcach, adjustChroma } from "apcach";
+import { apcach, setChroma } from "apcach";
 let color = apcach(60, 0.2, 145); // oklch(62.01% 0.2 145)
 // Absolute value
-adjustChroma(color, 0.1); // oklch(63.38% 0.1 145)
+setChroma(color, 0.1); // oklch(63.38% 0.1 145)
 // Relative value
-adjustChroma(color, (c) => c - 0.1); // oklch(63.38% 0.1 145)
+setChroma(color, (c) => c - 0.1); // oklch(63.38% 0.1 145)
 ```
 
-Parameters in `adjustChroma()` function are:
+Parameters in `setChroma()` function are:
 
 - color you want to adjust
 - chroma value:
@@ -126,15 +126,15 @@ Parameters in `adjustChroma()` function are:
 **Hue**
 
 ```js
-import { apcach, adjustHue } from "apcach";
+import { apcach, setHue } from "apcach";
 let color = apcach(60, 0.2, 145); // oklch(62.01% 0.2 145)
 // Absolute value
-adjustHue(color, 300); // oklch(67.29% 0.2 300)
+setHue(color, 300); // oklch(67.29% 0.2 300)
 // Relative value
-adjustHue(color, (h) => h + 155); // oklch(67.29% 0.2 300)
+setHue(color, (h) => h + 155); // oklch(67.29% 0.2 300)
 ```
 
-Parameters in `adjustHue()` function are:
+Parameters in `setHue()` function are:
 
 - color you want to adjust
 - hue value
