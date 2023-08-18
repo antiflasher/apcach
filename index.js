@@ -17,17 +17,18 @@ useMode(modeOklch);
 // API
 
 function apcach(contrast, chroma, hue, alpha = 100) {
+  // Check for hue
+  console.log("hue: " + hue);
+  hue = hue === undefined || hue === null ? 0 : parseFloat(hue);
+  console.log("hue: " + hue);
+  // Compose contrast config
   let contrastConfig = contrastToConfig(contrast);
   if (typeof chroma === "function") {
     // Max chroma case
-    return chroma(contrastConfig, parseFloat(hue), alpha);
+    return chroma(contrastConfig, hue, alpha);
   } else {
     // Constant chroma case
-    let lightness = calcLightess(
-      contrastConfig,
-      parseFloat(chroma),
-      parseFloat(hue)
-    );
+    let lightness = calcLightess(contrastConfig, parseFloat(chroma), hue);
     return {
       alpha,
       chroma,
@@ -60,30 +61,6 @@ function cssToApcach(color, antagonist) {
   } else {
     throw new Error("antagonist color is not provided");
   }
-  /*
-  let colorOklch = converter("oklch")(parse(color));
-  let fgColor;
-  let bgColor;
-  let antagonistColor;
-  let crFunction;
-
-  if (antagonist === null || antagonist === undefined) {
-    if (colorOklch.l > 0.5) {
-      bgColor = "oklch(0 0 0)";
-    } else {
-      bgColor = "oklch(1 0 0)";
-    }
-    fgColor = color;
-    antagonistColor = bgColor;
-    crFunction = crTo;
-  } else if (typeof antagonist === "string") {
-    fgColor = color;
-    bgColor = antagonist;
-    antagonistColor = bgColor;
-    crFunction = crTo;
-  } else if (typeof antagonist === "function") {
-  }
-*/
 }
 
 function crToBg(bgColor, cr) {
