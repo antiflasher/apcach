@@ -18,9 +18,7 @@ useMode(modeOklch);
 
 function apcach(contrast, chroma, hue, alpha = 100) {
   // Check for hue
-  console.log("hue: " + hue);
   hue = hue === undefined || hue === null ? 0 : parseFloat(hue);
-  console.log("hue: " + hue);
   // Compose contrast config
   let contrastConfig = contrastToConfig(contrast);
   if (typeof chroma === "function") {
