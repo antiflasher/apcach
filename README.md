@@ -16,7 +16,7 @@ npm install apcach
 
 ### Color on a white background
 
-For composing a color you are going to use as a foreground color (for text or icons) on white background, use a short notation:
+For composing a color that you are going to use as a foreground color (for text or icons) on white background, use a short notation:
 
 ```js
 import { apcach } from "apcach";
@@ -85,7 +85,7 @@ apcach(crToFg("white", 60), maxChroma(0.25), 200); // oklch(65.71% 0.15 200)
 
 ### Color manipulations
 
-Having a color in apcach format, you can adjust its contrast, chroma or hue by using these functions:
+Having a color in apcach format, you can adjust its contrast, chroma, or hue by using these functions:
 
 **Contrast**
 
@@ -93,12 +93,12 @@ Having a color in apcach format, you can adjust its contrast, chroma or hue by u
 import { apcach, setContrast } from "apcach";
 let color = apcach(60, 0.2, 145); // oklch(62.01% 0.2 145)
 // Absolute value
-adjustContrast(color, 70); // oklch(54.98% 0.2 145)
+setContrast(color, 70); // oklch(54.98% 0.2 145)
 // Relative value
-adjustContrast(color, (cr) => cr + 10); // oklch(54.98% 0.2 145)
+setContrast(color, (cr) => cr + 10); // oklch(54.98% 0.2 145)
 ```
 
-Parameters in `adjustContrast()` function are:
+Parameters in `setContrast()` function are:
 
 - color you want to adjust
 - contrast value:
@@ -108,15 +108,15 @@ Parameters in `adjustContrast()` function are:
 **Chroma**
 
 ```js
-import { apcach, adjustChroma } from "apcach";
+import { apcach, setChroma } from "apcach";
 let color = apcach(60, 0.2, 145); // oklch(62.01% 0.2 145)
 // Absolute value
-adjustChroma(color, 0.1); // oklch(63.38% 0.1 145)
+setChroma(color, 0.1); // oklch(63.38% 0.1 145)
 // Relative value
-adjustChroma(color, (c) => c - 0.1); // oklch(63.38% 0.1 145)
+setChroma(color, (c) => c - 0.1); // oklch(63.38% 0.1 145)
 ```
 
-Parameters in `adjustChroma()` function are:
+Parameters in `setChroma()` function are:
 
 - color you want to adjust
 - chroma value:
@@ -126,15 +126,15 @@ Parameters in `adjustChroma()` function are:
 **Hue**
 
 ```js
-import { apcach, adjustHue } from "apcach";
+import { apcach, setHue } from "apcach";
 let color = apcach(60, 0.2, 145); // oklch(62.01% 0.2 145)
 // Absolute value
-adjustHue(color, 300); // oklch(67.29% 0.2 300)
+setHue(color, 300); // oklch(67.29% 0.2 300)
 // Relative value
-adjustHue(color, (h) => h + 155); // oklch(67.29% 0.2 300)
+setHue(color, (h) => h + 155); // oklch(67.29% 0.2 300)
 ```
 
-Parameters in `adjustHue()` function are:
+Parameters in `setHue()` function are:
 
 - color you want to adjust
 - hue value
@@ -143,7 +143,7 @@ Parameters in `adjustHue()` function are:
 
 ### apcach color conversion to CSS
 
-Once the color is composed, convert it into one of the CSS formats and use it as usual
+Once the color is composed, convert it into one of the CSS formats and use it as usual:
 
 ```js
 import { apcach, apcachToCss } from "apcach";
@@ -154,5 +154,24 @@ apcachToCss(color, "hex"); // #00a22b
 
 Parameters in `apcachToCss()` function are:
 
-- color in apcach format you want to convert
+- color in the apcach format you want to convert
 - format (supported: `oklch`, `rgb`, `hex`)
+
+### CSS color conversion to apcach
+
+The apcach format can be restored from color in CSS format using the function `cssToApcach()`:
+
+```js
+import { apcach, cssToApcach } from "apcach";
+let cssColor = "oklch(70% 0.1 200)";
+let comparingColor = "#fff";
+let apcachColor = cssToApcach(cssColor, { bg: comparingColor });
+apcachToCss(apcachColor, "oklch"); // oklch(70.00953125% 0.1 200)
+```
+
+Parameters in `cssToApcach()` function are:
+
+- color in CSS format that you want to convert to apcach format
+- commaring color:
+  - if it's on the background position: `bg : comparingColor` (supported formats: `oklch`, `oklab`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
+  - if it's in the foreground position: `fg : comparingColor`

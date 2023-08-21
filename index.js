@@ -17,10 +17,13 @@ useMode(modeOklch);
 // API
 
 function apcach(contrast, chroma, hue, alpha = 100) {
+  // Check for hue
+  hue = hue === undefined || hue === null ? 0 : parseFloat(hue);
+  // Compose contrast config
   let contrastConfig = contrastToConfig(contrast);
   if (typeof chroma === "function") {
     // Max chroma case
-    return chroma(contrastConfig, parseFloat(hue), alpha);
+    return chroma(contrastConfig, hue, alpha);
   } else {
     // Constant chroma case
     let lightness = calcLightness(
@@ -35,6 +38,30 @@ function apcach(contrast, chroma, hue, alpha = 100) {
       hue,
       lightness,
     };
+  }
+}
+
+function cssToApcach(color, antagonist) {
+  if (color === undefined) {
+    throw new Error("Color is undefined");
+  }
+
+  if ("bg" in antagonist || "fg" in antagonist) {
+    let colorOklch = converter("oklch")(parse(color));
+    let fgColor = antagonist.fg !== undefined ? antagonist.fg : color;
+    let bgColor = antagonist.bg !== undefined ? antagonist.bg : color;
+    let crFunction = antagonist.fg !== undefined ? crToFg : crToBg;
+    let antagonistColor =
+      antagonist.fg !== undefined ? antagonist.fg : antagonist.bg;
+    let contrast = Math.abs(p3contrast(fgColor, bgColor)).toFixed(6);
+    return apcach(
+      crFunction(antagonistColor, contrast),
+      colorOklch.c,
+      colorOklch.h,
+      colorOklch.alpha ?? 1
+    );
+  } else {
+    throw new Error("antagonist color is not provided");
   }
 }
 
@@ -154,7 +181,13 @@ function apcachToCss(color, format) {
   switch (format) {
     case "oklch":
       return (
-        "oklch(" + color.lightness + " " + color.chroma + " " + color.hue + ")"
+        "oklch(" +
+        color.lightness * 100 +
+        "% " +
+        color.chroma +
+        " " +
+        color.hue +
+        ")"
       );
     case "rgb":
       return formatRgb(parse(apcachToCss(color, "oklch")));
@@ -258,14 +291,12 @@ function calcLightness(contrastConfig, chroma, hue) {
       contrastConfig.bgColor === "apcach"
         ? checkingColor
         : contrastConfig.bgColor;
-    //console.log("fgColor: " + fgColor + " / bgColor: " + bgColor);
     factContrast = Math.abs(p3contrast(fgColor, bgColor));
     let newDeltaContrast = contrastConfig.cr - factContrast;
 
     let apcachIsLighter = apcachIsOnBgPosition
-      ? colorIsLighterThenAnother(bgColor, fgColor)
-      : colorIsLighterThenAnother(fgColor, bgColor);
-    //console.log("apcachIsLighter: " + apcachIsLighter);
+      ? сolorIsLighterThenAnother(bgColor, fgColor)
+      : сolorIsLighterThenAnother(fgColor, bgColor);
     if (
       iteration === 1 &&
       ((apcachIsLighter && newDeltaContrast < 0) ||
@@ -279,16 +310,6 @@ function calcLightness(contrastConfig, chroma, hue) {
     ) {
       lightnessPatch = -lightnessPatch / 2;
     }
-    // console.log(
-    //   "desired contrast: " +
-    //     contrastConfig.cr +
-    //     " / checkingColor: " +
-    //     checkingColor +
-    //     " / newDeltaContrast: " +
-    //     newDeltaContrast +
-    //     " / lightnessPatch: " +
-    //     lightnessPatch
-    // );
     deltaContrast = newDeltaContrast;
     lightness += lightnessPatch;
     lightness = Math.max(Math.min(lightness, 0.9999), 0);
@@ -329,6 +350,7 @@ export {
   crToFg,
   crToFgBlack,
   crToFgWhite,
+  cssToApcach,
   inP3,
   maxChroma,
   p3contrast,
