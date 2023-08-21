@@ -295,8 +295,8 @@ function calcLightness(contrastConfig, chroma, hue) {
     let newDeltaContrast = contrastConfig.cr - factContrast;
 
     let apcachIsLighter = apcachIsOnBgPosition
-      ? сolorIsLighterThenAnother(bgColor, fgColor)
-      : сolorIsLighterThenAnother(fgColor, bgColor);
+      ? colorIsLighterThenAnother(bgColor, fgColor)
+      : colorIsLighterThenAnother(fgColor, bgColor);
     if (
       iteration === 1 &&
       ((apcachIsLighter && newDeltaContrast < 0) ||
