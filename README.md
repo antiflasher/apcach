@@ -54,7 +54,7 @@ Parameters in `crToBg()` function are:
 
 ### Background color
 
-APCA calculates the contrast differently depending on the color position – on the background or in the foreground. So if you want to compose a color and use it on the background, use `crToFg()` function:
+APCA calculates contrast differently depending on color position – on the background or in the foreground. So if you want to compose a color and use in on background, use `crToFg()` function:
 
 ```js
 import { apcach, crToFg } from "apcach";
@@ -68,7 +68,7 @@ Parameters in `crToFg()` function are:
 
 ### Maximum chroma
 
-Use `maxChroma()` function instead of a static value for finding the most saturated color with a given hue and contrast ratio:
+Use `maxChroma()` function instead of a static value for finding the most saturated color with given hue and contrast ratio:
 
 ```js
 import { apcach, maxChroma } from "apcach";

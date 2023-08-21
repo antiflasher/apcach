@@ -26,7 +26,11 @@ function apcach(contrast, chroma, hue, alpha = 100) {
     return chroma(contrastConfig, hue, alpha);
   } else {
     // Constant chroma case
-    let lightness = calcLightess(contrastConfig, parseFloat(chroma), hue);
+    let lightness = calcLightness(
+      contrastConfig,
+      parseFloat(chroma),
+      parseFloat(hue)
+    );
     return {
       alpha,
       chroma,
@@ -159,8 +163,7 @@ function maxChroma(chromaCap = 0.4) {
         searchPatch *= -1;
       } else if (newColorIsValid !== colorIsValid) {
         // Over shooot
-        searchPatch = searchPatch / 2;
-        searchPatch *= -1;
+        searchPatch /= -2;
       }
       colorIsValid = newColorIsValid;
       if (
@@ -243,7 +246,7 @@ function anyColorCssToOklch(srt) {
   return formatCss(olkch(parse(srt)));
 }
 
-function сolorIsLighterThenAnother(fgColor, bgColor) {
+function colorIsLighterThenAnother(fgColor, bgColor) {
   let fgColorComponents = parse(fgColor);
   let bgColorComponents = parse(bgColor);
   return fgColorComponents.l > bgColorComponents.l;
@@ -263,7 +266,7 @@ function contrastToConfig(rawContrast) {
   }
 }
 
-function calcLightess(contrastConfig, chroma, hue) {
+function calcLightness(contrastConfig, chroma, hue) {
   let apcachIsOnBgPosition = contrastConfig.bgColor === "apcach";
   let factContrast = 0;
   let deltaContrast = 0;
