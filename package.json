@@ -1,6 +1,6 @@
 {
   "name": "apcach",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "JS color calculator for composing colors with consistent APCA contrast ratio",
   "keywords": [
     "A11y",
@@ -40,12 +40,13 @@
   },
   "size-limit": [
     {
-      "limit": "20 kB"
+      "limit": "25 kB"
     }
   ],
   "dependencies": {
     "apca-w3": "^0.1.9",
-    "culori": "^3.2.0"
+    "culori": "^3.2.0",
+    "wcag-contrast": "^3.0.0"
   },
   "exports": {
     ".": "./index.js",
