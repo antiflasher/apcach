@@ -1,11 +1,10 @@
-import { calcAPCA } from "apca-w3";
-import { clampChroma, parse } from "culori";
+import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
+import { clampChroma, inGamut, parse } from "culori";
 import {
   converter,
   formatCss,
   formatHex,
   formatRgb,
-  inGamut,
   modeOklch,
   modeP3,
   useMode,
@@ -235,12 +234,17 @@ function apcachToCss(color, format) {
   return apcachToCss(color, "oklch");
 }
 
-function calcContrast(fgColor, bgColor, contrastModel = "apca") {
+function calcContrast(
+  fgColor,
+  bgColor,
+  contrastModel = "apca",
+  colorSpace = "p3"
+) {
   switch (contrastModel) {
     case "apca":
-      return calcApca(fgColor, bgColor);
+      return calcApca(fgColor, bgColor, colorSpace);
     case "wcag":
-      return calcWcag(fgColor, bgColor);
+      return calcWcag(fgColor, bgColor, colorSpace);
     default:
       throw new Error(
         'Invalid contrast model. Suported models: "apca", "wcag"'
@@ -249,6 +253,7 @@ function calcContrast(fgColor, bgColor, contrastModel = "apca") {
 }
 
 function inColorSpace(color, colorSpace = "p3") {
+  colorSpace = colorSpace === "srgb" ? "rgb" : colorSpace;
   if (isValidApcach(color)) {
     let cssColor = apcachToCss(color, "oklch");
     return inGamut(colorSpace)(cssColor);
@@ -291,13 +296,27 @@ function calcApca(fgColorInCssFormat, bgColorInCssFormat, colorSpace = "p3") {
     case "p3": {
       let fgColor = securedP3Color(fgColorInCssFormat);
       let bgColor = securedP3Color(bgColorInCssFormat);
-      return calcAPCA(fgColor, bgColor);
+      let fgY = displayP3toY([fgColor.r, fgColor.g, fgColor.b]);
+      let bgY = displayP3toY([bgColor.r, bgColor.g, bgColor.b]);
+      return APCAcontrast(fgY, bgY);
     }
 
     case "srgb": {
-      let fgColorHex = formatHex(fgColorInCssFormat);
-      let bgColorHex = formatHex(bgColorInCssFormat);
-      return calcAPCA(fgColorHex, bgColorHex);
+      let fgColor = parse(formatRgb(fgColorInCssFormat));
+      let bgColor = parse(formatRgb(bgColorInCssFormat));
+      let fgY = sRGBtoY([
+        fgColor.r * 255,
+        fgColor.g * 255,
+        fgColor.b * 255,
+        1.0,
+      ]);
+      let bgY = sRGBtoY([
+        bgColor.r * 255,
+        bgColor.g * 255,
+        bgColor.b * 255,
+        1.0,
+      ]);
+      return APCAcontrast(fgY, bgY);
     }
 
     default:
@@ -333,7 +352,7 @@ function contrastToConfig(rawContrast) {
   }
 }
 
-function calcLightness(contrastConfig, chroma, hue) {
+function calcLightness(contrastConfig, chroma, hue, colorSpace) {
   let apcachIsOnBgPosition = contrastConfig.bgColor === "apcach";
   let deltaContrast = 0;
   let lightness = 0;
@@ -360,7 +379,7 @@ function calcLightness(contrastConfig, chroma, hue) {
         ? checkingColor
         : contrastConfig.bgColor;
     let calcedContrast = Math.abs(
-      calcContrast(fgColor, bgColor, contrastConfig.contrastModel)
+      calcContrast(fgColor, bgColor, contrastConfig.contrastModel, colorSpace)
     );
     let newDeltaContrast = contrastConfig.cr - calcedContrast;
 
@@ -442,17 +461,20 @@ function floatingPointToHex(float) {
 
 function securedP3Color(colorInCssFormat) {
   let oklch = converter("oklch")(parse(colorInCssFormat));
-  oklch.l = oklch.l === undefined ? 0 : parseFloat(oklch.l).toFixed(16);
-  oklch.c = oklch.c === undefined ? 0 : parseFloat(oklch.c).toFixed(16);
-  oklch.h = oklch.h === undefined ? 0 : parseFloat(oklch.h).toFixed(16);
-  if (inGamut("p3")(oklch)) {
-    return formatCss(converter("p3")(oklch));
+  oklch.l = oklch.l === undefined ? 0 : roundToDP(oklch.l, 7);
+  oklch.c = oklch.c === undefined ? 0 : roundToDP(oklch.c, 16);
+  oklch.h = oklch.h === undefined ? 0 : roundToDP(oklch.h, 16);
+  let oklchCss = formatCss(oklch);
+  if (inGamut("p3")(oklchCss)) {
+    let p3Color = converter("p3")(oklch);
+    return p3Color;
   } else {
     let clampedOklch = clampChroma(oklch, "oklch");
     if (clampedOklch.c === undefined) {
       clampedOklch.c = 0;
     }
-    return formatCss(converter("p3")(clampedOklch));
+    let p3Color = converter("p3")(clampedOklch);
+    return p3Color;
   }
 }
 
