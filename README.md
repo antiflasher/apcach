@@ -31,6 +31,8 @@ Parameters are:
 
 (Follow to [Apcach color conversion to CSS](#apcach-color-conversion-to-CSS) section to see how to convert apcach to a CSS color)
 
+> BEWARE: apcach always returns a result even if the color doesn't exist in any color spaces. Use [maxChroma(capValue)](#maximum-chroma) if you need to be sure the returned result is a real color.
+
 ### Color on a black background
 
 For composing a foreground color on black background, use `crToBlack()` function:
@@ -54,7 +56,7 @@ Parameters in `crToBg()` function are:
 - background color (opaque colors only in one of these formats: `oklch`, `oklab`, `display-p3`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
 - desired contrast ratio (the same with APCA 0...108)
 
-> Pro tip: When working in Firma with `display-p3` profile use colors in `display-p3` format instead of `hex`.
+> Pro tip: When working in Firma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
 
 ### Background color
 
@@ -70,7 +72,7 @@ Parameters in `crToFg()` function are:
 - foreground color (opaque colors only in one of these formats: `oklch`, `oklab`, `display-p3`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
 - desired contrast ratio (the same with APCA 0...108)
 
-> Pro tip: When working in Firma with `display-p3` profile use colors in `display-p3` format instead of `hex`.
+> Pro tip: When working in Firma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
 
 ### Maximum chroma
 
@@ -188,7 +190,7 @@ Parameters in `cssToApcach()` function are:
 
 ### APCA vs WCAG
 
-All contrast functions accept contrast model as a parameter. When not specified, APCA is used. Use this parameter to specify the contrast model that apcach will use for color composition.
+All contrast functions accept the contrast model as a parameter. When not specified, APCA is used. Use this parameter to specify the contrast model that apcach will use for color composition.
 
 ```js
 import { apcach, crToBg } from "apcach";
@@ -204,11 +206,11 @@ apcach(crToBg("#E8E8E8", 4.5, "wcag"), 0.2, 145); // oklch(50.5% 0.2 145)
 
 Supported values: `apca`, `wcag`
 
-> Pro tip: Don't forget to adjust the contrast amount. APCA's scale goes from 8 to 108, WCAG scale goes from 1 to 21
+> Pro tip: Don't forget to adjust the contrast amount. APCA's scale goes from 8 to 108, and WCAG scale goes from 1 to 21
 
 ### Search direction
 
-You can specify if you need a color lighter or darker then the comparing one (bg or fg color you provide for calculation). Default value is `auto` whihc means apcach will try to find find either darker of lighter color with desired contrast ratio.
+You can specify if you need a color lighter or darker than the comparing one (bg or fg color you provide for calculation). The default value is `auto` which means apcach will try to find either darker or lighter color with the desired contrast ratio.
 
 Lighter color search:
 
@@ -228,7 +230,7 @@ Supported values: `lighter`, `darker`, `auto`
 
 ### SRGB vs P3 colors
 
-You can specify if you need a color in `P3` or `SRGB` color space. Default value is `p3`.
+You can specify if you need a color in `P3` or `SRGB` color space. The default value is `p3`.
 
 ```js
 import { apcach, crToBg } from "apcach";
@@ -240,4 +242,4 @@ import { apcach, crToBg } from "apcach";
 apcach(crToBg("#00A3FF", 40), 0.1, 145, 100, "srgb"); // oklch(35.82% 0.1 145)
 ```
 
-> Pro tip: When working in Firma with `display-p3` profile use colors in `display-p3` format instead of `hex`.
+> Pro tip: When working in Firma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
