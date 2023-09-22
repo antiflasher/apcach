@@ -27,6 +27,7 @@
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "size-limit": "^8.2.6",
+    "uvu": "^0.5.6",
     "vite": "^4.4.9"
   },
   "eslintConfig": {
@@ -35,6 +36,7 @@
   "scripts": {
     "test:lint": "eslint .",
     "test:size": "size-limit",
+    "test:unit": "uvu . '\\.test\\.(ts|js)$'",
     "test": "pnpm run /^test:/",
     "start": "vite ./demo/"
   },

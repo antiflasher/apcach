@@ -9,7 +9,7 @@ import {
   modeP3,
   useMode,
 } from "culori/fn";
-import { hex } from "wcag-contrast";
+import { rgb } from "wcag-contrast";
 
 useMode(modeP3);
 useMode(modeOklch);
@@ -326,10 +326,30 @@ function calcApca(fgColorInCssFormat, bgColorInCssFormat, colorSpace = "p3") {
   }
 }
 
-function calcWcag(fgColorInCssFormat, bgColorInCssFormat) {
-  let fgColorHex = formatHex(clampChroma(fgColorInCssFormat, "oklch"));
-  let bgColorHex = formatHex(clampChroma(bgColorInCssFormat, "oklch"));
-  let wcag = hex(fgColorHex, bgColorHex);
+function calcWcag(fgColorInCssFormat, bgColorInCssFormat, colorSpace) {
+  let fgColorRgb;
+  let bgColorRgb;
+  if (colorSpace === "p3") {
+    fgColorRgb = converter("rgb")(parse(fgColorInCssFormat));
+    bgColorRgb = converter("rgb")(parse(bgColorInCssFormat));
+  } else {
+    fgColorRgb = converter("rgb")(clampChroma(fgColorInCssFormat, "oklch"));
+    bgColorRgb = converter("rgb")(clampChroma(bgColorInCssFormat, "oklch"));
+    // fgColorRgb = formatHex(clampChroma(fgColorInCssFormat, "oklch"));
+    // bgColorRgb = formatHex(clampChroma(bgColorInCssFormat, "oklch"));
+    // return hex(fgColorRgb, bgColorRgb);
+  }
+  let fgArray = [
+    Math.round(fgColorRgb.r * 255),
+    Math.round(fgColorRgb.g * 255),
+    Math.round(fgColorRgb.b * 255),
+  ];
+  let bgArray = [
+    Math.round(bgColorRgb.r * 255),
+    Math.round(bgColorRgb.g * 255),
+    Math.round(bgColorRgb.b * 255),
+  ];
+  let wcag = rgb(fgArray, bgArray);
   return wcag;
 }
 
@@ -410,20 +430,6 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
       // );
       factLightness = lightness;
     }
-    /* DELETE IT
-    let apcachIsLighter = apcachIsOnBgPosition
-      ? colorIsLighterThenAnother(bgColor, fgColor)
-      : colorIsLighterThenAnother(fgColor, bgColor);
-    Flip the search Patch
-    if (
-      iteration === 1 &&
-      ((apcachIsLighter && newDeltaContrast < 0) ||
-        (!apcachIsLighter && newDeltaContrast > 0))
-    ) {
-      console.log("flipping search patch");
-      lightnessPatch *= -1;
-    }
-    */
     // console.log(
     //   "Desired cr: " +
     //     contrastConfig.cr +
@@ -472,7 +478,6 @@ function lightnessAndPatch(contrastConfig) {
       ? contrastConfig.bgColor
       : contrastConfig.fgColor;
   let antagonistLightness = converter("oklch")(parse(antagonist)).l;
-  // console.log("antagonistLightness: " + antagonistLightness);
 
   let lightness;
   let patch;
