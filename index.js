@@ -1,5 +1,5 @@
-import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
-import { clampChroma, inGamut, parse } from "culori";
+import { APCAcontrast, displayP3toY } from "apca-w3";
+import { blend, clampChroma, inGamut, parse, toGamut } from "culori";
 import {
   converter,
   formatCss,
@@ -170,7 +170,7 @@ function setHue(colorInApcach, h) {
 function maxChroma(chromaCap = 0.4) {
   return function (contrastConfig, hue, alpha, colorSpace) {
     let checkingChroma = chromaCap;
-    let searchPatch = 0.2;
+    let searchPatch = 0.4;
     let color;
     let colorIsValid = false;
     let chromaFound = false;
@@ -179,8 +179,9 @@ function maxChroma(chromaCap = 0.4) {
       iteration++;
       let oldChroma = checkingChroma;
       let newPatchedChroma = oldChroma + searchPatch;
-      checkingChroma = Math.min(newPatchedChroma, chromaCap);
+      checkingChroma = Math.max(Math.min(newPatchedChroma, chromaCap), 0);
       color = apcach(contrastConfig, checkingChroma, hue, alpha, colorSpace);
+
       // Check if the new color is valid
       let newColorIsValid = inColorSpace(color, colorSpace);
       if (iteration === 1 && !newColorIsValid) {
@@ -192,11 +193,15 @@ function maxChroma(chromaCap = 0.4) {
       colorIsValid = newColorIsValid;
       if (checkingChroma <= 0 && !colorIsValid) {
         // Contrast is too high, return invalid color
+        color.chroma = 0;
         return color;
       } else if (
         (Math.abs(searchPatch) <= 0.001 || checkingChroma === chromaCap) &&
         colorIsValid
       ) {
+        if (checkingChroma <= 0) {
+          color.chroma = 0;
+        }
         chromaFound = true;
       }
     }
@@ -242,11 +247,20 @@ function calcContrast(
   contrastModel = "apca",
   colorSpace = "p3"
 ) {
+  // Blend fgColor if needed
+  fgColor = blendColors(fgColor, bgColor);
+  bgColor = dropAplha(bgColor);
+
+  // Prepare colors
+  let fgOklch = prepareColorForContrastCalculation(fgColor, colorSpace);
+  let bgOklch = prepareColorForContrastCalculation(bgColor, colorSpace);
+
+  // Calculate contrast
   switch (contrastModel) {
     case "apca":
-      return calcApca(fgColor, bgColor, colorSpace);
+      return calcApca(fgOklch, bgOklch);
     case "wcag":
-      return calcWcag(fgColor, bgColor, colorSpace);
+      return calcWcag(fgOklch, bgOklch);
     default:
       throw new Error(
         'Invalid contrast model. Suported models: "apca", "wcag"'
@@ -257,10 +271,15 @@ function calcContrast(
 function inColorSpace(color, colorSpace = "p3") {
   colorSpace = colorSpace === "srgb" ? "rgb" : colorSpace;
   if (isValidApcach(color)) {
-    let cssColor = apcachToCss(color, "oklch");
+    let colorCopy = Object.assign({}, color);
+    colorCopy.lightness =
+      colorCopy.lightness === 1 ? 0.9999999 : colorCopy.lightness; // Fixes wrons inGumut calculation
+    let cssColor = apcachToCss(colorCopy, "oklch");
     return inGamut(colorSpace)(cssColor);
   } else {
-    return inGamut(colorSpace)(color);
+    let oklch = converter("oklch")(color);
+    oklch.l = oklch.l === 1 ? 0.9999999 : oklch.l; // Fixes wrons inGumut calculation
+    return inGamut(colorSpace)(oklch);
   }
 }
 
@@ -268,11 +287,11 @@ function inColorSpace(color, colorSpace = "p3") {
 
 function isValidApcach(el) {
   return (
-    "contrastConfig" in el &&
-    "alpha" in el &&
-    "chroma" in el &&
-    "hue" in el &&
-    "lightness" in el
+    el.contrastConfig !== undefined &&
+    el.alpha !== undefined &&
+    el.chroma !== undefined &&
+    el.hue !== undefined &&
+    el.lightness !== undefined
   );
 }
 
@@ -293,76 +312,58 @@ function stringToColor(str) {
   }
 }
 
-function calcApca(fgColorInCssFormat, bgColorInCssFormat, colorSpace = "p3") {
-  switch (colorSpace) {
-    case "p3": {
-      let fgColor = securedP3Color(fgColorInCssFormat);
-      let bgColor = securedP3Color(bgColorInCssFormat);
-      let fgY = displayP3toY([fgColor.r, fgColor.g, fgColor.b]);
-      let bgY = displayP3toY([bgColor.r, bgColor.g, bgColor.b]);
-      return APCAcontrast(fgY, bgY);
-    }
+function prepareColorForContrastCalculation(colorInCssFormat, colorSpace) {
+  // Convert color into oklsh
+  let oklch = converter("oklch")(colorInCssFormat);
 
-    case "srgb": {
-      let fgColor = parse(formatRgb(fgColorInCssFormat));
-      let bgColor = parse(formatRgb(bgColorInCssFormat));
-      let fgY = sRGBtoY([
-        fgColor.r * 255,
-        fgColor.g * 255,
-        fgColor.b * 255,
-        1.0,
-      ]);
-      let bgY = sRGBtoY([
-        bgColor.r * 255,
-        bgColor.g * 255,
-        bgColor.b * 255,
-        1.0,
-      ]);
-      return APCAcontrast(fgY, bgY);
+  // Clamp color if it's outside the space
+  if (colorSpace === "p3") {
+    if (!inGamut("p3")(colorInCssFormat)) {
+      let hex = formatHex(oklch);
+      oklch = converter("oklch")(hex);
     }
-
-    default:
-      throw new Error('Invalid color space. Supported formats: "p3", "srgb".');
+  } else if (colorSpace === "srgb") {
+    oklch = clampChroma(oklch, "oklch");
   }
+
+  // Heal oklch
+  oklch = healOklch(oklch);
+
+  return oklch;
 }
 
-function calcWcag(fgColorInCssFormat, bgColorInCssFormat, colorSpace) {
-  let fgColorRgb;
-  let bgColorRgb;
-  if (colorSpace === "p3") {
-    fgColorRgb = converter("rgb")(parse(fgColorInCssFormat));
-    bgColorRgb = converter("rgb")(parse(bgColorInCssFormat));
-  } else {
-    fgColorRgb = converter("rgb")(clampChroma(fgColorInCssFormat, "oklch"));
-    bgColorRgb = converter("rgb")(clampChroma(bgColorInCssFormat, "oklch"));
-    // fgColorRgb = formatHex(clampChroma(fgColorInCssFormat, "oklch"));
-    // bgColorRgb = formatHex(clampChroma(bgColorInCssFormat, "oklch"));
-    // return hex(fgColorRgb, bgColorRgb);
-  }
-  let fgArray = [
-    Math.round(fgColorRgb.r * 255),
-    Math.round(fgColorRgb.g * 255),
-    Math.round(fgColorRgb.b * 255),
-  ];
-  let bgArray = [
-    Math.round(bgColorRgb.r * 255),
-    Math.round(bgColorRgb.g * 255),
-    Math.round(bgColorRgb.b * 255),
-  ];
-  let wcag = rgb(fgArray, bgArray);
-  return wcag;
+function calcApca(fgOklch, bgOklch) {
+  // Convert into P3
+  let fgP3 = converter("p3")(fgOklch);
+  let bgP3 = converter("p3")(bgOklch);
+
+  // Calculate Y
+  let fgY = displayP3toY([fgP3.r, fgP3.g, fgP3.b]);
+  let bgY = displayP3toY([bgP3.r, bgP3.g, bgP3.b]);
+
+  return APCAcontrast(fgY, bgY);
+}
+
+function calcWcag(fgOklch, bgOklch) {
+  // Convert into P3
+  let fgRgb = converter("rgb")(fgOklch);
+  let bgRgb = converter("rgb")(bgOklch);
+
+  // Compose arrays
+  let fgArray = [rgb1to256(fgRgb.r), rgb1to256(fgRgb.g), rgb1to256(fgRgb.b)];
+  let bgArray = [rgb1to256(bgRgb.r), rgb1to256(bgRgb.g), rgb1to256(bgRgb.b)];
+
+  return rgb(fgArray, bgArray);
+}
+
+function rgb1to256(value) {
+  return Math.round(parseFloat(value.toFixed(4)) * 255);
 }
 
 function anyColorCssToOklch(srt) {
   let olkch = converter("oklch");
   return formatCss(olkch(parse(srt)));
 }
-/* DELETE IT
-function colorIsLighterThenAnother(fgColor, bgColor) {
-  let fgColorComponents = parse(fgColor);
-  let bgColorComponents = parse(bgColor);
-  return fgColorComponents.l > bgColorComponents.l;
-}*/
 
 function contrastToConfig(rawContrast) {
   if (typeof rawContrast === "number") {
@@ -378,98 +379,164 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
   let deltaContrast = 0;
   let lightness = lightnessAndPatch(contrastConfig).lightness;
   let lightnessPatch = lightnessAndPatch(contrastConfig).patch;
+  let factContrast = 1000;
   let factLightness = 0;
   let iteration = 0;
   let lightnessFound = false;
-  // console.log(
-  //   "searchDirection: " +
-  //     contrastConfig.searchDirection +
-  //     " lightness: " +
-  //     lightness +
-  //     " lightnessPatch: " +
-  //     lightnessPatch +
-  //     " colorSpace: " +
-  //     colorSpace
-  // );
-  while (!lightnessFound && iteration < 20) {
+  let lastValidChroma = 0;
+  let chromaRange = chromaLimits(contrastConfig);
+
+  while (!lightnessFound && iteration < 40) {
     iteration++;
+
+    // Calc new lightness to check
+    let newLightness = lightness;
     if (iteration > 1) {
-      lightness += lightnessPatch;
+      newLightness += lightnessPatch;
     }
-    lightness = Math.max(Math.min(lightness, 1), 0);
+
+    newLightness = Math.max(
+      Math.min(newLightness, chromaRange.upper),
+      chromaRange.lower
+    );
+
+    // Compose color with the lightness to check
     let checkingColor = formatCss({
       c: chroma,
       h: hue,
-      l: lightness,
+      l: newLightness,
       mode: "oklch",
     });
 
-    let fgColor =
-      contrastConfig.fgColor === "apcach"
-        ? checkingColor
-        : contrastConfig.fgColor;
-    let bgColor =
-      contrastConfig.bgColor === "apcach"
-        ? checkingColor
-        : contrastConfig.bgColor;
-    let calcedContrast = Math.abs(
-      calcContrast(fgColor, bgColor, contrastConfig.contrastModel, colorSpace)
-    );
-    //console.log("fgColor: " + fgColor + " bgColor: " + bgColor);
-    let newDeltaContrast = contrastConfig.cr - calcedContrast;
-
-    // Save valid lightness–the one giving fact contrast higher than the desired one
-    // It's needed to avoid returning lightness that gives contrast lower than the requested
-    let floatingPoints = contrastConfig.contrastModel === "apca" ? 0 : 1;
-    if (
-      roundToDP(calcedContrast, floatingPoints) >=
-      roundToDP(contrastConfig.cr, floatingPoints)
-    ) {
-      // console.log(
-      //   "lightness saved: " + lightness + " calcedContrast: " + calcedContrast
-      // );
-      factLightness = lightness;
-    }
-    // console.log(
-    //   "Desired cr: " +
-    //     contrastConfig.cr +
-    //     " fact: " +
-    //     calcedContrast +
-    //     " delta: " +
-    //     newDeltaContrast +
-    //     " lightness patch: " +
-    //     lightnessPatch +
-    //     " lightness: " +
-    //     lightness
-    // );
-    // Flip the search Patch
-    if (
-      deltaContrast !== 0 &&
-      signOf(newDeltaContrast) !== signOf(deltaContrast)
-    ) {
-      // console.log("-lightnessPatch / 2;");
-      lightnessPatch = -lightnessPatch / 2;
-    }
-    deltaContrast = newDeltaContrast;
-
-    // Check if the lightness is found
-    if (
-      Math.abs(lightnessPatch) < 0.0001 ||
-      (contrastConfig.searchDirection === "lighter" &&
-        lightness === 1 &&
-        newDeltaContrast > 0) ||
-      (contrastConfig.searchDirection === "darker" &&
-        lightness === 0 &&
-        newDeltaContrast > 0)
-    ) {
-      // console.log("lightness found in " + iteration + " iterations");
-      if (iteration === 1) {
+    // Check if the color is valid
+    let colorIsValid = inColorSpace(formatCss(checkingColor), colorSpace);
+    if (!colorIsValid) {
+      // INVALID ---------------
+      let clampedOklch = oklchClampedToSpace(checkingColor, colorSpace);
+      let validChroma = clampedOklch.c;
+      validChroma = validChroma === undefined ? 0 : validChroma;
+      let contrast = contrastFromConfig(
+        formatCss(clampedOklch),
+        contrastConfig,
+        colorSpace
+      );
+      deltaContrast = contrastConfig.cr - contrast;
+      // Check for edge case
+      if (
+        iteration === 1 &&
+        contrast < contrastConfig.cr &&
+        contrastConfig.searchDirection !== "auto"
+      ) {
         factLightness = lightness;
+        lightnessFound = true;
       }
-      lightnessFound = true;
+      if (Math.abs(lightnessPatch) < 0.001) {
+        lightnessFound = true;
+      }
+      // Change direction of search
+      if (lastValidChroma > validChroma) {
+        lightnessPatch = -lightnessPatch / 2;
+      }
+      // Save last valid chroma
+      lastValidChroma = validChroma;
+    } else {
+      // VALID ---------------
+      let calcedContrast = contrastFromConfig(
+        checkingColor,
+        contrastConfig,
+        colorSpace
+      );
+      let newDeltaContrast = contrastConfig.cr - calcedContrast;
+
+      // Check for edge case
+      if (
+        iteration === 1 &&
+        calcedContrast < contrastConfig.cr &&
+        contrastConfig.searchDirection !== "auto"
+      ) {
+        factLightness = lightness;
+        lightnessFound = true;
+      }
+
+      // Save valid lightness–the one giving fact contrast higher than the desired one
+      // It's needed to avoid returning lightness that gives contrast lower than the requested
+      let floatingPoints = contrastConfig.contrastModel === "apca" ? 0 : 1;
+      if (
+        roundToDP(calcedContrast, floatingPoints) >=
+          roundToDP(contrastConfig.cr, floatingPoints) &&
+        calcedContrast < factContrast
+      ) {
+        factContrast = calcedContrast;
+        factLightness = newLightness;
+      }
+
+      // Flip the search Patch
+      if (
+        deltaContrast !== 0 &&
+        signOf(newDeltaContrast) !== signOf(deltaContrast)
+      ) {
+        lightnessPatch = -lightnessPatch / 2;
+      }
+
+      // Check if the lightness is found
+      if (
+        Math.abs(lightnessPatch) < 0.001 ||
+        (iteration > 1 && newLightness === lightness)
+      ) {
+        lightnessFound = true;
+      }
+
+      // Save valid chroma and deltacontrast
+      lastValidChroma = chroma;
+      deltaContrast = newDeltaContrast;
     }
+
+    lightness = newLightness;
   }
   return Math.min(Math.max(factLightness, 0), 100);
+}
+
+function contrastFromConfig(color, contrastConfig, colorSpace) {
+  // Deside the position of the color
+  let fgColor =
+    contrastConfig.fgColor === "apcach" ? color : contrastConfig.fgColor;
+  let bgColor =
+    contrastConfig.bgColor === "apcach" ? color : contrastConfig.bgColor;
+
+  // Caclulate contrast
+  return Math.abs(
+    calcContrast(fgColor, bgColor, contrastConfig.contrastModel, colorSpace)
+  );
+}
+
+function antagonistColorLightness(contrastConfig) {
+  let antagonist =
+    contrastConfig.fgColor === "apcach"
+      ? contrastConfig.bgColor
+      : contrastConfig.fgColor;
+  let oklch = converter("oklch")(antagonist);
+  return oklch.l;
+}
+
+function chromaLimits(contrastConfig) {
+  if (contrastConfig.searchDirection === "auto") {
+    return { lower: 0, upper: 1 };
+  }
+  let pairColorLightness = antagonistColorLightness(contrastConfig);
+  let upper =
+    contrastConfig.searchDirection === "lighter" ? 1 : pairColorLightness;
+  let lower =
+    contrastConfig.searchDirection === "lighter" ? pairColorLightness : 0;
+  return { lower, upper };
+}
+
+function oklchClampedToSpace(oklch, colorSpace) {
+  if (colorSpace === "p3") {
+    let clampedP3 = toGamut("p3")(oklch);
+    return converter("oklch")(clampedP3);
+  } else {
+    return clampChroma(oklch, "oklch");
+  }
 }
 
 function lightnessAndPatch(contrastConfig) {
@@ -555,23 +622,28 @@ function floatingPointToHex(float) {
     .padStart(2, "0");
 }
 
-function securedP3Color(colorInCssFormat) {
-  let oklch = converter("oklch")(parse(colorInCssFormat));
+function healOklch(oklch) {
   oklch.l = oklch.l === undefined ? 0 : roundToDP(oklch.l, 7);
   oklch.c = oklch.c === undefined ? 0 : roundToDP(oklch.c, 16);
   oklch.h = oklch.h === undefined ? 0 : roundToDP(oklch.h, 16);
-  let oklchCss = formatCss(oklch);
-  if (inGamut("p3")(oklchCss)) {
-    let p3Color = converter("p3")(oklch);
-    return p3Color;
-  } else {
-    let clampedOklch = clampChroma(oklch, "oklch");
-    if (clampedOklch.c === undefined) {
-      clampedOklch.c = 0;
-    }
-    let p3Color = converter("p3")(clampedOklch);
-    return p3Color;
+  oklch.alpha = oklch.alpha === undefined ? 1 : roundToDP(oklch.alpha, 4);
+  return oklch;
+}
+
+function blendColors(fgColor, bgColor) {
+  let fgStruct = parse(fgColor);
+  let bgStruct = parse(bgColor);
+  if (fgStruct.alpha === undefined || fgStruct.alpha === 1) {
+    return fgStruct;
   }
+  // Blend color with the bg
+  return blend([bgStruct, fgStruct], "normal", fgStruct.mode);
+}
+
+function dropAplha(color) {
+  let colorStruct = parse(color);
+  colorStruct.alpha = 1;
+  return colorStruct;
 }
 
 export {
