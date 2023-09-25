@@ -1,3 +1,4 @@
 demo/
 .editorconfig
 *.test.js
+benchmark.js
