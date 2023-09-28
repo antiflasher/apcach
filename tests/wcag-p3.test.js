@@ -705,49 +705,49 @@ test("#21", () => {
   assert.is(
     apcachToCss(
       apcach(
-        crToFg("color(display-p3 0.012 0.961 0.620)", 5, "wcag"),
+        crToFg("color(display-p3 0.439 0.945 0.647)", 5, "wcag"),
         0.14,
         300,
         100,
         "p3"
       )
     ),
-    "oklch(47.752503319582054% 0.14 300)"
+    "oklch(47.03722004975786% 0.14 300)"
   );
 
   // AUTO
   assert.is(
     apcachToCss(
       apcach(
-        crToFg("color(display-p3 0.012 0.961 0.620)", 5, "wcag", "auto"),
+        crToFg("color(display-p3 0.439 0.945 0.647)", 5, "wcag", "auto"),
         0.14,
         300,
         100,
         "p3"
       )
     ),
-    "oklch(47.752503319582054% 0.14 300)"
+    "oklch(47.03722004975786% 0.14 300)"
   );
 
   // DARKER
   assert.is(
     apcachToCss(
       apcach(
-        crToFg("color(display-p3 0.012 0.961 0.620)", 5, "wcag", "darker"),
+        crToFg("color(display-p3 0.439 0.945 0.647)", 5, "wcag", "darker"),
         0.14,
         300,
         100,
         "p3"
       )
     ),
-    "oklch(47.752503319582054% 0.14 300)"
+    "oklch(47.03722004975786% 0.14 300)"
   );
 
   // LIGHTER
   assert.is(
     apcachToCss(
       apcach(
-        crToFg("color(display-p3 0.012 0.961 0.620)", 5, "wcag", "lighter"),
+        crToFg("color(display-p3 0.439 0.945 0.647)", 5, "wcag", "lighter"),
         0.14,
         300,
         100,
@@ -822,7 +822,7 @@ test("#23", () => {
   // Implicit search direction
   assert.is(
     apcachToCss(apcach(crToBg("white", 5, "wcag"), 0.4, 150, 100, "p3")),
-    "oklch(0% 0.4 150)"
+    "oklch(50.390625% 0.4 150)"
   );
 });
 

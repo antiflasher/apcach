@@ -319,8 +319,8 @@ function prepareColorForContrastCalculation(colorInCssFormat, colorSpace) {
   // Clamp color if it's outside the space
   if (colorSpace === "p3") {
     if (!inGamut("p3")(colorInCssFormat)) {
-      let hex = formatHex(oklch);
-      oklch = converter("oklch")(hex);
+      let clampedP3 = toGamut("p3")(oklch);
+      oklch = converter("oklch")(clampedP3);
     }
   } else if (colorSpace === "srgb") {
     oklch = clampChroma(oklch, "oklch");
@@ -338,8 +338,16 @@ function calcApca(fgOklch, bgOklch) {
   let bgP3 = converter("p3")(bgOklch);
 
   // Calculate Y
-  let fgY = displayP3toY([fgP3.r, fgP3.g, fgP3.b]);
-  let bgY = displayP3toY([bgP3.r, bgP3.g, bgP3.b]);
+  let fgY = displayP3toY([
+    Math.max(fgP3.r, 0),
+    Math.max(fgP3.g, 0),
+    Math.max(fgP3.b, 0),
+  ]);
+  let bgY = displayP3toY([
+    Math.max(bgP3.r, 0),
+    Math.max(bgP3.g, 0),
+    Math.max(bgP3.b, 0),
+  ]);
 
   return APCAcontrast(fgY, bgY);
 }
@@ -376,6 +384,7 @@ function contrastToConfig(rawContrast) {
 }
 
 function calcLightness(contrastConfig, chroma, hue, colorSpace) {
+  // console.log("CALC LIGHNTESS chroma: " + chroma);
   let deltaContrast = 0;
   let lightness = lightnessAndPatch(contrastConfig).lightness;
   let lightnessPatch = lightnessAndPatch(contrastConfig).patch;
@@ -383,10 +392,9 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
   let factLightness = 0;
   let iteration = 0;
   let lightnessFound = false;
-  let lastValidChroma = 0;
   let chromaRange = chromaLimits(contrastConfig);
 
-  while (!lightnessFound && iteration < 40) {
+  while (!lightnessFound && iteration < 20) {
     iteration++;
 
     // Calc new lightness to check
@@ -408,91 +416,88 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
       mode: "oklch",
     });
 
-    // Check if the color is valid
-    let colorIsValid = inColorSpace(formatCss(checkingColor), colorSpace);
-    if (!colorIsValid) {
-      // INVALID ---------------
-      let clampedOklch = oklchClampedToSpace(checkingColor, colorSpace);
-      let validChroma = clampedOklch.c;
-      validChroma = validChroma === undefined ? 0 : validChroma;
-      let contrast = contrastFromConfig(
-        formatCss(clampedOklch),
-        contrastConfig,
-        colorSpace
-      );
-      deltaContrast = contrastConfig.cr - contrast;
-      // Check for edge case
-      if (
-        iteration === 1 &&
-        contrast < contrastConfig.cr &&
-        contrastConfig.searchDirection !== "auto"
-      ) {
-        factLightness = lightness;
-        lightnessFound = true;
-      }
-      if (Math.abs(lightnessPatch) < 0.001) {
-        lightnessFound = true;
-      }
-      // Change direction of search
-      if (lastValidChroma > validChroma) {
-        lightnessPatch = -lightnessPatch / 2;
-      }
-      // Save last valid chroma
-      lastValidChroma = validChroma;
-    } else {
-      // VALID ---------------
-      let calcedContrast = contrastFromConfig(
-        checkingColor,
-        contrastConfig,
-        colorSpace
-      );
-      let newDeltaContrast = contrastConfig.cr - calcedContrast;
+    // Calculate contrast of this color
+    let calcedContrast = contrastFromConfig(
+      checkingColor,
+      contrastConfig,
+      colorSpace
+    );
+    let newDeltaContrast = contrastConfig.cr - calcedContrast;
 
-      // Check for edge case
-      if (
-        iteration === 1 &&
-        calcedContrast < contrastConfig.cr &&
-        contrastConfig.searchDirection !== "auto"
-      ) {
-        factLightness = lightness;
-        lightnessFound = true;
-      }
-
-      // Save valid lightness–the one giving fact contrast higher than the desired one
-      // It's needed to avoid returning lightness that gives contrast lower than the requested
-      let floatingPoints = contrastConfig.contrastModel === "apca" ? 0 : 1;
-      if (
-        roundToDP(calcedContrast, floatingPoints) >=
-          roundToDP(contrastConfig.cr, floatingPoints) &&
-        calcedContrast < factContrast
-      ) {
-        factContrast = calcedContrast;
-        factLightness = newLightness;
-      }
-
-      // Flip the search Patch
-      if (
-        deltaContrast !== 0 &&
-        signOf(newDeltaContrast) !== signOf(deltaContrast)
-      ) {
-        lightnessPatch = -lightnessPatch / 2;
-      }
-
-      // Check if the lightness is found
-      if (
-        Math.abs(lightnessPatch) < 0.001 ||
-        (iteration > 1 && newLightness === lightness)
-      ) {
-        lightnessFound = true;
-      }
-
-      // Save valid chroma and deltacontrast
-      lastValidChroma = chroma;
-      deltaContrast = newDeltaContrast;
+    // Check for edge case
+    if (
+      iteration === 1 &&
+      calcedContrast < contrastConfig.cr &&
+      contrastConfig.searchDirection !== "auto"
+    ) {
+      factLightness = lightness;
+      lightnessFound = true;
     }
+
+    // console.log(
+    //   "- CR wanted: " +
+    //     contrastConfig.cr +
+    //     " fact: " +
+    //     calcedContrast +
+    //     " delta: " +
+    //     newDeltaContrast +
+    //     " /// LIGHTNESS old: " +
+    //     lightness +
+    //     " patch: " +
+    //     lightnessPatch +
+    //     " new: " +
+    //     newLightness
+    // );
+
+    // Save valid lightness–the one giving fact contrast higher than the desired one
+    // It's needed to avoid returning lightness that gives contrast lower than the requested
+    let floatingPoints = contrastConfig.contrastModel === "apca" ? 0 : 1;
+    if (
+      roundToDP(calcedContrast, floatingPoints) >=
+        roundToDP(contrastConfig.cr, floatingPoints) &&
+      calcedContrast < factContrast
+    ) {
+      factContrast = calcedContrast;
+      factLightness = newLightness;
+      // console.log(
+      //   "+ lightness saved: " + factLightness + " contrast: " + calcedContrast
+      // );
+    }
+
+    // Flip the search Patch
+    if (
+      deltaContrast !== 0 &&
+      signOf(newDeltaContrast) !== signOf(deltaContrast)
+    ) {
+      // console.log("----- lightnessPatch switch");
+      lightnessPatch = -lightnessPatch / 2;
+    }
+
+    // Check if the lightness is found
+    if (
+      Math.abs(lightnessPatch) < 0.001 ||
+      (iteration > 1 && newLightness === lightness)
+    ) {
+      lightnessFound = true;
+    }
+
+    // Save valid chroma and deltacontrast
+    deltaContrast = newDeltaContrast;
 
     lightness = newLightness;
   }
+  // console.log(
+  //   "LIGHTNESS FOUND in " +
+  //     iteration +
+  //     " iterations. Chroma " +
+  //     chroma +
+  //     " lightness " +
+  //     factLightness +
+  //     " contrast: " +
+  //     factContrast +
+  //     " wanted: " +
+  //     contrastConfig.cr
+  // );
   return Math.min(Math.max(factLightness, 0), 100);
 }
 
@@ -528,15 +533,6 @@ function chromaLimits(contrastConfig) {
   let lower =
     contrastConfig.searchDirection === "lighter" ? pairColorLightness : 0;
   return { lower, upper };
-}
-
-function oklchClampedToSpace(oklch, colorSpace) {
-  if (colorSpace === "p3") {
-    let clampedP3 = toGamut("p3")(oklch);
-    return converter("oklch")(clampedP3);
-  } else {
-    return clampChroma(oklch, "oklch");
-  }
 }
 
 function lightnessAndPatch(contrastConfig) {
@@ -633,6 +629,7 @@ function healOklch(oklch) {
 function blendColors(fgColor, bgColor) {
   let fgStruct = parse(fgColor);
   let bgStruct = parse(bgColor);
+
   if (fgStruct.alpha === undefined || fgStruct.alpha === 1) {
     return fgStruct;
   }

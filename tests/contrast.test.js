@@ -12,7 +12,7 @@ test("#0", () => {
   // White over black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0)", "apca", "p3"),
-    -107.8847050997958
+    -107.88470520486138
   );
 
   // White over black, hex
@@ -24,7 +24,7 @@ test("#0", () => {
   // Black over white, oklch
   assert.is(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0)", "apca", "p3"),
-    106.04064784712475
+    106.0406479420227
   );
 
   // Black over white, hex
@@ -506,7 +506,7 @@ test("#10", () => {
   // Semitransparent Black over White, oklch
   assert.is(
     calcContrast("oklch(0% 0 0 / 50%)", "oklch(100% 0 0)", "apca", "p3"),
-    80.01735623486259
+    80.01735632976055
   );
 
   // Semitransparent Black over White, rgbs
@@ -518,7 +518,7 @@ test("#10", () => {
   // White over Semitransparent Black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0 / 50%)", "apca", "p3"),
-    -107.8847050997958
+    -107.88470520486138
   );
 
   // White over Semitransparent Black, rgba
@@ -530,7 +530,7 @@ test("#10", () => {
   // Black over Semitransparent White, oklch
   assert.is(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0 / 50%)", "apca", "p3"),
-    106.04064784712475
+    106.0406479420227
   );
 
   // Black over Semitransparent White, rgbs

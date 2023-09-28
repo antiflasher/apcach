@@ -723,7 +723,7 @@ test("#23", () => {
   // Implicit search direction
   assert.is(
     apcachToCss(apcach(70, 0.4, 150, 100, "srgb")),
-    "oklch(0% 0.4 150)"
+    "oklch(55.859375% 0.4 150)"
   );
 });
 
