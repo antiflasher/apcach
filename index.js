@@ -393,6 +393,7 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
   let iteration = 0;
   let lightnessFound = false;
   let chromaRange = chromaLimits(contrastConfig);
+  let searchWindow = { low: 0, top: 1 };
 
   while (!lightnessFound && iteration < 20) {
     iteration++;
@@ -453,8 +454,9 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
     // It's needed to avoid returning lightness that gives contrast lower than the requested
     let floatingPoints = contrastConfig.contrastModel === "apca" ? 0 : 1;
     if (
-      roundToDP(calcedContrast, floatingPoints) >=
-        roundToDP(contrastConfig.cr, floatingPoints) &&
+      // roundToDP(calcedContrast, floatingPoints) >=
+      //   roundToDP(contrastConfig.cr, floatingPoints) &&
+      calcedContrast >= contrastConfig.cr &&
       calcedContrast < factContrast
     ) {
       factContrast = calcedContrast;
@@ -470,12 +472,26 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
       signOf(newDeltaContrast) !== signOf(deltaContrast)
     ) {
       // console.log("----- lightnessPatch switch");
+      if (lightnessPatch > 0) {
+        searchWindow.top = newLightness;
+      } else {
+        searchWindow.low = newLightness;
+      }
+      // console.log(
+      //   "searchWindow: " + searchWindow.low + " / " + searchWindow.top
+      // );
       lightnessPatch = -lightnessPatch / 2;
+    } else if (
+      newLightness + lightnessPatch === searchWindow.low ||
+      newLightness + lightnessPatch === searchWindow.top
+    ) {
+      lightnessPatch = lightnessPatch / 2;
     }
 
     // Check if the lightness is found
     if (
-      Math.abs(lightnessPatch) < 0.001 ||
+      searchWindow.top - searchWindow.low < 0.001 ||
+      //Math.abs(lightnessPatch) < 0.001 ||
       (iteration > 1 && newLightness === lightness)
     ) {
       lightnessFound = true;
@@ -496,7 +512,9 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
   //     " contrast: " +
   //     factContrast +
   //     " wanted: " +
-  //     contrastConfig.cr
+  //     contrastConfig.cr +
+  //     " lightnessPatch: " +
+  //     lightnessPatch
   // );
   return Math.min(Math.max(factLightness, 0), 100);
 }
