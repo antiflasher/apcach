@@ -12,25 +12,25 @@ test("#0", () => {
   // White over black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0)", "apca", "p3"),
-    -107.88470520486138
+    -107.88472611509847
   );
 
   // White over black, hex
   assert.is(
     calcContrast("#ffffff", "#000000", "apca", "p3"),
-    -107.8847050997958
+    -107.88472471814163
   );
 
   // Black over white, oklch
   assert.is(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0)", "apca", "p3"),
-    106.0406479420227
+    106.04066682868863
   );
 
   // Black over white, hex
   assert.is(
     calcContrast("#000000", "#ffffff", "apca", "p3"),
-    106.04064784712475
+    106.04066556692115
   );
 });
 
@@ -118,21 +118,21 @@ test("#4", () => {
       "apca",
       "p3"
     ),
-    68.33405340238411
+    68.33405460235842
   );
 
   // #3 Clamped to hex
   // Value must be different from #0
   assert.is(
     calcContrast("#5C11A0", "#00EEA5", "apca", "p3"),
-    66.25589296860609
+    66.25590425444918
   );
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
   assert.is(
     calcContrast("#54189A", "#14F59E", "apca", "p3"),
-    70.53453161486236
+    70.53454522083737
   );
 
   // #3 Clamped hex converted into display-p3 format
@@ -144,7 +144,7 @@ test("#4", () => {
       "apca",
       "p3"
     ),
-    66.25920699942
+    66.25920464580894
   );
 });
 
@@ -296,7 +296,7 @@ test("#7", () => {
 // ----------------------------------------
 
 // APCA, P3
-test("#6", () => {
+test("#8", () => {
   // #0 Original oklch, both colors are in P3
   assert.is(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "apca", "p3"),
@@ -312,21 +312,21 @@ test("#6", () => {
       "apca",
       "p3"
     ),
-    -63.94356999113734
+    -63.943571402196085
   );
 
   // #3 Clamped to hex
   // Value must be different from #0
   assert.is(
     calcContrast("#FCF200", "#00893D", "apca", "p3"),
-    -64.60734026891349
+    -64.60734027280562
   );
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
   assert.is(
     calcContrast("#FDF318", "#038D2F", "apca", "p3"),
-    -63.82702572532345
+    -63.827029459889204
   );
 
   // #3 Clamped hex converted into display-p3 format
@@ -338,12 +338,12 @@ test("#6", () => {
       "apca",
       "p3"
     ),
-    -64.6096677192623
+    -64.60967876148801
   );
 });
 
 // APCA, SRGB
-test("#7", () => {
+test("#9", () => {
   // #0 Original oklch, both colors are in P3
   assert.is(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "apca", "srgb"),
@@ -391,7 +391,7 @@ test("#7", () => {
 });
 
 // WCAG, P3
-test("#8", () => {
+test("#10", () => {
   // #0 Original oklch, both colors are in P3
   assert.is(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "wcag", "p3"),
@@ -438,7 +438,7 @@ test("#8", () => {
 });
 
 // WCAG, SRGB
-test("#9", () => {
+test("#11", () => {
   // #0 Original oklch, both colors are in P3
   assert.is(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "wcag", "srgb"),
@@ -490,7 +490,7 @@ test("#9", () => {
 // ----------------------------------------
 
 // APCA, P3
-test("#10", () => {
+test("#12", () => {
   // Semitransparent White over Black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "apca", "p3"),
@@ -500,48 +500,48 @@ test("#10", () => {
   // Semitransparent White over Black, rgba
   assert.is(
     calcContrast("rgba(255, 255, 255, 0.5)", "rgba(0, 0, 0)", "apca", "p3"),
-    -34.52645528608647
+    -34.52645902056733
   );
 
   // Semitransparent Black over White, oklch
   assert.is(
     calcContrast("oklch(0% 0 0 / 50%)", "oklch(100% 0 0)", "apca", "p3"),
-    80.01735632976055
+    80.01737521642647
   );
 
   // Semitransparent Black over White, rgbs
   assert.is(
     calcContrast("rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255)", "apca", "p3"),
-    67.13319672423782
+    67.13321071293325
   );
 
   // White over Semitransparent Black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0 / 50%)", "apca", "p3"),
-    -107.88470520486138
+    -107.88472611509847
   );
 
   // White over Semitransparent Black, rgba
   assert.is(
     calcContrast("rgba(255, 255, 255)", "rgba(0, 0, 0, 0.5)", "apca", "p3"),
-    -107.8847050997958
+    -107.88472471814163
   );
 
   // Black over Semitransparent White, oklch
   assert.is(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0 / 50%)", "apca", "p3"),
-    106.0406479420227
+    106.04066682868863
   );
 
   // Black over Semitransparent White, rgbs
   assert.is(
     calcContrast("rgba(0, 0, 0)", "rgba(255, 255, 255, 0.5)", "apca", "p3"),
-    106.04064784712475
+    106.04066556692115
   );
 });
 
 // APCA, SRGB
-test("#11", () => {
+test("#13", () => {
   // Semitransparent White over Black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "apca", "srgb"),
@@ -592,7 +592,7 @@ test("#11", () => {
 });
 
 // WCAG, P3
-test("#12", () => {
+test("#14", () => {
   // Semitransparent White over Black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "wcag", "p3"),
@@ -643,7 +643,7 @@ test("#12", () => {
 });
 
 // WCAG, SRGB
-test("#13", () => {
+test("#15", () => {
   // Semitransparent White over Black, oklch
   assert.is(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "wcag", "srgb"),
