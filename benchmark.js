@@ -8,7 +8,8 @@ let suite = new benchmark.Suite();
 
 suite
   .add("create", () => {
-    apcach(70, 0.1, 200);
+    //apcach(70, 0.1, 200);
+    apcach(70, maxChroma(), 200);
   })
   .on("cycle", (event) => {
     process.stdout.write(String(event.target));

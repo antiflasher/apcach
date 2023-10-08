@@ -1,6 +1,6 @@
 {
   "name": "apcach",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "JS color calculator for composing colors with consistent APCA contrast ratio",
   "keywords": [
     "A11y",
@@ -38,6 +38,7 @@
     "test:lint": "eslint .",
     "test:size": "size-limit",
     "test:unit": "uvu . '\\.test\\.(ts|js)$'",
+    "test:contrast": "uvu . 'contrast.test.js'",
     "test": "pnpm run /^test:/",
     "start": "vite ./demo/"
   },
