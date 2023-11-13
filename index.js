@@ -79,6 +79,7 @@ function cssToApcach(
     fgColor = clapmColorToSpace(fgColor, colorSpace);
     let bgColor = antagonist.bg !== undefined ? antagonist.bg : color;
     bgColor = clapmColorToSpace(bgColor, colorSpace);
+
     let crFunction = antagonist.fg !== undefined ? crToFg : crToBg;
     let antagonistColor =
       antagonist.fg !== undefined ? antagonist.fg : antagonist.bg;
@@ -88,9 +89,11 @@ function cssToApcach(
     // Compose apcach
     let colorClamped = clapmColorToSpace(color, colorSpace);
     let colorComp = convertToOklch(colorClamped);
-    log("culori > convertToOklch /// 91");
+    let antagonistColorOklch = convertToOklch(antagonistColor);
+    let isColorLighter = colorComp.l > antagonistColorOklch.l;
+    let searchDirection = isColorLighter ? "lighter" : "darker";
     return apcach(
-      crFunction(antagonistColor, contrast, contrastModel),
+      crFunction(antagonistColor, contrast, contrastModel, searchDirection),
       colorComp.c,
       colorComp.h ?? 0,
       colorComp.alpha ?? 1,
@@ -155,7 +158,8 @@ function setContrast(colorInApcach, cr) {
     newContrastConfig,
     colorInApcach.chroma,
     colorInApcach.hue,
-    colorInApcach.alpha
+    colorInApcach.alpha,
+    colorInApcach.colorSpace
   );
 }
 
@@ -173,7 +177,8 @@ function setChroma(colorInApcach, c) {
     colorInApcach.contrastConfig,
     newChroma,
     colorInApcach.hue,
-    colorInApcach.alpha
+    colorInApcach.alpha,
+    colorInApcach.colorSpace
   );
 }
 
@@ -191,7 +196,8 @@ function setHue(colorInApcach, h) {
     colorInApcach.contrastConfig,
     colorInApcach.chroma,
     newHue,
-    colorInApcach.alpha
+    colorInApcach.alpha,
+    colorInApcach.colorSpace
   );
 }
 
@@ -315,7 +321,6 @@ function inColorSpace(color, colorSpace = "p3") {
 // Private
 
 function internalContrastConfig(contrastConfig, colorSpace) {
-  // console.log("contrastConfig: " + JSON.stringify(contrastConfig));
   let config = {
     contrastModel: contrastConfig.contrastModel,
     cr: contrastConfig.cr,
