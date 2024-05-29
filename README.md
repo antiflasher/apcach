@@ -56,7 +56,7 @@ Parameters in `crToBg()` function are:
 - background color (opaque colors only in one of these formats: `oklch`, `oklab`, `display-p3`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
 - desired contrast ratio (the same with APCA 0...108)
 
-> Pro tip: When working in Firma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
+> Pro tip: When working in Figma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
 
 ### Background color
 
@@ -72,7 +72,7 @@ Parameters in `crToFg()` function are:
 - foreground color (opaque colors only in one of these formats: `oklch`, `oklab`, `display-p3`, `lch`, `lab`, `hex`, `rgb`, `hsl`, `p3`)
 - desired contrast ratio (the same with APCA 0...108)
 
-> Pro tip: When working in Firma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
+> Pro tip: When working in Figma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
 
 ### Maximum chroma
 
@@ -165,9 +165,9 @@ apcachToCss(color, "figma-p3"); // #47a23d
 Parameters in `apcachToCss()` function are:
 
 - color in the apcach format you want to convert
-- format (supported: `oklch`, `rgb`, `hex`, `p3`, `firma-p3`)
+- format (supported: `oklch`, `rgb`, `hex`, `p3`, `figma-p3`)
 
-> Pro tip: When working in Firma with `display-p3` profile convert apcach to `figma-p3` which basically is `hex` stretch to p3 space.
+> Pro tip: When working in Figma with `display-p3` profile convert apcach to `figma-p3` which basically is `hex` stretch to p3 space.
 
 ### CSS color conversion to apcach
 
@@ -242,4 +242,4 @@ import { apcach, crToBg } from "apcach";
 apcach(crToBg("#00A3FF", 40), 0.1, 145, 100, "srgb"); // oklch(35.82% 0.1 145)
 ```
 
-> Pro tip: When working in Firma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
+> Pro tip: When working in Figma with `display-p3` profile, use colors in `display-p3` format instead of `hex`.
