@@ -22,6 +22,67 @@ import { rgb } from "wcag-contrast";
 useMode(modeP3);
 useMode(modeOklch);
 
+// TEMPORARY TYPES -------------------------------
+export type Maybe<T> = T | null | undefined;
+export type ContrastModel = "apca" | "wcag";
+export type ColorSpace = "p3" | "rgb";
+export type Oklch = {
+  l: number;
+  c: number;
+  h: number;
+  alpha: number;
+};
+
+// prettier-ignore
+export type HueExpr =
+  | number
+  | string
+  | ((hue: number) => number);
+
+export type ChromaExpr =
+  | number
+  | string
+  | ((
+      contrastConfig: ContrastConfig,
+      hue: number,
+      alpha: number,
+      colorSpace: ColorSpace
+    ) => number);
+
+export type ContrastRatio = number;
+
+export type SearchDirection = "auto" | "lighter" | "darker";
+
+/** extended way to specify a contrast config */
+export type RawContrastConfig = number | ContrastConfig;
+
+/** a normalized contrast config */
+export type ContrastConfig = {
+  bgColor: string;
+  fgColor: string;
+  cr: ContrastRatio;
+  contrastModel: ContrastModel;
+  searchDirection: SearchDirection;
+  apcachIsOnFg: boolean;
+  colorAntagonist: Oklch;
+};
+
+/** TODO */
+export type Apcach = {
+  //
+  contrastConfig: ContrastConfig;
+  //
+  lightness: number;
+  chroma: number;
+  hue: number;
+  //
+  alpha: number;
+  //
+  colorSpace: ColorSpace;
+};
+
+// ----------------------------------------------
+
 const LOG_ON: boolean = false;
 
 const convertToOklch: ConvertFn<"oklch"> = converter("oklch");
@@ -34,9 +95,31 @@ const toP3 = toGamut("p3", "oklch", differenceEuclidean("oklch"), 0);
 
 // API
 
-function apcach(contrast, chroma, hue, alpha = 100, colorSpace = "p3") {
+function apcach(
+  //
+  contrast: number,
+  chroma: ChromaExpr,
+  hue?: Maybe<number | string>,
+  alpha: number = 100,
+  colorSpace: ColorSpace = "p3"
+) {
+  // 💬 2024-06-16 rvion:
+  // | checking if something is either null or undefined should be done
+  // | in one go by doing `hue == null` (two equal sign).
+  // | (almost the only case when one want to use `==` instead of `===`).
+
+  // 💬 2024-06-16 rvion:
+  // | not sure if parseFloat is guaranteed to accept number
+  // | probably better to only pass strings to it
+
   // Check for hue
-  hue = hue === undefined || hue === null ? 0 : parseFloat(hue);
+  hue =
+    hue == null //
+      ? 0
+      : typeof hue === "number"
+      ? hue
+      : parseFloat(hue);
+
   // Compose contrast config
   let contrastConfig = contrastToConfig(contrast);
   if (typeof chroma === "function") {
@@ -107,7 +190,12 @@ function cssToApcach(
   }
 }
 
-function crToBg(bgColor, cr, contrastModel = "apca", searchDirection = "auto") {
+function crToBg(
+  bgColor: string,
+  cr: ContrastRatio,
+  contrastModel: ContrastModel = "apca",
+  searchDirection: SearchDirection = "auto"
+) {
   return {
     bgColor: stringToColor(bgColor),
     contrastModel,
@@ -117,19 +205,37 @@ function crToBg(bgColor, cr, contrastModel = "apca", searchDirection = "auto") {
   };
 }
 
-function crTo(bgColor, cr, contrastModel = "apca", searchDirection = "auto") {
+function crTo(
+  bgColor: string,
+  cr: ContrastRatio,
+  contrastModel: ContrastModel = "apca",
+  searchDirection: SearchDirection = "auto"
+) {
   return crToBg(bgColor, cr, contrastModel, searchDirection);
 }
 
-function crToBgWhite(cr, contrastModel = "apca", searchDirection = "auto") {
+function crToBgWhite(
+  cr: ContrastRatio,
+  contrastModel: ContrastModel = "apca",
+  searchDirection: SearchDirection = "auto"
+) {
   return crToBg("white", cr, contrastModel, searchDirection);
 }
 
-function crToBgBlack(cr, contrastModel = "apca", searchDirection = "auto") {
+function crToBgBlack(
+  cr: ContrastRatio,
+  contrastModel: ContrastModel = "apca",
+  searchDirection: SearchDirection = "auto"
+) {
   return crToBg("black", cr, contrastModel, searchDirection);
 }
 
-function crToFg(fgColor, cr, contrastModel = "apca", searchDirection = "auto") {
+function crToFg(
+  fgColor: string,
+  cr: ContrastRatio,
+  contrastModel: ContrastModel = "apca",
+  searchDirection: SearchDirection = "auto"
+) {
   return {
     bgColor: "apcach",
     contrastModel,
@@ -185,8 +291,8 @@ function setChroma(colorInApcach, c) {
   );
 }
 
-function setHue(colorInApcach, h) {
-  let newHue;
+function setHue(colorInApcach: Apcach, h: HueExpr) {
+  let newHue: number;
   if (typeof h === "number") {
     newHue = clipHue(h);
   } else if (typeof h === "function") {
@@ -323,12 +429,15 @@ function inColorSpace(color, colorSpace = "p3") {
 
 // Private
 
-function internalContrastConfig(contrastConfig, colorSpace) {
+function internalContrastConfig(
+  contrastConfig: ContrastConfig,
+  colorSpace: ColorSpace
+): ContrastConfig {
   let config = {
     contrastModel: contrastConfig.contrastModel,
     cr: contrastConfig.cr,
+    apcachIsOnFg: contrastConfig.fgColor === "apcach",
   };
-  config.apcachIsOnFg = contrastConfig.fgColor === "apcach";
   let colorAntagonistOriginal = config.apcachIsOnFg
     ? contrastConfig.bgColor
     : contrastConfig.fgColor;
@@ -513,7 +622,7 @@ function rgb1to256(value) {
   return Math.round(parseFloat(value.toFixed(4)) * 255);
 }
 
-function contrastToConfig(rawContrast) {
+function contrastToConfig(rawContrast: RawContrastConfig): ContrastConfig {
   if (typeof rawContrast === "number") {
     return crToBg("white", rawContrast);
   } else if (isValidContrastConfig(rawContrast)) {
@@ -523,7 +632,13 @@ function contrastToConfig(rawContrast) {
   }
 }
 
-function calcLightness(contrastConfig, chroma, hue, colorSpace) {
+function calcLightness(
+  //
+  contrastConfig: ContrastConfig,
+  chroma: number,
+  hue: number,
+  colorSpace: ColorSpace
+) {
   // log(
   //   "CALC LIGHNTESS chroma: " +
   //     chroma +
@@ -728,13 +843,6 @@ function lightnessFromAntagonist(contrastConfig) {
   return convertToOklch(antagonist).l;
 }
 
-type Oklch = {
-  l: number;
-  c: number;
-  h: number;
-  alpha: number;
-};
-
 function healOklch(oklch: Oklch): Oklch {
   oklch.l = oklch.l === undefined ? 0 : roundToDP(oklch.l, 7);
   oklch.c = oklch.c === undefined ? 0 : roundToDP(oklch.c, 16);
@@ -744,7 +852,7 @@ function healOklch(oklch: Oklch): Oklch {
 }
 
 /** round to decimal places */
-function roundToDP(number: number, dp) {
+function roundToDP(number: number, dp: number): number {
   return Math.floor(number * 10 ** dp) / 10 ** dp;
 }
 
@@ -765,8 +873,6 @@ function clipChroma(c: number): number {
 function clipHue(h: number): number {
   return Math.max(Math.min(h, 360), 0);
 }
-
-export type ContrastModel = "apca" | "wcag";
 
 function contrastIsLegal(cr: number, contrastModel: ContrastModel) {
   return (
