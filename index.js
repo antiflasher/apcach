@@ -785,6 +785,7 @@ function blendChannel(channelFg, channelBg, alpha) {
 
 function log(srt) {
   if (LOG_ON) {
+    // eslint-disable-next-line no-console
     console.log(srt);
   }
 }
