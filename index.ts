@@ -1,3 +1,5 @@
+import type { ConvertFn } from "culori/src/converter";
+
 import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
 import {
   clampChroma,
@@ -20,11 +22,12 @@ import { rgb } from "wcag-contrast";
 useMode(modeP3);
 useMode(modeOklch);
 
-const LOG_ON = false;
+const LOG_ON: boolean = false;
 
-const convertToOklch = converter("oklch");
-const convertToP3 = converter("p3");
-const convertToRgb = converter("rgb");
+const convertToOklch: ConvertFn<"oklch"> = converter("oklch");
+const convertToP3: ConvertFn<"p3"> = converter("p3");
+const convertToRgb: ConvertFn<"rgb"> = converter("rgb");
+
 const inP3 = inGamut("p3");
 const inSrgb = inGamut("rgb");
 const toP3 = toGamut("p3", "oklch", differenceEuclidean("oklch"), 0);
