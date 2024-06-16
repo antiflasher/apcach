@@ -1,4 +1,5 @@
-import type { Oklch, ContrastModel } from "./types";
+import type { Oklch } from "culori";
+import type { ContrastModel } from "./types";
 
 /**
  * 1. ensure every oklch properties are set

@@ -2,9 +2,9 @@ import type { Oklch } from "culori";
 import type { ContrastRatio, ContrastModel, SearchDirection } from "./types";
 
 /** extended way to specify a contrast config */
-export type RawContrastConfig = number | ContrastConfigV1;
+export type ContrastConfig_Ext = number | ContrastConfig;
 
-export type ContrastConfigV1 = {
+export type ContrastConfig = {
   bgColor: string;
   fgColor: string;
   cr: ContrastRatio;
@@ -13,7 +13,7 @@ export type ContrastConfigV1 = {
 };
 
 /** a normalized contrast config */
-export type ContrastConfigV2 = {
+export type ContrastConfig_WTF = {
   bgColor: string;
   fgColor: string;
   cr: ContrastRatio;
@@ -30,7 +30,7 @@ export function crToBg(
   cr: ContrastRatio,
   contrastModel: ContrastModel = "apca",
   searchDirection: SearchDirection = "auto"
-): ContrastConfigV1 {
+): ContrastConfig {
   return {
     fgColor: "apcach",
     bgColor: stringToColor(bgColor),
@@ -45,7 +45,7 @@ export function crToFg(
   cr: ContrastRatio,
   contrastModel: ContrastModel = "apca",
   searchDirection: SearchDirection = "auto"
-): ContrastConfigV1 {
+): ContrastConfig {
   return {
     fgColor: stringToColor(fgColor),
     bgColor: "apcach",
@@ -62,7 +62,7 @@ export function crTo(
   cr: ContrastRatio,
   contrastModel: ContrastModel = "apca",
   searchDirection: SearchDirection = "auto"
-): ContrastConfigV1 {
+): ContrastConfig {
   return crToBg(bgColor, cr, contrastModel, searchDirection);
 }
 
@@ -72,7 +72,7 @@ export function crToBgWhite(
   cr: ContrastRatio,
   contrastModel: ContrastModel = "apca",
   searchDirection: SearchDirection = "auto"
-): ContrastConfigV1 {
+): ContrastConfig {
   return crToBg("white", cr, contrastModel, searchDirection);
 }
 
@@ -80,7 +80,7 @@ export function crToBgBlack(
   cr: ContrastRatio,
   contrastModel: ContrastModel = "apca",
   searchDirection: SearchDirection = "auto"
-): ContrastConfigV1 {
+): ContrastConfig {
   return crToBg("black", cr, contrastModel, searchDirection);
 }
 
@@ -103,8 +103,8 @@ export function crToFgBlack(
 // ----------------------------------------------------------------------
 // TODO: rename that function
 export function contrastToConfig(
-  rawContrast: RawContrastConfig
-): ContrastConfigV1 {
+  rawContrast: ContrastConfig_Ext
+): ContrastConfig {
   if (typeof rawContrast === "number") return crToBg("white", rawContrast);
   if (_isValidContrastConfig(rawContrast)) return rawContrast;
   throw new Error("Invalid contrast format");
@@ -123,7 +123,7 @@ function stringToColor(str: string): string {
   }
 }
 
-function _isValidContrastConfig(el: object): el is ContrastConfigV1 {
+function _isValidContrastConfig(el: object): el is ContrastConfig {
   return (
     "bgColor" in el && //
     "fgColor" in el &&

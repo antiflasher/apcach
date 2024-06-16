@@ -1,20 +1,21 @@
 // TEMPORARY TYPES -------------------------------
 
-import type { ContrastConfigV1 } from "./crToFg";
+import type { ContrastConfig } from "./contrastConfig";
 
 export type Maybe<T> = T | null | undefined;
 export type ContrastModel = "apca" | "wcag";
 export type ColorSpace = "p3" | "rgb";
 export type ColorInCSSFormat = string;
 
-export type Oklch = {
-  l: number;
-  c: number;
-  h: number;
-  alpha: number;
-};
-// prettier-ignore
+// use culori type instead
+// ⏸️export type Oklch = {
+// ⏸️  l: number;
+// ⏸️  c: number;
+// ⏸️  h: number;
+// ⏸️  alpha: number;
+// ⏸️};
 
+// prettier-ignore
 export type HueExpr = number |
   string |
   ((hue: number) => number);
@@ -23,15 +24,13 @@ export type ChromaExpr =
   | number
   | string
   | ((
-      contrastConfig: ContrastConfigV1,
+      contrastConfig: ContrastConfig,
       hue: number,
       alpha: number,
       colorSpace: ColorSpace
     ) => number);
 
-export type ChromaExpr2 =
-  | number
-  | ((contrastConfig: ContrastConfigV1) => number);
+export type ChromaExpr2 = number | ((contrastConfig: ContrastConfig) => number);
 
 export type ContrastRatio = number;
 
@@ -44,6 +43,6 @@ export type Apcach = {
   //
   alpha: number;
   //
-  contrastConfig: ContrastConfigV1;
+  contrastConfig: ContrastConfig;
   colorSpace: ColorSpace;
 };

@@ -1,58 +1,57 @@
 import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
 import {
-  crTo,
-  crToBg,
-  crToBgWhite,
-  crToBgBlack,
-  crToFg,
-  crToFgWhite,
-  crToFgBlack,
-  type ContrastConfigV1,
   contrastToConfig,
-} from "./crToFg";
+  crTo,
+  crToBgBlack,
+  crToBgWhite,
+  crToFgBlack,
+  crToFgWhite,
+  type ContrastConfig,
+  type ContrastConfig_Ext,
+} from "./contrastConfig";
 
+// 🔴 todo: patch types
+// @ts-ignore
 import { clampChroma, inGamut, parse } from "culori";
 
 import { formatCss, formatHex, formatRgb } from "culori/fn";
 import { rgb } from "wcag-contrast";
-import {
-  ChromaExpr,
-  Maybe,
-  ColorSpace,
-  Apcach,
-  HueExpr,
-  ContrastConfig,
-  RawContrastConfig,
-  type ChromaExpr2,
-  type ContrastRatio,
-  type ContrastModel,
-  type ColorInCSSFormat,
-} from "./types";
-import { log } from "./log";
-import {
-  contrastIsLegal,
-  clipContrast,
-  clipChroma,
-  clipHue,
-  floatingPointToHex,
-  blendCompColors,
-  healOklch,
-  signOf,
-} from "./utils";
+import { lightnessFromAntagonist } from "./aaa/lightnessFromAntagonist";
 import {
   convertToOklch,
   convertToP3,
   convertToRgb,
   inP3,
-  toP3,
   inSrgb,
+  toP3,
 } from "./culoriUtils";
+import { log } from "./log";
+import {
+  Apcach,
+  ChromaExpr,
+  ColorSpace,
+  HueExpr,
+  Maybe,
+  type ChromaExpr2,
+  type ColorInCSSFormat,
+  type ContrastRatio,
+} from "./types";
+import {
+  blendCompColors,
+  clipChroma,
+  clipContrast,
+  clipHue,
+  contrastIsLegal,
+  floatingPointToHex,
+  healOklch,
+  signOf,
+} from "./utils";
 
 // API
 
-export function apcach(
+function apcach(
   //
-  contrast: number,
+  contrast: ContrastConfig_Ext,
   chroma: ChromaExpr,
   hue?: Maybe<number | string>,
   alpha: number = 100,
@@ -76,7 +75,7 @@ export function apcach(
       : parseFloat(hue);
 
   // Compose contrast config
-  const contrastConfig = contrastToConfig(contrast);
+  const contrastConfig: ContrastConfig = contrastToConfig(contrast);
 
   if (typeof chroma === "function") {
     // Max chroma case
@@ -107,72 +106,6 @@ export function apcach(
       contrastConfig,
     };
   }
-}
-
-/**
- * The apcach format can be restored from color in CSS format
- * using the function cssToApcach():
- */
-function cssToApcach(
-  /** color in CSS format that you want to convert to apcach format */
-  color: string,
-
-  /** comparing color
-   * if it's on the background position: { bg : comparingColor }
-   * if it's in the foreground position: { fg : comparingColor }
-   *
-   * (supported formats: oklch, oklab, display-p3, lch, lab, hex, rgb, hsl, p3)
-   */
-  antagonist: { bg?: string; fg?: string },
-  colorSpace: ColorSpace = "p3",
-  contrastModel: ContrastModel = "apca"
-) {
-  // ensure color is defined
-  if (color == null) throw new Error("Color is undefined");
-
-  // ensure antagonist is specified
-  if (antagonist.fg == null && antagonist.bg == null)
-    throw new Error("antagonist color is not provided");
-
-  // ensure antagonist is either fg xor bg, not both
-  if (antagonist.fg != null && antagonist.bg != null)
-    throw new Error("antagonist can't be both fb and bg");
-
-  // fgcolor
-  let fgColor = antagonist.fg !== undefined ? antagonist.fg : color;
-  fgColor = clapmColorToSpace(fgColor, colorSpace);
-
-  // bgcolor
-  let bgColor = antagonist.bg !== undefined ? antagonist.bg : color;
-  bgColor = clapmColorToSpace(bgColor, colorSpace);
-
-  // get the contrast function
-  const crFunction =
-    antagonist.fg !== undefined //
-      ? crToFg
-      : crToBg;
-
-  // get the antagonist color
-  const antagonistColor =
-    antagonist.fg !== undefined //
-      ? antagonist.fg
-      : antagonist.bg;
-
-  let contrast = calcContrast(fgColor, bgColor, contrastModel, colorSpace);
-
-  // Compose apcach
-  let colorClamped = clapmColorToSpace(color, colorSpace);
-  let colorComp = convertToOklch(colorClamped);
-  let antagonistColorOklch = convertToOklch(antagonistColor);
-  let isColorLighter = colorComp.l > antagonistColorOklch.l;
-  let searchDirection = isColorLighter ? "lighter" : "darker";
-  return apcach(
-    crFunction(antagonistColor, contrast, contrastModel, searchDirection),
-    colorComp.c,
-    colorComp.h ?? 0,
-    colorComp.alpha ?? 1,
-    colorSpace
-  );
 }
 
 function setContrast(
@@ -412,7 +345,7 @@ function isValidApcach(el: Apcach): el is Apcach {
 }
 
 // ----------------------------------------------------------------------
-function clapmColorToSpace(
+export function clapmColorToSpace(
   //
   colorInCssFormat: ColorInCSSFormat,
   colorSpace: ColorSpace
@@ -744,17 +677,6 @@ function lightnessAndPatch(contrastConfig) {
   }
 
   return { lightness, lightnessPatch };
-}
-
-function lightnessFromAntagonist(contrastConfig) {
-  let antagonist;
-  if (contrastConfig.fgColor === "apcach") {
-    antagonist = contrastConfig.bgColor;
-  } else {
-    antagonist = contrastConfig.fgColor;
-  }
-  log("culori > convertToOklch /// lightnessFromAntagonist");
-  return convertToOklch(antagonist).l;
 }
 
 export {
