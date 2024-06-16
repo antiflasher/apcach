@@ -21,7 +21,7 @@ export type ContrastConfig_WTF = {
   searchDirection: SearchDirection;
   // --------------------------
   /* ❓ */ apcachIsOnFg: boolean;
-  /* ❓ */ colorAntagonist: Oklch;
+  /* ❓ */ colorAntagonist: string | Oklch;
 };
 /** TODO */
 

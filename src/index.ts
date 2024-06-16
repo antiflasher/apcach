@@ -1,29 +1,26 @@
-import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
 import {
   contrastToConfig,
   crTo,
+  crToBg,
+  crToFg,
   crToBgBlack,
   crToBgWhite,
   crToFgBlack,
   crToFgWhite,
   type ContrastConfig,
   type ContrastConfig_Ext,
+  type ContrastConfig_WTF,
 } from "./contrastConfig";
 
 // 🔴 todo: patch types
 // @ts-ignore
-import { clampChroma, inGamut, parse } from "culori";
-
+import { inGamut, parse, type Oklch } from "culori";
 import { formatCss, formatHex, formatRgb } from "culori/fn";
-import { rgb } from "wcag-contrast";
 import { lightnessFromAntagonist } from "./aaa/lightnessFromAntagonist";
 import {
-  convertToOklch,
+  convertToOklch_orThrow,
   convertToP3,
   convertToRgb,
-  inP3,
-  inSrgb,
-  toP3,
 } from "./culoriUtils";
 import { log } from "./utils/log";
 import {
@@ -34,6 +31,7 @@ import {
   Maybe,
   type ChromaExpr2,
   type ColorInCSSFormat,
+  type ContrastModel,
   type ContrastRatio,
 } from "./types";
 import {
@@ -43,9 +41,13 @@ import {
   clipHue,
   contrastIsLegal,
   floatingPointToHex,
-  healOklch,
   signOf,
 } from "./utils/misc";
+import { clampColorToSpace } from "./utils/clampColorToSpace";
+import { chromaLimits } from "./utils/chromaLimits";
+import { lightnessAndPatch } from "./aaa/lightnessAndPatch";
+import { cssToApcach } from "./cssToApcach";
+import { calcContrastFromPreparedColors } from "./calc/calcContrastFromPreparedColors";
 
 // API
 
@@ -245,17 +247,17 @@ function apcachToCss(color, format) {
 }
 
 function calcContrast(
-  fgColor,
-  bgColor,
-  contrastModel = "apca",
-  colorSpace = "p3"
+  fgColor: ColorInCSSFormat,
+  bgColor: ColorInCSSFormat,
+  contrastModel: ContrastModel = "apca",
+  colorSpace: ColorSpace = "p3"
 ) {
   // Background color
-  let bgColorClamped = clapmColorToSpace(bgColor, colorSpace);
+  let bgColorClamped = clampColorToSpace(bgColor, colorSpace);
   let bgColorComps = colorToComps(bgColorClamped, contrastModel, colorSpace);
 
   // Foreground color
-  let fgColorClamped = clapmColorToSpace(fgColor, colorSpace);
+  let fgColorClamped = clampColorToSpace(fgColor, colorSpace);
   let fgColorComps = colorToComps(fgColorClamped, contrastModel, colorSpace);
   fgColorComps = blendCompColors(fgColorComps, bgColorComps);
 
@@ -270,7 +272,11 @@ function calcContrast(
   );
 }
 
-function inColorSpace(color, colorSpace = "p3") {
+function inColorSpace(
+  //
+  color,
+  colorSpace = "p3"
+) {
   colorSpace = colorSpace === "srgb" ? "rgb" : colorSpace;
   if (isValidApcach(color)) {
     let colorCopy = Object.assign({}, color);
@@ -279,7 +285,7 @@ function inColorSpace(color, colorSpace = "p3") {
     let cssColor = apcachToCss(colorCopy, "oklch");
     return inGamut(colorSpace)(cssColor);
   } else {
-    let oklch = convertToOklch(color);
+    let oklch = convertToOklch_orThrow(color);
     log("culori > convertToOklch /// 307");
     oklch.l = oklch.l === 1 ? 0.9999999 : oklch.l; // Fixes wrons inGumut calculation
 
@@ -301,7 +307,7 @@ function internalContrastConfig(
   let colorAntagonistOriginal = config.apcachIsOnFg
     ? contrastConfig.bgColor
     : contrastConfig.fgColor;
-  let colorAntagonistClamped = clapmColorToSpace(
+  let colorAntagonistClamped = clampColorToSpace(
     colorAntagonistOriginal,
     colorSpace
   );
@@ -321,7 +327,11 @@ function internalContrastConfig(
 }
 
 function colorToComps(color, contrastModel, colorSpace) {
-  if (contrastModel === "apca" && colorSpace === "p3") {
+  if (
+    //
+    contrastModel === "apca" &&
+    colorSpace === "p3"
+  ) {
     log("culori > convertToP3 /// colorToComps");
     return convertToP3(color);
   } else {
@@ -344,53 +354,15 @@ function isValidApcach(el: Apcach): el is Apcach {
   );
 }
 
-// ----------------------------------------------------------------------
-export function clapmColorToSpace(
-  //
-  colorInCssFormat: ColorInCSSFormat,
-  colorSpace: ColorSpace
-) {
-  if (colorSpace === "p3") {
-    log("culori > inP3 /// clapmColorToSpace");
-    if (inP3(colorInCssFormat)) {
-      return colorInCssFormat;
-    } else {
-      let oklch;
-      if (colorInCssFormat.slice(4) === "oklch") {
-        oklch = colorInCssFormat;
-      } else {
-        oklch = convertToOklch(colorInCssFormat);
-        log("culori > convertToOklch /// 394");
-        oklch = healOklch(oklch);
-      }
-      // Clamp color to p3 gamut
-      log("culori > toGamut(p3)");
-      return toP3(oklch);
-    }
-  } else {
-    // eslint-disable-next-line no-lonely-if
-    log("culori > inSrgb /// clapmColorToSpace");
-    if (inSrgb(colorInCssFormat)) {
-      return colorInCssFormat;
-    } else {
-      let oklch = convertToOklch(colorInCssFormat);
-      log("culori > convertToOklch /// 407");
-      oklch = clampChroma(oklch, "oklch");
-      log("culori > clampChroma /// 409");
-      return oklch;
-    }
-  }
-}
-
 function contrastFromConfig(
   //
-  color,
-  contrastConfig,
-  colorSpace
+  color: ColorInCSSFormat,
+  contrastConfig: ContrastConfig_WTF,
+  colorSpace: ColorSpace
 ) {
   // Deside the position of the color
-  let fgColor;
-  let bgColor;
+  let fgColor: Oklch;
+  let bgColor: Oklch;
   if (contrastConfig.apcachIsOnFg) {
     bgColor = contrastConfig.colorAntagonist;
     fgColor = blendCompColors(color, bgColor);
@@ -410,72 +382,7 @@ function contrastFromConfig(
   );
 }
 
-function calcContrastFromPreparedColors(
-  fgColor,
-  bgColor,
-  contrastModel,
-  colorSpace
-) {
-  switch (contrastModel) {
-    case "apca": {
-      if (colorSpace === "p3") {
-        return calcApcaP3(fgColor, bgColor);
-      } else {
-        return calcApcaSrgb(fgColor, bgColor);
-      }
-    }
-    case "wcag":
-      return calcWcag(fgColor, bgColor);
-    default:
-      throw new Error(
-        'Invalid contrast model. Suported models: "apca", "wcag"'
-      );
-  }
-}
-
-function calcApcaP3(fgP3, bgP3) {
-  // Calculate Y
-  let fgY = displayP3toY([
-    Math.max(fgP3.r, 0),
-    Math.max(fgP3.g, 0),
-    Math.max(fgP3.b, 0),
-  ]);
-
-  let bgY = displayP3toY([
-    Math.max(bgP3.r, 0),
-    Math.max(bgP3.g, 0),
-    Math.max(bgP3.b, 0),
-  ]);
-
-  return APCAcontrast(fgY, bgY);
-}
-
-function calcApcaSrgb(fgRgb, bgGrb) {
-  // Calculate Y
-  let fgY = sRGBtoY([
-    Math.round(Math.max(fgRgb.r * 255, 0)),
-    Math.round(Math.max(fgRgb.g * 255, 0)),
-    Math.round(Math.max(fgRgb.b * 255, 0)),
-  ]);
-
-  let bgY = sRGBtoY([
-    Math.round(Math.max(bgGrb.r * 255, 0)),
-    Math.round(Math.max(bgGrb.g * 255, 0)),
-    Math.round(Math.max(bgGrb.b * 255, 0)),
-  ]);
-
-  return APCAcontrast(fgY, bgY);
-}
-
-function calcWcag(fgRgb, bgRgb) {
-  // Compose arrays
-  let fgArray = [rgb1to256(fgRgb.r), rgb1to256(fgRgb.g), rgb1to256(fgRgb.b)];
-  let bgArray = [rgb1to256(bgRgb.r), rgb1to256(bgRgb.g), rgb1to256(bgRgb.b)];
-
-  return rgb(fgArray, bgArray);
-}
-
-function rgb1to256(value) {
+export function rgb1to256(value) {
   return Math.round(parseFloat(value.toFixed(4)) * 255);
 }
 
@@ -521,7 +428,7 @@ function calcLightness(
     // Compose color with the lightness to check
     let checkingColor =
       "oklch(" + newLightness + " " + chroma + " " + hue + ")";
-    let checkingColorClamped = clapmColorToSpace(checkingColor, colorSpace);
+    let checkingColorClamped = clampColorToSpace(checkingColor, colorSpace);
 
     let checkingColorComps = colorToComps(
       checkingColorClamped,
@@ -623,60 +530,6 @@ function calcLightness(
   //     lightnessPatch
   // );
   return Math.min(Math.max(factLightness, 0), 100);
-}
-
-function antagonistColorLightness(contrastConfig) {
-  let oklch = convertToOklch(contrastConfig.colorAntagonist);
-  log("culori > convertToOklch /// antagonistColorLightness");
-  return oklch.l;
-}
-
-function chromaLimits(contrastConfig) {
-  if (contrastConfig.searchDirection === "auto") {
-    return { lower: 0, upper: 1 };
-  }
-  let pairColorLightness = antagonistColorLightness(contrastConfig);
-  let upper =
-    contrastConfig.searchDirection === "lighter" ? 1 : pairColorLightness;
-  let lower =
-    contrastConfig.searchDirection === "lighter" ? pairColorLightness : 0;
-  return { lower, upper };
-}
-
-function lightnessAndPatch(contrastConfig) {
-  let antagonistLightness = convertToOklch(contrastConfig.colorAntagonist).l;
-  log("culori > convertToOklch /// lightnessAndPatch");
-  let lightness;
-  let lightnessPatch;
-
-  switch (contrastConfig.searchDirection) {
-    case "auto": {
-      if (antagonistLightness < 0.5) {
-        lightnessPatch = (1 - antagonistLightness) / -2;
-        lightness = 1;
-      } else {
-        lightnessPatch = antagonistLightness / 2;
-        lightness = 0;
-      }
-      break;
-    }
-    case "lighter": {
-      lightness = 1;
-      lightnessPatch = (antagonistLightness - lightness) / 2;
-      break;
-    }
-    case "darker": {
-      lightness = 0;
-      lightnessPatch = (antagonistLightness - lightness) / 2;
-      break;
-    }
-    default:
-      throw new Error(
-        "Invalid lightness search region. Supported values: 'auto', 'lighter', 'darker'"
-      );
-  }
-
-  return { lightness, lightnessPatch };
 }
 
 export {

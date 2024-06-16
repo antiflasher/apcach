@@ -1,16 +1,22 @@
 import type { ConvertFn } from "culori/src/converter";
 
-// 🔴 todo: patch types
-// @ts-ignore
-import { differenceEuclidean, inGamut, toGamut } from "culori";
+import {
+  differenceEuclidean,
+  // @ts-ignore 🔴 todo: patch types
+  inGamut,
+  // @ts-ignore 🔴 todo: patch types
+  toGamut,
+  type Color,
+  type Oklch,
+} from "culori";
 import { converter, modeOklch, modeP3, useMode } from "culori/fn";
 
 useMode(modeP3);
 useMode(modeOklch);
 
-export const convertToOklch: ConvertFn<"oklch"> = converter("oklch");
-export const convertToOklch_orThrow = (color: string) => {
-  const oklch = convertToOklch(color);
+export const convertToOklch_orNull: ConvertFn<"oklch"> = converter("oklch");
+export const convertToOklch_orThrow = (color: string | Color): Oklch => {
+  const oklch = convertToOklch_orNull(color);
   if (!oklch) throw new Error("Could not convert to oklch");
   return oklch;
 };

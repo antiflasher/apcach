@@ -1,7 +1,10 @@
-import { crToBg, crToFg, type ContrastConfig } from "./contrastConfig";
+import type { ColorSpace, ContrastModel } from "./types";
+import type { ContrastConfig } from "./contrastConfig";
+
+import { crToBg, crToFg } from "./contrastConfig";
 import { convertToOklch_orThrow } from "./culoriUtils";
-import { ColorSpace, type ContrastModel } from "./types";
-import { clapmColorToSpace, calcContrast, apcach } from "./index";
+import { calcContrast, apcach } from "./index";
+import { clampColorToSpace } from "./utils/clampColorToSpace";
 
 /**
  * The apcach format can be restored from color in CSS format
@@ -34,11 +37,11 @@ export function cssToApcach(
 
   // fgcolor
   let fgColor = antagonist.fg !== undefined ? antagonist.fg : color;
-  fgColor = clapmColorToSpace(fgColor, colorSpace);
+  fgColor = clampColorToSpace(fgColor, colorSpace);
 
   // bgcolor
   let bgColor = antagonist.bg !== undefined ? antagonist.bg : color;
-  bgColor = clapmColorToSpace(bgColor, colorSpace);
+  bgColor = clampColorToSpace(bgColor, colorSpace);
 
   // get the contrast function
   const crFunction =
@@ -52,7 +55,7 @@ export function cssToApcach(
   const contrast = calcContrast(fgColor, bgColor, contrastModel, colorSpace);
 
   // Compose apcach
-  const colorClamped = clapmColorToSpace(color, colorSpace);
+  const colorClamped = clampColorToSpace(color, colorSpace);
   const colorComp = convertToOklch_orThrow(colorClamped);
   const antagonistColorOklch = convertToOklch_orThrow(antagonistColor);
   const isColorLighter = colorComp.l > antagonistColorOklch.l;

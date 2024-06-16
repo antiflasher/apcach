@@ -2,6 +2,9 @@
 
 import type { ContrastConfig } from "./contrastConfig";
 
+export type Number0To1 = number;
+export type PreparedColor = { r: Number0To1; g: Number0To1; b: Number0To1 };
+
 export type Maybe<T> = T | null | undefined;
 export type ContrastModel = "apca" | "wcag";
 export type ColorSpace = "p3" | "rgb";
