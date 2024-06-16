@@ -3,7 +3,8 @@ import type { ContrastConfig } from "../contrast/contrastConfig";
 
 import { crToBg, crToFg } from "../contrast/crTo";
 import { convertToOklch_orThrow } from "../utils/culoriUtils";
-import { calcContrast, apcach } from "../index";
+import { apcach } from "../index";
+import { calcContrast } from "./calcContrast";
 import { clampColorToSpace } from "../utils/clampColorToSpace";
 
 /**

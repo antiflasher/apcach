@@ -1,4 +1,4 @@
-import { colorToComps } from "..";
+import { colorToComps } from "../to-sort-somewhere/colorToComps";
 import { getContrastScoreForObjective } from "./getContrastScoreForObjective";
 import type { ContrastConfig_PREPARED } from "../contrast/contrastConfig";
 import { ColorSpace } from "../types";

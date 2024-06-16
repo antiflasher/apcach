@@ -1,7 +1,7 @@
 import type { ContrastConfig, ContrastConfig_PREPARED } from "./contrastConfig";
 import { ColorSpace } from "../types";
 import { clampColorToSpace } from "../utils/clampColorToSpace";
-import { colorToComps } from "..";
+import { colorToComps } from "../to-sort-somewhere/colorToComps";
 
 // Private
 export function prepareContrastConfig(

@@ -1,3 +1,4 @@
+import type { ColorSpace } from "./types";
 import type { ContrastConfig } from "./contrast/contrastConfig";
 import {
   crTo,
@@ -9,63 +10,25 @@ import {
   crToFgWhite,
 } from "./contrast/crTo";
 
-// 🔴 todo: patch types
-// @ts-ignore
-import { inGamut, parse, type Color } from "culori";
-import { formatCss, formatHex, formatRgb } from "culori/fn";
-import { Apcach, apcach } from "./apcah/apcach";
-import { cssToApcach } from "./apcah/cssToApcach";
-import { calcContrastFromPreparedColors } from "./calc/calcContrastFromPreparedColors";
-import {
-  ColorSpace,
-  type ChromaExpr2,
-  type ColorInCSSFormat,
-  type ContrastModel,
-  type ContrastRatio,
-} from "./types";
-import { clampColorToSpace } from "./utils/clampColorToSpace";
-import {
-  convertToOklch_orThrow,
-  convertToP3,
-  convertToRgb,
-} from "./utils/culoriUtils";
-import { log } from "./utils/log";
-import {
-  blendCompColors,
-  clipContrast,
-  floatingPointToHex,
-} from "./utils/misc";
-import { isValidApcach } from "./apcah/isValidApcach";
-import { setChroma } from "./apcah/setChroma";
-import { setHue } from "./apcah/setHue";
+import { apcach } from "./apcach/apcach";
+import { setHue } from "./apcach/setHue";
+import { setChroma } from "./apcach/setChroma";
+import { setContrast } from "./apcach/setContrast";
 
-// API
+import { inColorSpace } from "./to-sort-somewhere/inColorSpace";
 
-function setContrast(
-  //
-  colorInApcach: Apcach,
-  cr: ContrastRatio | ((cr: number) => number)
-) {
-  let newContrastConfig: ContrastConfig = colorInApcach.contrastConfig;
-  if (typeof cr === "number") {
-    newContrastConfig.cr = clipContrast(cr);
-  } else if (typeof cr === "function") {
-    let newCr = cr(newContrastConfig.cr);
-    newContrastConfig.cr = clipContrast(newCr);
-  } else {
-    throw new Error("Invalid format of contrast value");
-  }
-  return apcach(
-    newContrastConfig,
-    colorInApcach.chroma,
-    colorInApcach.hue,
-    colorInApcach.alpha,
-    colorInApcach.colorSpace
-  );
-}
+import { apcachToCss } from "./apcach_conv/apcachToCss";
+import { cssToApcach } from "./apcach_conv/cssToApcach";
+import { calcContrast } from "./apcach_conv/calcContrast";
 
 function maxChroma(chromaCap = 0.4) {
-  return function (contrastConfig, hue, alpha, colorSpace) {
+  return function (
+    //
+    contrastConfig: ContrastConfig,
+    hue: number,
+    alpha: number,
+    colorSpace: ColorSpace
+  ) {
     let checkingChroma = chromaCap;
     let searchPatch = 0.4;
     let color;
@@ -104,107 +67,6 @@ function maxChroma(chromaCap = 0.4) {
     }
     return color;
   };
-}
-
-function apcachToCss(
-  color,
-  format: "oklch" | "rgb" | "hex" | "p3" | "figma-p3"
-) {
-  switch (format) {
-    case "oklch":
-      return (
-        "oklch(" +
-        color.lightness * 100 +
-        "% " +
-        color.chroma +
-        " " +
-        color.hue +
-        ")"
-      );
-    case "rgb":
-      return formatRgb(apcachToCss(color, "oklch"));
-    case "hex":
-      return formatHex(apcachToCss(color, "oklch"));
-    case "p3": {
-      log("culori > convertToP3 /// apcachToCss");
-      return formatCss(convertToP3(apcachToCss(color, "oklch")));
-    }
-    case "figma-p3": {
-      let p3Parsed = parse(apcachToCss(color, "p3"));
-      return (
-        floatingPointToHex(p3Parsed.r) +
-        floatingPointToHex(p3Parsed.g) +
-        floatingPointToHex(p3Parsed.b)
-      );
-    }
-  }
-  return apcachToCss(color, "oklch");
-}
-
-function calcContrast(
-  fgColor: ColorInCSSFormat,
-  bgColor: ColorInCSSFormat,
-  contrastModel: ContrastModel = "apca",
-  colorSpace: ColorSpace = "p3"
-) {
-  // Background color
-  let bgColorClamped = clampColorToSpace(bgColor, colorSpace);
-  let bgColorComps = colorToComps(bgColorClamped, contrastModel, colorSpace);
-
-  // Foreground color
-  let fgColorClamped = clampColorToSpace(fgColor, colorSpace);
-  let fgColorComps = colorToComps(fgColorClamped, contrastModel, colorSpace);
-  fgColorComps = blendCompColors(fgColorComps, bgColorComps);
-
-  // Caclulate contrast
-  return Math.abs(
-    calcContrastFromPreparedColors(
-      fgColorComps,
-      bgColorComps,
-      contrastModel,
-      colorSpace
-    )
-  );
-}
-
-function inColorSpace(
-  //
-  color: string | Apcach,
-  colorSpace = "p3"
-) {
-  colorSpace = colorSpace === "srgb" ? "rgb" : colorSpace;
-  if (isValidApcach(color)) {
-    let colorCopy = Object.assign({}, color);
-    colorCopy.lightness =
-      colorCopy.lightness === 1 ? 0.9999999 : colorCopy.lightness; // Fixes wrons inGumut calculation
-    let cssColor = apcachToCss(colorCopy, "oklch");
-    return inGamut(colorSpace)(cssColor);
-  } else {
-    let oklch = convertToOklch_orThrow(color);
-    log("culori > convertToOklch /// 307");
-    oklch.l = oklch.l === 1 ? 0.9999999 : oklch.l; // Fixes wrons inGumut calculation
-
-    return inGamut(colorSpace)(oklch);
-  }
-}
-
-export function colorToComps(
-  //
-  color: Color,
-  contrastModel: ContrastModel,
-  colorSpace: ColorSpace
-) {
-  if (
-    //
-    contrastModel === "apca" &&
-    colorSpace === "p3"
-  ) {
-    log("culori > convertToP3 /// colorToComps");
-    return convertToP3(color);
-  } else {
-    log("culori > convertToRgb /// colorToComps");
-    return convertToRgb(color);
-  }
 }
 
 export {
