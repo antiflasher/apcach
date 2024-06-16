@@ -725,7 +725,14 @@ function lightnessFromAntagonist(contrastConfig) {
   return convertToOklch(antagonist).l;
 }
 
-function healOklch(oklch) {
+type Oklch = {
+  l: number;
+  c: number;
+  h: number;
+  alpha: number;
+};
+
+function healOklch(oklch: Oklch): Oklch {
   oklch.l = oklch.l === undefined ? 0 : roundToDP(oklch.l, 7);
   oklch.c = oklch.c === undefined ? 0 : roundToDP(oklch.c, 16);
   oklch.h = oklch.h === undefined ? 0 : roundToDP(oklch.h, 16);
@@ -733,34 +740,39 @@ function healOklch(oklch) {
   return oklch;
 }
 
-function roundToDP(number, dp) {
+/** round to decimal places */
+function roundToDP(number: number, dp) {
   return Math.floor(number * 10 ** dp) / 10 ** dp;
 }
 
-function signOf(number) {
-  return number / Math.abs(number);
+function signOf(number: number): 1 | -1 {
+  return number >= 0 ? 1 : -1;
+  // 2024-06-16: this seems to be dangerous (divide by 0?)
+  // return number / Math.abs(number);
 }
 
-function clipContrast(cr) {
+function clipContrast(cr: number): number {
   return Math.max(Math.min(cr, 108), 0);
 }
 
-function clipChroma(c) {
+function clipChroma(c: number): number {
   return Math.max(Math.min(c, 0.37), 0);
 }
 
-function clipHue(h) {
+function clipHue(h: number): number {
   return Math.max(Math.min(h, 360), 0);
 }
 
-function contrastIsLegal(cr, contrastModel) {
+export type ContrastModel = "apca" | "wcag";
+
+function contrastIsLegal(cr: number, contrastModel: ContrastModel) {
   return (
     (Math.abs(cr) >= 8 && contrastModel === "apca") ||
     (Math.abs(cr) >= 1 && contrastModel === "wcag")
   );
 }
 
-function floatingPointToHex(float) {
+function floatingPointToHex(float: number): string {
   return Math.round(255 * float)
     .toString(16)
     .padStart(2, "0");
@@ -779,11 +791,16 @@ function blendCompColors(fgCompColor, bgCompColor) {
   };
 }
 
-function blendChannel(channelFg, channelBg, alpha) {
+function blendChannel(
+  channelFg: number,
+  channelBg: number,
+  alpha: number
+): number {
   return channelBg + (channelFg - channelBg) * alpha;
 }
 
-function log(srt) {
+/** log to the console when LOG_ON */
+function log(srt: unknown): void {
   if (LOG_ON) {
     // eslint-disable-next-line no-console
     console.log(srt);
