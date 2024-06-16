@@ -42,6 +42,7 @@ import {
   clipHue,
   floatingPointToHex,
 } from "./utils/misc";
+import { isValidApcach } from "./apcah/isValidApcach";
 
 // API
 
@@ -249,20 +250,6 @@ export function colorToComps(
     log("culori > convertToRgb /// colorToComps");
     return convertToRgb(color);
   }
-}
-
-// ----------------------------------------------------------------------
-// 💬 2024-06-16 rvion
-// | probably not a good way to do things here.
-// | we should really move toward using proper classes
-function isValidApcach(el: Apcach): el is Apcach {
-  return (
-    el.contrastConfig !== undefined &&
-    el.alpha !== undefined &&
-    el.chroma !== undefined &&
-    el.hue !== undefined &&
-    el.lightness !== undefined
-  );
 }
 
 export function contrastFromConfig(
