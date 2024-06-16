@@ -1,7 +1,7 @@
 import type { ContrastConfig } from "../contrastConfig";
 import type { Oklch } from "culori";
 
-import { log } from "../log";
+import { log } from "../utils/log";
 import { convertToOklch } from "../culoriUtils";
 
 export function lightnessFromAntagonist(contrastConfig: ContrastConfig) {

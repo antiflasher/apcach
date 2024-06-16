@@ -25,7 +25,7 @@ import {
   inSrgb,
   toP3,
 } from "./culoriUtils";
-import { log } from "./log";
+import { log } from "./utils/log";
 import {
   Apcach,
   ChromaExpr,
@@ -45,7 +45,7 @@ import {
   floatingPointToHex,
   healOklch,
   signOf,
-} from "./utils";
+} from "./utils/misc";
 
 // API
 
