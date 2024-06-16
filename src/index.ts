@@ -1,5 +1,3 @@
-import type { ConvertFn } from "culori/src/converter";
-
 import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
 import {
   crTo,
@@ -9,26 +7,13 @@ import {
   crToFg,
   crToFgWhite,
   crToFgBlack,
-  type RelativeContrastSettings,
+  type ContrastConfigV1,
+  contrastToConfig,
 } from "./crToFg";
 
-import {
-  clampChroma,
-  differenceEuclidean,
-  inGamut,
-  parse,
-  toGamut,
-} from "culori";
+import { clampChroma, inGamut, parse } from "culori";
 
-import {
-  converter,
-  formatCss,
-  formatHex,
-  formatRgb,
-  modeOklch,
-  modeP3,
-  useMode,
-} from "culori/fn";
+import { formatCss, formatHex, formatRgb } from "culori/fn";
 import { rgb } from "wcag-contrast";
 import {
   ChromaExpr,
@@ -41,6 +26,7 @@ import {
   type ChromaExpr2,
   type ContrastRatio,
   type ContrastModel,
+  type ColorInCSSFormat,
 } from "./types";
 import { log } from "./log";
 import {
@@ -53,22 +39,18 @@ import {
   healOklch,
   signOf,
 } from "./utils";
-
-useMode(modeP3);
-useMode(modeOklch);
-
-const convertToOklch: ConvertFn<"oklch"> = converter("oklch");
-const convertToP3: ConvertFn<"p3"> = converter("p3");
-const convertToRgb: ConvertFn<"rgb"> = converter("rgb");
-
-type GamutCheck = (color: string) => boolean;
-const inP3: GamutCheck = inGamut("p3");
-const inSrgb: GamutCheck = inGamut("rgb");
-const toP3 = toGamut("p3", "oklch", differenceEuclidean("oklch"), 0);
+import {
+  convertToOklch,
+  convertToP3,
+  convertToRgb,
+  inP3,
+  toP3,
+  inSrgb,
+} from "./culoriUtils";
 
 // API
 
-function apcach(
+export function apcach(
   //
   contrast: number,
   chroma: ChromaExpr,
@@ -94,7 +76,8 @@ function apcach(
       : parseFloat(hue);
 
   // Compose contrast config
-  let contrastConfig = contrastToConfig(contrast);
+  const contrastConfig = contrastToConfig(contrast);
+
   if (typeof chroma === "function") {
     // Max chroma case
     return chroma(contrastConfig, hue, alpha, colorSpace);
@@ -114,12 +97,14 @@ function apcach(
     }
 
     return {
-      alpha,
+      lightness,
       chroma,
+      hue,
+      //
+      alpha,
+      //
       colorSpace,
       contrastConfig,
-      hue,
-      lightness,
     };
   }
 }
@@ -426,19 +411,10 @@ function isValidApcach(el: Apcach): el is Apcach {
   );
 }
 
-function isValidContrastConfig(el): el is ContrastConfig {
-  return (
-    "bgColor" in el && //
-    "fgColor" in el &&
-    "cr" in el &&
-    "contrastModel" in el
-  );
-}
-
 // ----------------------------------------------------------------------
 function clapmColorToSpace(
   //
-  colorInCssFormat,
+  colorInCssFormat: ColorInCSSFormat,
   colorSpace: ColorSpace
 ) {
   if (colorSpace === "p3") {
@@ -568,18 +544,6 @@ function calcWcag(fgRgb, bgRgb) {
 
 function rgb1to256(value) {
   return Math.round(parseFloat(value.toFixed(4)) * 255);
-}
-
-function contrastToConfig(
-  rawContrast: RawContrastConfig
-): RelativeContrastSettings {
-  if (typeof rawContrast === "number") {
-    return crToBg("white", rawContrast);
-  } else if (isValidContrastConfig(rawContrast)) {
-    return rawContrast;
-  } else {
-    throw new Error("Invalid contrast format");
-  }
 }
 
 function calcLightness(
