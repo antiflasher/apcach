@@ -2,12 +2,23 @@ import type { ConvertFn } from "culori/src/converter";
 
 import { APCAcontrast, displayP3toY, sRGBtoY } from "apca-w3";
 import {
+  crTo,
+  crToBg,
+  crToBgWhite,
+  crToBgBlack,
+  crToFg,
+  crToFgWhite,
+  crToFgBlack,
+} from "./crToFg";
+
+import {
   clampChroma,
   differenceEuclidean,
   inGamut,
   parse,
   toGamut,
 } from "culori";
+
 import {
   converter,
   formatCss,
@@ -18,68 +29,20 @@ import {
   useMode,
 } from "culori/fn";
 import { rgb } from "wcag-contrast";
+import {
+  ChromaExpr,
+  Maybe,
+  ColorSpace,
+  Apcach,
+  HueExpr,
+  ContrastConfig,
+  RawContrastConfig,
+  Oklch,
+  ContrastModel,
+} from "./types";
 
 useMode(modeP3);
 useMode(modeOklch);
-
-// TEMPORARY TYPES -------------------------------
-export type Maybe<T> = T | null | undefined;
-export type ContrastModel = "apca" | "wcag";
-export type ColorSpace = "p3" | "rgb";
-export type Oklch = {
-  l: number;
-  c: number;
-  h: number;
-  alpha: number;
-};
-
-// prettier-ignore
-export type HueExpr =
-  | number
-  | string
-  | ((hue: number) => number);
-
-export type ChromaExpr =
-  | number
-  | string
-  | ((
-      contrastConfig: ContrastConfig,
-      hue: number,
-      alpha: number,
-      colorSpace: ColorSpace
-    ) => number);
-
-export type ContrastRatio = number;
-
-export type SearchDirection = "auto" | "lighter" | "darker";
-
-/** extended way to specify a contrast config */
-export type RawContrastConfig = number | ContrastConfig;
-
-/** a normalized contrast config */
-export type ContrastConfig = {
-  bgColor: string;
-  fgColor: string;
-  cr: ContrastRatio;
-  contrastModel: ContrastModel;
-  searchDirection: SearchDirection;
-  apcachIsOnFg: boolean;
-  colorAntagonist: Oklch;
-};
-
-/** TODO */
-export type Apcach = {
-  //
-  contrastConfig: ContrastConfig;
-  //
-  lightness: number;
-  chroma: number;
-  hue: number;
-  //
-  alpha: number;
-  //
-  colorSpace: ColorSpace;
-};
 
 // ----------------------------------------------
 
@@ -89,8 +52,9 @@ const convertToOklch: ConvertFn<"oklch"> = converter("oklch");
 const convertToP3: ConvertFn<"p3"> = converter("p3");
 const convertToRgb: ConvertFn<"rgb"> = converter("rgb");
 
-const inP3 = inGamut("p3");
-const inSrgb = inGamut("rgb");
+type GamutCheck = (color: string) => boolean;
+const inP3: GamutCheck = inGamut("p3");
+const inSrgb: GamutCheck = inGamut("rgb");
 const toP3 = toGamut("p3", "oklch", differenceEuclidean("oklch"), 0);
 
 // API
@@ -102,7 +66,7 @@ function apcach(
   hue?: Maybe<number | string>,
   alpha: number = 100,
   colorSpace: ColorSpace = "p3"
-) {
+): Apcach {
   // 💬 2024-06-16 rvion:
   // | checking if something is either null or undefined should be done
   // | in one go by doing `hue == null` (two equal sign).
@@ -139,6 +103,7 @@ function apcach(
       // APCA has a cut off at the value about 8
       lightness = lightnessFromAntagonist(contrastConfig);
     }
+
     return {
       alpha,
       chroma,
@@ -188,69 +153,6 @@ function cssToApcach(
   } else {
     throw new Error("antagonist color is not provided");
   }
-}
-
-function crToBg(
-  bgColor: string,
-  cr: ContrastRatio,
-  contrastModel: ContrastModel = "apca",
-  searchDirection: SearchDirection = "auto"
-) {
-  return {
-    bgColor: stringToColor(bgColor),
-    contrastModel,
-    cr,
-    fgColor: "apcach",
-    searchDirection,
-  };
-}
-
-function crTo(
-  bgColor: string,
-  cr: ContrastRatio,
-  contrastModel: ContrastModel = "apca",
-  searchDirection: SearchDirection = "auto"
-) {
-  return crToBg(bgColor, cr, contrastModel, searchDirection);
-}
-
-function crToBgWhite(
-  cr: ContrastRatio,
-  contrastModel: ContrastModel = "apca",
-  searchDirection: SearchDirection = "auto"
-) {
-  return crToBg("white", cr, contrastModel, searchDirection);
-}
-
-function crToBgBlack(
-  cr: ContrastRatio,
-  contrastModel: ContrastModel = "apca",
-  searchDirection: SearchDirection = "auto"
-) {
-  return crToBg("black", cr, contrastModel, searchDirection);
-}
-
-function crToFg(
-  fgColor: string,
-  cr: ContrastRatio,
-  contrastModel: ContrastModel = "apca",
-  searchDirection: SearchDirection = "auto"
-) {
-  return {
-    bgColor: "apcach",
-    contrastModel,
-    cr,
-    fgColor: stringToColor(fgColor),
-    searchDirection,
-  };
-}
-
-function crToFgWhite(cr, contrastModel = "apca", searchDirection = "auto") {
-  return crToFg("white", cr, contrastModel, searchDirection);
-}
-
-function crToFgBlack(cr, contrastModel = "apca", searchDirection = "auto") {
-  return crToFg("black", cr, contrastModel, searchDirection);
 }
 
 function setContrast(colorInApcach, cr) {
@@ -480,21 +382,13 @@ function isValidApcach(el) {
   );
 }
 
-function isValidContrastConfig(el) {
+function isValidContrastConfig(el): el is ContrastConfig {
   return (
-    "bgColor" in el && "fgColor" in el && "cr" in el && "contrastModel" in el
+    "bgColor" in el && //
+    "fgColor" in el &&
+    "cr" in el &&
+    "contrastModel" in el
   );
-}
-
-function stringToColor(str) {
-  switch (str) {
-    case "black":
-      return "oklch(0 0 0)";
-    case "white":
-      return "oklch(1 0 0)";
-    default:
-      return str;
-  }
 }
 
 function clapmColorToSpace(colorInCssFormat, colorSpace) {
