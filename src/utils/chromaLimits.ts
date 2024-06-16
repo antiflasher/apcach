@@ -1,6 +1,6 @@
-import type { ContrastConfig_WTF } from "../contrastConfig";
+import type { ContrastConfig_WTF } from "../contrast/contrastConfig";
 
-import { antagonistColorLightness } from "../aaa/antagonistColorLightness";
+import { antagonistColorLightness } from "../light/antagonistColorLightness";
 
 export function chromaLimits(
   //

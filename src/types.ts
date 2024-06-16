@@ -1,6 +1,6 @@
 // TEMPORARY TYPES -------------------------------
 
-import type { ContrastConfig } from "./contrastConfig";
+import type { ContrastConfig } from "./contrast/contrastConfig";
 
 export type Number0To1 = number;
 export type PreparedColor = { r: Number0To1; g: Number0To1; b: Number0To1 };
@@ -38,14 +38,3 @@ export type ChromaExpr2 = number | ((contrastConfig: ContrastConfig) => number);
 export type ContrastRatio = number;
 
 export type SearchDirection = "auto" | "lighter" | "darker";
-
-export type Apcach = {
-  lightness: number;
-  chroma: number;
-  hue: number;
-  //
-  alpha: number;
-  //
-  contrastConfig: ContrastConfig;
-  colorSpace: ColorSpace;
-};

@@ -1,5 +1,4 @@
 import type { Oklch } from "culori";
-import type { ContrastModel } from "../types";
 
 /**
  * 1. ensure every oklch properties are set
@@ -56,16 +55,6 @@ export function clipChroma(c: number): number {
  */
 export function clipHue(h: number): number {
   return Math.max(Math.min(h, 360), 0);
-}
-
-export function contrastIsLegal(
-  cr: number,
-  contrastModel: ContrastModel
-): boolean {
-  return (
-    (Math.abs(cr) >= 8 && contrastModel === "apca") ||
-    (Math.abs(cr) >= 1 && contrastModel === "wcag")
-  );
 }
 
 export function floatingPointToHex(float: number): string {

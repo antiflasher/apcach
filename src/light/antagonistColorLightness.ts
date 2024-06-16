@@ -1,6 +1,6 @@
-import type { ContrastConfig_WTF } from "../contrastConfig";
+import type { ContrastConfig_WTF } from "../contrast/contrastConfig";
 
-import { convertToOklch_orThrow } from "../culoriUtils";
+import { convertToOklch_orThrow } from "../utils/culoriUtils";
 import { log } from "../utils/log";
 
 export function antagonistColorLightness(contrastConfig: ContrastConfig_WTF) {

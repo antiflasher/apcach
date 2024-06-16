@@ -1,10 +1,10 @@
-import type { ColorSpace, ContrastModel } from "./types";
-import type { ContrastConfig } from "./contrastConfig";
+import type { ColorSpace, ContrastModel } from "../types";
+import type { ContrastConfig } from "../contrast/contrastConfig";
 
-import { crToBg, crToFg } from "./contrastConfig";
-import { convertToOklch_orThrow } from "./culoriUtils";
-import { calcContrast, apcach } from "./index";
-import { clampColorToSpace } from "./utils/clampColorToSpace";
+import { crToBg, crToFg } from "../contrast/crTo";
+import { convertToOklch_orThrow } from "../utils/culoriUtils";
+import { calcContrast, apcach } from "../index";
+import { clampColorToSpace } from "../utils/clampColorToSpace";
 
 /**
  * The apcach format can be restored from color in CSS format

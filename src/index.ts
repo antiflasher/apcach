@@ -1,5 +1,9 @@
 import {
-  contrastToConfig,
+  type ContrastConfig,
+  type ContrastConfig_Ext,
+  type ContrastConfig_WTF,
+} from "./contrast/contrastConfig";
+import {
   crTo,
   crToBg,
   crToFg,
@@ -7,24 +11,21 @@ import {
   crToBgWhite,
   crToFgBlack,
   crToFgWhite,
-  type ContrastConfig,
-  type ContrastConfig_Ext,
-  type ContrastConfig_WTF,
-} from "./contrastConfig";
+} from "./contrast/crTo";
+import { contrastToConfig } from "./contrast/contrastToConfig";
 
 // 🔴 todo: patch types
 // @ts-ignore
-import { inGamut, parse, type Oklch } from "culori";
+import { inGamut, parse, type Color, type Oklch } from "culori";
 import { formatCss, formatHex, formatRgb } from "culori/fn";
-import { lightnessFromAntagonist } from "./aaa/lightnessFromAntagonist";
+import { lightnessFromAntagonist } from "./light/lightnessFromAntagonist";
 import {
   convertToOklch_orThrow,
   convertToP3,
   convertToRgb,
-} from "./culoriUtils";
+} from "./utils/culoriUtils";
 import { log } from "./utils/log";
 import {
-  Apcach,
   ChromaExpr,
   ColorSpace,
   HueExpr,
@@ -33,82 +34,25 @@ import {
   type ColorInCSSFormat,
   type ContrastModel,
   type ContrastRatio,
+  type PreparedColor,
 } from "./types";
+import { Apcach, apcach } from "./apcah/apcach";
 import {
   blendCompColors,
   clipChroma,
   clipContrast,
   clipHue,
-  contrastIsLegal,
   floatingPointToHex,
   signOf,
 } from "./utils/misc";
+import { contrastIsLegal } from "./contrast/contrastIsLegal";
 import { clampColorToSpace } from "./utils/clampColorToSpace";
 import { chromaLimits } from "./utils/chromaLimits";
-import { lightnessAndPatch } from "./aaa/lightnessAndPatch";
-import { cssToApcach } from "./cssToApcach";
+import { lightnessAndPatch } from "./light/lightnessAndPatch";
+import { cssToApcach } from "./apcah/cssToApcach";
 import { calcContrastFromPreparedColors } from "./calc/calcContrastFromPreparedColors";
 
 // API
-
-function apcach(
-  //
-  contrast: ContrastConfig_Ext,
-  chroma: ChromaExpr,
-  hue?: Maybe<number | string>,
-  alpha: number = 100,
-  colorSpace: ColorSpace = "p3"
-): Apcach {
-  // 💬 2024-06-16 rvion:
-  // | checking if something is either null or undefined should be done
-  // | in one go by doing `hue == null` (two equal sign).
-  // | (almost the only case when one want to use `==` instead of `===`).
-
-  // 💬 2024-06-16 rvion:
-  // | not sure if parseFloat is guaranteed to accept number
-  // | probably better to only pass strings to it
-
-  // Check for hue
-  hue =
-    hue == null //
-      ? 0
-      : typeof hue === "number"
-      ? hue
-      : parseFloat(hue);
-
-  // Compose contrast config
-  const contrastConfig: ContrastConfig = contrastToConfig(contrast);
-
-  if (typeof chroma === "function") {
-    // Max chroma case
-    return chroma(contrastConfig, hue, alpha, colorSpace);
-  } else {
-    // Constant chroma case
-    let lightness;
-    if (contrastIsLegal(contrastConfig.cr, contrastConfig.contrastModel)) {
-      lightness = calcLightness(
-        internalContrastConfig(contrastConfig, colorSpace),
-        parseFloat(chroma),
-        parseFloat(hue),
-        colorSpace
-      );
-    } else {
-      // APCA has a cut off at the value about 8
-      lightness = lightnessFromAntagonist(contrastConfig);
-    }
-
-    return {
-      lightness,
-      chroma,
-      hue,
-      //
-      alpha,
-      //
-      colorSpace,
-      contrastConfig,
-    };
-  }
-}
 
 function setContrast(
   //
@@ -153,7 +97,11 @@ function setChroma(colorInApcach, c: ChromaExpr2): Apcach {
   );
 }
 
-function setHue(colorInApcach: Apcach, h: HueExpr) {
+function setHue(
+  //
+  colorInApcach: Apcach,
+  h: HueExpr
+) {
   let newHue: number;
   if (typeof h === "number") {
     newHue = clipHue(h);
@@ -326,7 +274,12 @@ function internalContrastConfig(
   return config;
 }
 
-function colorToComps(color, contrastModel, colorSpace) {
+function colorToComps(
+  //
+  color: Color,
+  contrastModel: ContrastModel,
+  colorSpace: ColorSpace
+) {
   if (
     //
     contrastModel === "apca" &&
@@ -356,13 +309,13 @@ function isValidApcach(el: Apcach): el is Apcach {
 
 function contrastFromConfig(
   //
-  color: ColorInCSSFormat,
+  color: PreparedColor,
   contrastConfig: ContrastConfig_WTF,
   colorSpace: ColorSpace
 ) {
   // Deside the position of the color
-  let fgColor: Oklch;
-  let bgColor: Oklch;
+  let fgColor: PreparedColor;
+  let bgColor: PreparedColor;
   if (contrastConfig.apcachIsOnFg) {
     bgColor = contrastConfig.colorAntagonist;
     fgColor = blendCompColors(color, bgColor);
@@ -372,14 +325,14 @@ function contrastFromConfig(
   }
 
   // Caclulate contrast
-  return Math.abs(
-    calcContrastFromPreparedColors(
-      fgColor,
-      bgColor,
-      contrastConfig.contrastModel,
-      colorSpace
-    )
+  const contrast = calcContrastFromPreparedColors(
+    fgColor,
+    bgColor,
+    contrastConfig.contrastModel,
+    colorSpace
   );
+
+  return Math.abs(contrast);
 }
 
 export function rgb1to256(value) {

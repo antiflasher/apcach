@@ -1,7 +1,7 @@
 import type { ColorSpace, ColorInCSSFormat } from "../types";
 
 import { clampChroma } from "culori";
-import { convertToOklch_orThrow, inP3, inSrgb, toP3 } from "../culoriUtils";
+import { convertToOklch_orThrow, inP3, inSrgb, toP3 } from "./culoriUtils";
 import { log } from "./log";
 import { healOklch } from "./misc";
 
