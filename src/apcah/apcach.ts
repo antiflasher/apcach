@@ -6,7 +6,7 @@ import { contrastToConfig } from "../contrast/contrastToConfig";
 import type { ColorSpace, ChromaExpr, Maybe } from "../types";
 import { contrastIsLegal } from "../contrast/contrastIsLegal";
 import { lightnessFromAntagonist } from "../light/lightnessFromAntagonist";
-import { calcLightness } from "../light/calcLightness";
+import { calcLightness } from "../scoring/calcLightness";
 import { prepareContrastConfig } from "../contrast/prepareContrastConfig";
 
 export type Apcach = {

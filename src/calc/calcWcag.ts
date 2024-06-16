@@ -1,7 +1,7 @@
 import type { PreparedColor } from "../types";
 
 import { rgb, type RGBColor } from "wcag-contrast";
-import { rgb1to256 } from "..";
+import { rgb1to256 } from "../utils/rgb1to256";
 
 /**
  * Get a score for the contrast between two PreparedColor

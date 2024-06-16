@@ -1,11 +1,12 @@
-import { colorToComps, contrastFromConfig } from "..";
+import { colorToComps } from "..";
+import { getContrastScoreForObjective } from "./getContrastScoreForObjective";
 import type { ContrastConfig_PREPARED } from "../contrast/contrastConfig";
 import { ColorSpace } from "../types";
 import { chromaLimits } from "../utils/chromaLimits";
 import { clampColorToSpace } from "../utils/clampColorToSpace";
 import { log } from "../utils/log";
 import { signOf } from "../utils/misc";
-import { lightnessAndPatch } from "./lightnessAndPatch";
+import { lightnessAndPatch } from "../light/lightnessAndPatch";
 
 /** 🟢 of of the main function ! */
 export function calcLightness(
@@ -59,7 +60,7 @@ export function calcLightness(
     );
 
     // Calculate contrast of this color
-    let calcedContrast = contrastFromConfig(
+    let calcedContrast = getContrastScoreForObjective(
       checkingColorComps,
       contrastConfig,
       colorSpace

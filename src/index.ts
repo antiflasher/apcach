@@ -1,7 +1,4 @@
-import type {
-  ContrastConfig,
-  ContrastConfig_PREPARED,
-} from "./contrast/contrastConfig";
+import type { ContrastConfig } from "./contrast/contrastConfig";
 import {
   crTo,
   crToBg,
@@ -21,12 +18,10 @@ import { cssToApcach } from "./apcah/cssToApcach";
 import { calcContrastFromPreparedColors } from "./calc/calcContrastFromPreparedColors";
 import {
   ColorSpace,
-  HueExpr,
   type ChromaExpr2,
   type ColorInCSSFormat,
   type ContrastModel,
   type ContrastRatio,
-  type PreparedColor,
 } from "./types";
 import { clampColorToSpace } from "./utils/clampColorToSpace";
 import {
@@ -37,12 +32,12 @@ import {
 import { log } from "./utils/log";
 import {
   blendCompColors,
-  clipChroma,
   clipContrast,
-  clipHue,
   floatingPointToHex,
 } from "./utils/misc";
 import { isValidApcach } from "./apcah/isValidApcach";
+import { setChroma } from "./apcah/setChroma";
+import { setHue } from "./apcah/setHue";
 
 // API
 
@@ -64,49 +59,6 @@ function setContrast(
     newContrastConfig,
     colorInApcach.chroma,
     colorInApcach.hue,
-    colorInApcach.alpha,
-    colorInApcach.colorSpace
-  );
-}
-
-function setChroma(colorInApcach, c: ChromaExpr2): Apcach {
-  let newChroma: number;
-  if (typeof c === "number") {
-    newChroma = clipChroma(c);
-  } else if (typeof c === "function") {
-    let newRawChroma = c(colorInApcach.chroma);
-    newChroma = clipChroma(newRawChroma);
-  } else {
-    throw new Error("Invalid format of chroma value");
-  }
-
-  return apcach(
-    colorInApcach.contrastConfig,
-    newChroma,
-    colorInApcach.hue,
-    colorInApcach.alpha,
-    colorInApcach.colorSpace
-  );
-}
-
-function setHue(
-  //
-  colorInApcach: Apcach,
-  h: HueExpr
-) {
-  let newHue: number;
-  if (typeof h === "number") {
-    newHue = clipHue(h);
-  } else if (typeof h === "function") {
-    let newRawHue = h(colorInApcach.hue);
-    newHue = clipHue(newRawHue);
-  } else {
-    throw new Error("Invalid format of hue value");
-  }
-  return apcach(
-    colorInApcach.contrastConfig,
-    colorInApcach.chroma,
-    newHue,
     colorInApcach.alpha,
     colorInApcach.colorSpace
   );
@@ -154,7 +106,10 @@ function maxChroma(chromaCap = 0.4) {
   };
 }
 
-function apcachToCss(color, format) {
+function apcachToCss(
+  color,
+  format: "oklch" | "rgb" | "hex" | "p3" | "figma-p3"
+) {
   switch (format) {
     case "oklch":
       return (
@@ -214,7 +169,7 @@ function calcContrast(
 
 function inColorSpace(
   //
-  color,
+  color: string | Apcach,
   colorSpace = "p3"
 ) {
   colorSpace = colorSpace === "srgb" ? "rgb" : colorSpace;
@@ -250,38 +205,6 @@ export function colorToComps(
     log("culori > convertToRgb /// colorToComps");
     return convertToRgb(color);
   }
-}
-
-export function contrastFromConfig(
-  //
-  color: PreparedColor,
-  contrastConfig: ContrastConfig_PREPARED,
-  colorSpace: ColorSpace
-) {
-  // Deside the position of the color
-  let fgColor: PreparedColor;
-  let bgColor: PreparedColor;
-  if (contrastConfig.apcachIsOnFg) {
-    bgColor = contrastConfig.colorAntagonist;
-    fgColor = blendCompColors(color, bgColor);
-  } else {
-    fgColor = contrastConfig.colorAntagonist;
-    bgColor = color;
-  }
-
-  // Caclulate contrast
-  const contrast = calcContrastFromPreparedColors(
-    fgColor,
-    bgColor,
-    contrastConfig.contrastModel,
-    colorSpace
-  );
-
-  return Math.abs(contrast);
-}
-
-export function rgb1to256(value) {
-  return Math.round(parseFloat(value.toFixed(4)) * 255);
 }
 
 export {
