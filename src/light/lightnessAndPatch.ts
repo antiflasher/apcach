@@ -1,8 +1,8 @@
-import { type ContrastConfig_WTF } from "../contrast/contrastConfig";
+import { type ContrastConfig_PREPARED } from "../contrast/contrastConfig";
 import { convertToOklch_orThrow } from "../utils/culoriUtils";
 import { log } from "../utils/log";
 
-export function lightnessAndPatch(contrastConfig: ContrastConfig_WTF) {
+export function lightnessAndPatch(contrastConfig: ContrastConfig_PREPARED) {
   let antagonistLightness = convertToOklch_orThrow(
     contrastConfig.colorAntagonist
   ).l;

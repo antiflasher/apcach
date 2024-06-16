@@ -1,24 +1,34 @@
-import {
-  type ContrastConfig,
-  type ContrastConfig_Ext,
-  type ContrastConfig_WTF,
+import type {
+  ContrastConfig,
+  ContrastConfig_PREPARED,
 } from "./contrast/contrastConfig";
 import {
   crTo,
   crToBg,
-  crToFg,
   crToBgBlack,
   crToBgWhite,
+  crToFg,
   crToFgBlack,
   crToFgWhite,
 } from "./contrast/crTo";
-import { contrastToConfig } from "./contrast/contrastToConfig";
 
 // 🔴 todo: patch types
 // @ts-ignore
-import { inGamut, parse, type Color, type Oklch } from "culori";
+import { inGamut, parse, type Color } from "culori";
 import { formatCss, formatHex, formatRgb } from "culori/fn";
-import { lightnessFromAntagonist } from "./light/lightnessFromAntagonist";
+import { Apcach, apcach } from "./apcah/apcach";
+import { cssToApcach } from "./apcah/cssToApcach";
+import { calcContrastFromPreparedColors } from "./calc/calcContrastFromPreparedColors";
+import {
+  ColorSpace,
+  HueExpr,
+  type ChromaExpr2,
+  type ColorInCSSFormat,
+  type ContrastModel,
+  type ContrastRatio,
+  type PreparedColor,
+} from "./types";
+import { clampColorToSpace } from "./utils/clampColorToSpace";
 import {
   convertToOklch_orThrow,
   convertToP3,
@@ -26,31 +36,12 @@ import {
 } from "./utils/culoriUtils";
 import { log } from "./utils/log";
 import {
-  ChromaExpr,
-  ColorSpace,
-  HueExpr,
-  Maybe,
-  type ChromaExpr2,
-  type ColorInCSSFormat,
-  type ContrastModel,
-  type ContrastRatio,
-  type PreparedColor,
-} from "./types";
-import { Apcach, apcach } from "./apcah/apcach";
-import {
   blendCompColors,
   clipChroma,
   clipContrast,
   clipHue,
   floatingPointToHex,
-  signOf,
 } from "./utils/misc";
-import { contrastIsLegal } from "./contrast/contrastIsLegal";
-import { clampColorToSpace } from "./utils/clampColorToSpace";
-import { chromaLimits } from "./utils/chromaLimits";
-import { lightnessAndPatch } from "./light/lightnessAndPatch";
-import { cssToApcach } from "./apcah/cssToApcach";
-import { calcContrastFromPreparedColors } from "./calc/calcContrastFromPreparedColors";
 
 // API
 
@@ -241,40 +232,7 @@ function inColorSpace(
   }
 }
 
-// Private
-
-function internalContrastConfig(
-  contrastConfig: ContrastConfig,
-  colorSpace: ColorSpace
-): ContrastConfig {
-  let config = {
-    contrastModel: contrastConfig.contrastModel,
-    cr: contrastConfig.cr,
-    apcachIsOnFg: contrastConfig.fgColor === "apcach",
-  };
-  let colorAntagonistOriginal = config.apcachIsOnFg
-    ? contrastConfig.bgColor
-    : contrastConfig.fgColor;
-  let colorAntagonistClamped = clampColorToSpace(
-    colorAntagonistOriginal,
-    colorSpace
-  );
-  let colorAntagonistPrepared = colorToComps(
-    colorAntagonistClamped,
-    contrastConfig.contrastModel,
-    colorSpace
-  );
-
-  // Drop alpha if antagonist is on bg
-  if (config.apcachIsOnFg) {
-    colorAntagonistPrepared.alpha = 1;
-  }
-  config.colorAntagonist = colorAntagonistPrepared;
-  config.searchDirection = contrastConfig.searchDirection;
-  return config;
-}
-
-function colorToComps(
+export function colorToComps(
   //
   color: Color,
   contrastModel: ContrastModel,
@@ -307,10 +265,10 @@ function isValidApcach(el: Apcach): el is Apcach {
   );
 }
 
-function contrastFromConfig(
+export function contrastFromConfig(
   //
   color: PreparedColor,
-  contrastConfig: ContrastConfig_WTF,
+  contrastConfig: ContrastConfig_PREPARED,
   colorSpace: ColorSpace
 ) {
   // Deside the position of the color
@@ -337,152 +295,6 @@ function contrastFromConfig(
 
 export function rgb1to256(value) {
   return Math.round(parseFloat(value.toFixed(4)) * 255);
-}
-
-function calcLightness(
-  //
-  contrastConfig: ContrastConfig,
-  chroma: number,
-  hue: number,
-  colorSpace: ColorSpace
-) {
-  // log(
-  //   "CALC LIGHNTESS chroma: " +
-  //     chroma +
-  //     " colorSpace: " +
-  //     colorSpace +
-  //     " contrastConfig: " +
-  //     JSON.stringify(contrastConfig)
-  // );
-  let deltaContrast = 0;
-  let { lightness, lightnessPatch } = lightnessAndPatch(contrastConfig);
-  let factContrast = 1000;
-  let factLightness = 0;
-  let iteration = 0;
-  let lightnessFound = false;
-  let chromaRange = chromaLimits(contrastConfig);
-  let searchWindow = { low: 0, top: 1 };
-
-  while (!lightnessFound && iteration < 20) {
-    iteration++;
-    log("--- ITERATION: " + iteration);
-    // Calc new lightness to check
-    let newLightness = lightness;
-    if (iteration > 1) {
-      newLightness += lightnessPatch;
-    }
-
-    // Cap new lightness
-    newLightness = Math.max(
-      Math.min(newLightness, chromaRange.upper),
-      chromaRange.lower
-    );
-
-    // Compose color with the lightness to check
-    let checkingColor =
-      "oklch(" + newLightness + " " + chroma + " " + hue + ")";
-    let checkingColorClamped = clampColorToSpace(checkingColor, colorSpace);
-
-    let checkingColorComps = colorToComps(
-      checkingColorClamped,
-      contrastConfig.contrastModel,
-      colorSpace
-    );
-
-    // Calculate contrast of this color
-    let calcedContrast = contrastFromConfig(
-      checkingColorComps,
-      contrastConfig,
-      colorSpace
-    );
-    let newDeltaContrast = contrastConfig.cr - calcedContrast;
-
-    // Check for edge case
-    if (
-      iteration === 1 &&
-      calcedContrast < contrastConfig.cr &&
-      contrastConfig.searchDirection !== "auto"
-    ) {
-      factLightness = lightness;
-      lightnessFound = true;
-    }
-
-    // log(
-    //   "- CR wanted: " +
-    //     contrastConfig.cr +
-    //     " fact: " +
-    //     calcedContrast +
-    //     " delta: " +
-    //     newDeltaContrast +
-    //     " /// LIGHTNESS old: " +
-    //     lightness +
-    //     " patch: " +
-    //     lightnessPatch +
-    //     " new: " +
-    //     newLightness +
-    //     " in color space? " +
-    //     inGamut(colorSpace === "p3" ? "p3" : "rgb")(checkingColor)
-    // );
-
-    // Save valid lightness–the one giving fact contrast higher than the desired one
-    // It's needed to avoid returning lightness that gives contrast lower than the requested
-    if (calcedContrast >= contrastConfig.cr && calcedContrast < factContrast) {
-      factContrast = calcedContrast;
-      factLightness = newLightness;
-      // log(
-      //   "+ lightness saved: " + factLightness + " contrast: " + calcedContrast
-      // );
-    }
-
-    // Flip the search Patch
-    if (
-      deltaContrast !== 0 &&
-      signOf(newDeltaContrast) !== signOf(deltaContrast)
-    ) {
-      // log("----- lightnessPatch switch");
-      if (lightnessPatch > 0) {
-        searchWindow.top = newLightness;
-      } else {
-        searchWindow.low = newLightness;
-      }
-      // log("searchWindow: " + searchWindow.low + " / " + searchWindow.top);
-      lightnessPatch = -lightnessPatch / 2;
-    } else if (
-      newLightness + lightnessPatch === searchWindow.low ||
-      newLightness + lightnessPatch === searchWindow.top
-    ) {
-      // log("----- lightnessPatch / 2");
-      lightnessPatch = lightnessPatch / 2;
-    }
-
-    // Check if the lightness is found
-    if (
-      searchWindow.top - searchWindow.low < 0.001 ||
-      (iteration > 1 && newLightness === lightness)
-    ) {
-      lightnessFound = true;
-    }
-
-    // Save valid chroma and deltacontrast
-    deltaContrast = newDeltaContrast;
-
-    lightness = newLightness;
-  }
-  // log(
-  //   "LIGHTNESS FOUND in " +
-  //     iteration +
-  //     " iterations. Chroma " +
-  //     chroma +
-  //     " lightness " +
-  //     factLightness +
-  //     " contrast: " +
-  //     factContrast +
-  //     " wanted: " +
-  //     contrastConfig.cr +
-  //     " lightnessPatch: " +
-  //     lightnessPatch
-  // );
-  return Math.min(Math.max(factLightness, 0), 100);
 }
 
 export {

@@ -1,10 +1,10 @@
-import type { ContrastConfig_WTF } from "../contrast/contrastConfig";
+import type { ContrastConfig_PREPARED } from "../contrast/contrastConfig";
 
 import { antagonistColorLightness } from "../light/antagonistColorLightness";
 
 export function chromaLimits(
   //
-  contrastConfig: ContrastConfig_WTF
+  contrastConfig: ContrastConfig_PREPARED
 ): {
   lower: number;
   upper: number;

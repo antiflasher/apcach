@@ -6,6 +6,8 @@ import { contrastToConfig } from "../contrast/contrastToConfig";
 import type { ColorSpace, ChromaExpr, Maybe } from "../types";
 import { contrastIsLegal } from "../contrast/contrastIsLegal";
 import { lightnessFromAntagonist } from "../light/lightnessFromAntagonist";
+import { calcLightness } from "../light/calcLightness";
+import { prepareContrastConfig } from "../contrast/prepareContrastConfig";
 
 export type Apcach = {
   lightness: number;
@@ -54,7 +56,7 @@ export function apcach(
     let lightness;
     if (contrastIsLegal(contrastConfig.cr, contrastConfig.contrastModel)) {
       lightness = calcLightness(
-        internalContrastConfig(contrastConfig, colorSpace),
+        prepareContrastConfig(contrastConfig, colorSpace),
         parseFloat(chroma),
         parseFloat(hue),
         colorSpace

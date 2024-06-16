@@ -21,7 +21,7 @@ export type ContrastConfig = {
 
 // 3. ------------------------------------------------------------
 /** normalized and prepared contrast config */
-export type ContrastConfig_WTF = {
+export type ContrastConfig_PREPARED = {
   bgColor: string;
   fgColor: string;
   cr: ContrastRatio;
