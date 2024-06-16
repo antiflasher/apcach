@@ -9,6 +9,7 @@ import {
   crToFg,
   crToFgWhite,
   crToFgBlack,
+  type RelativeContrastSettings,
 } from "./crToFg";
 
 import {
@@ -37,16 +38,24 @@ import {
   HueExpr,
   ContrastConfig,
   RawContrastConfig,
-  Oklch,
-  ContrastModel,
+  type ChromaExpr2,
+  type ContrastRatio,
+  type ContrastModel,
 } from "./types";
+import { log } from "./log";
+import {
+  contrastIsLegal,
+  clipContrast,
+  clipChroma,
+  clipHue,
+  floatingPointToHex,
+  blendCompColors,
+  healOklch,
+  signOf,
+} from "./utils";
 
 useMode(modeP3);
 useMode(modeOklch);
-
-// ----------------------------------------------
-
-const LOG_ON: boolean = false;
 
 const convertToOklch: ConvertFn<"oklch"> = converter("oklch");
 const convertToP3: ConvertFn<"p3"> = converter("p3");
@@ -115,48 +124,78 @@ function apcach(
   }
 }
 
+/**
+ * The apcach format can be restored from color in CSS format
+ * using the function cssToApcach():
+ */
 function cssToApcach(
-  color,
-  antagonist,
-  colorSpace = "p3",
-  contrastModel = "apca"
+  /** color in CSS format that you want to convert to apcach format */
+  color: string,
+
+  /** comparing color
+   * if it's on the background position: { bg : comparingColor }
+   * if it's in the foreground position: { fg : comparingColor }
+   *
+   * (supported formats: oklch, oklab, display-p3, lch, lab, hex, rgb, hsl, p3)
+   */
+  antagonist: { bg?: string; fg?: string },
+  colorSpace: ColorSpace = "p3",
+  contrastModel: ContrastModel = "apca"
 ) {
-  if (color === undefined) {
-    throw new Error("Color is undefined");
-  }
+  // ensure color is defined
+  if (color == null) throw new Error("Color is undefined");
 
-  if ("bg" in antagonist || "fg" in antagonist) {
-    let fgColor = antagonist.fg !== undefined ? antagonist.fg : color;
-    fgColor = clapmColorToSpace(fgColor, colorSpace);
-    let bgColor = antagonist.bg !== undefined ? antagonist.bg : color;
-    bgColor = clapmColorToSpace(bgColor, colorSpace);
-
-    let crFunction = antagonist.fg !== undefined ? crToFg : crToBg;
-    let antagonistColor =
-      antagonist.fg !== undefined ? antagonist.fg : antagonist.bg;
-    let contrast;
-    contrast = calcContrast(fgColor, bgColor, contrastModel, colorSpace);
-
-    // Compose apcach
-    let colorClamped = clapmColorToSpace(color, colorSpace);
-    let colorComp = convertToOklch(colorClamped);
-    let antagonistColorOklch = convertToOklch(antagonistColor);
-    let isColorLighter = colorComp.l > antagonistColorOklch.l;
-    let searchDirection = isColorLighter ? "lighter" : "darker";
-    return apcach(
-      crFunction(antagonistColor, contrast, contrastModel, searchDirection),
-      colorComp.c,
-      colorComp.h ?? 0,
-      colorComp.alpha ?? 1,
-      colorSpace
-    );
-  } else {
+  // ensure antagonist is specified
+  if (antagonist.fg == null && antagonist.bg == null)
     throw new Error("antagonist color is not provided");
-  }
+
+  // ensure antagonist is either fg xor bg, not both
+  if (antagonist.fg != null && antagonist.bg != null)
+    throw new Error("antagonist can't be both fb and bg");
+
+  // fgcolor
+  let fgColor = antagonist.fg !== undefined ? antagonist.fg : color;
+  fgColor = clapmColorToSpace(fgColor, colorSpace);
+
+  // bgcolor
+  let bgColor = antagonist.bg !== undefined ? antagonist.bg : color;
+  bgColor = clapmColorToSpace(bgColor, colorSpace);
+
+  // get the contrast function
+  const crFunction =
+    antagonist.fg !== undefined //
+      ? crToFg
+      : crToBg;
+
+  // get the antagonist color
+  const antagonistColor =
+    antagonist.fg !== undefined //
+      ? antagonist.fg
+      : antagonist.bg;
+
+  let contrast = calcContrast(fgColor, bgColor, contrastModel, colorSpace);
+
+  // Compose apcach
+  let colorClamped = clapmColorToSpace(color, colorSpace);
+  let colorComp = convertToOklch(colorClamped);
+  let antagonistColorOklch = convertToOklch(antagonistColor);
+  let isColorLighter = colorComp.l > antagonistColorOklch.l;
+  let searchDirection = isColorLighter ? "lighter" : "darker";
+  return apcach(
+    crFunction(antagonistColor, contrast, contrastModel, searchDirection),
+    colorComp.c,
+    colorComp.h ?? 0,
+    colorComp.alpha ?? 1,
+    colorSpace
+  );
 }
 
-function setContrast(colorInApcach, cr) {
-  let newContrastConfig = colorInApcach.contrastConfig;
+function setContrast(
+  //
+  colorInApcach: Apcach,
+  cr: ContrastRatio | ((cr: number) => number)
+) {
+  let newContrastConfig: ContrastConfig = colorInApcach.contrastConfig;
   if (typeof cr === "number") {
     newContrastConfig.cr = clipContrast(cr);
   } else if (typeof cr === "function") {
@@ -174,8 +213,8 @@ function setContrast(colorInApcach, cr) {
   );
 }
 
-function setChroma(colorInApcach, c) {
-  let newChroma;
+function setChroma(colorInApcach, c: ChromaExpr2): Apcach {
+  let newChroma: number;
   if (typeof c === "number") {
     newChroma = clipChroma(c);
   } else if (typeof c === "function") {
@@ -184,6 +223,7 @@ function setChroma(colorInApcach, c) {
   } else {
     throw new Error("Invalid format of chroma value");
   }
+
   return apcach(
     colorInApcach.contrastConfig,
     newChroma,
@@ -372,7 +412,11 @@ function colorToComps(color, contrastModel, colorSpace) {
   }
 }
 
-function isValidApcach(el) {
+// ----------------------------------------------------------------------
+// 💬 2024-06-16 rvion
+// | probably not a good way to do things here.
+// | we should really move toward using proper classes
+function isValidApcach(el: Apcach): el is Apcach {
   return (
     el.contrastConfig !== undefined &&
     el.alpha !== undefined &&
@@ -391,7 +435,12 @@ function isValidContrastConfig(el): el is ContrastConfig {
   );
 }
 
-function clapmColorToSpace(colorInCssFormat, colorSpace) {
+// ----------------------------------------------------------------------
+function clapmColorToSpace(
+  //
+  colorInCssFormat,
+  colorSpace: ColorSpace
+) {
   if (colorSpace === "p3") {
     log("culori > inP3 /// clapmColorToSpace");
     if (inP3(colorInCssFormat)) {
@@ -424,7 +473,12 @@ function clapmColorToSpace(colorInCssFormat, colorSpace) {
   }
 }
 
-function contrastFromConfig(color, contrastConfig, colorSpace) {
+function contrastFromConfig(
+  //
+  color,
+  contrastConfig,
+  colorSpace
+) {
   // Deside the position of the color
   let fgColor;
   let bgColor;
@@ -516,7 +570,9 @@ function rgb1to256(value) {
   return Math.round(parseFloat(value.toFixed(4)) * 255);
 }
 
-function contrastToConfig(rawContrast: RawContrastConfig): ContrastConfig {
+function contrastToConfig(
+  rawContrast: RawContrastConfig
+): RelativeContrastSettings {
   if (typeof rawContrast === "number") {
     return crToBg("white", rawContrast);
   } else if (isValidContrastConfig(rawContrast)) {
@@ -735,79 +791,6 @@ function lightnessFromAntagonist(contrastConfig) {
   }
   log("culori > convertToOklch /// lightnessFromAntagonist");
   return convertToOklch(antagonist).l;
-}
-
-function healOklch(oklch: Oklch): Oklch {
-  oklch.l = oklch.l === undefined ? 0 : roundToDP(oklch.l, 7);
-  oklch.c = oklch.c === undefined ? 0 : roundToDP(oklch.c, 16);
-  oklch.h = oklch.h === undefined ? 0 : roundToDP(oklch.h, 16);
-  oklch.alpha = oklch.alpha === undefined ? 1 : roundToDP(oklch.alpha, 4);
-  return oklch;
-}
-
-/** round to decimal places */
-function roundToDP(number: number, dp: number): number {
-  return Math.floor(number * 10 ** dp) / 10 ** dp;
-}
-
-function signOf(number: number): 1 | -1 {
-  return number >= 0 ? 1 : -1;
-  // 2024-06-16: this seems to be dangerous (divide by 0?)
-  // return number / Math.abs(number);
-}
-
-function clipContrast(cr: number): number {
-  return Math.max(Math.min(cr, 108), 0);
-}
-
-function clipChroma(c: number): number {
-  return Math.max(Math.min(c, 0.37), 0);
-}
-
-function clipHue(h: number): number {
-  return Math.max(Math.min(h, 360), 0);
-}
-
-function contrastIsLegal(cr: number, contrastModel: ContrastModel) {
-  return (
-    (Math.abs(cr) >= 8 && contrastModel === "apca") ||
-    (Math.abs(cr) >= 1 && contrastModel === "wcag")
-  );
-}
-
-function floatingPointToHex(float: number): string {
-  return Math.round(255 * float)
-    .toString(16)
-    .padStart(2, "0");
-}
-
-function blendCompColors(fgCompColor, bgCompColor) {
-  if (fgCompColor.alpha === undefined || fgCompColor.alpha === 1) {
-    return fgCompColor;
-  }
-
-  // Blend color with the bg
-  return {
-    b: blendChannel(fgCompColor.b, bgCompColor.b, fgCompColor.alpha),
-    g: blendChannel(fgCompColor.g, bgCompColor.g, fgCompColor.alpha),
-    r: blendChannel(fgCompColor.r, bgCompColor.r, fgCompColor.alpha),
-  };
-}
-
-function blendChannel(
-  channelFg: number,
-  channelBg: number,
-  alpha: number
-): number {
-  return channelBg + (channelFg - channelBg) * alpha;
-}
-
-/** log to the console when LOG_ON */
-function log(srt: unknown): void {
-  if (LOG_ON) {
-    // eslint-disable-next-line no-console
-    console.log(srt);
-  }
 }
 
 export {

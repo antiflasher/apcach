@@ -26,6 +26,8 @@ export type ChromaExpr =
       colorSpace: ColorSpace
     ) => number);
 
+export type ChromaExpr2 = number | ((contrastConfig: ContrastConfig) => number);
+
 export type ContrastRatio = number;
 
 export type SearchDirection = "auto" | "lighter" | "darker";
@@ -40,8 +42,9 @@ export type ContrastConfig = {
   cr: ContrastRatio;
   contrastModel: ContrastModel;
   searchDirection: SearchDirection;
-  apcachIsOnFg: boolean;
-  colorAntagonist: Oklch;
+  // --------------------------
+  /* ❓ */ apcachIsOnFg: boolean;
+  /* ❓ */ colorAntagonist: Oklch;
 };
 /** TODO */
 
