@@ -1,6 +1,6 @@
 import { test } from 'bun:test'
 
-import { apcach, apcachToCss, crToBg, crToFg, cssToApcach, maxChroma } from '../src/index'
+import { apcach, apcachToCss, crToBg, crToFg, cssToApcach, maxChroma } from '../index'
 import { _assertSimilarOklch } from './_assertSimilarOklch'
 
 // ----------------------------------------

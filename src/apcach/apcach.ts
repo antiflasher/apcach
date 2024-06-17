@@ -21,6 +21,7 @@ export function apcach(
     //
     contrast: ContrastConfig_Ext,
     chroma: number | MaxChromaFn,
+    /** 0 to 100 */
     hue: number | string = 0,
     alpha: number = 100,
     colorSpace: ColorSpace = 'p3',

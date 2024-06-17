@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { crToBg } from '../contrast/crTo'
 import { apcachToCss } from '../convert/apcachToCss'
 import { apcach } from './apcach'
-import { _assertSimilarOklch } from '../../tests/_assertSimilarOklch'
+import { _assertSimilarOklch } from '../tests/_assertSimilarOklch'
 
 describe('apcach', () => {
     it('kinda work', () => {

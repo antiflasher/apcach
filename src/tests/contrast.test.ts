@@ -1,6 +1,6 @@
 import { test } from 'bun:test'
 
-import { calcContrast as calcContrast_ } from '../src/index'
+import { calcContrast as calcContrast_ } from '../index'
 import { _assertCloseEnough } from './_assertSimilarOklch'
 import { parse } from 'culori'
 

@@ -7,6 +7,7 @@ export type MaxChromaFn = (
     //
     contrastConfig: ContrastConfig,
     hue: number,
+    /** 0 to 100 */
     alpha: number,
     colorSpace: ColorSpace,
 ) => Apcach
