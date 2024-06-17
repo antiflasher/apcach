@@ -15,6 +15,7 @@ export function getContrastScoreForObjective(
     // Deside the position of the color
     let fgColor: PreparedColor
     let bgColor: PreparedColor
+
     if (contrastConfig.apcachIsOnFg) {
         bgColor = contrastConfig.colorAntagonist
         fgColor = blendCompColors(color, bgColor)

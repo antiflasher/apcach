@@ -1,5 +1,6 @@
-import { type Color, type P3, type Rgb } from 'culori'
-import { ColorSpace, type ContrastModel } from '../types'
+import type { Color, P3, Rgb } from 'culori'
+import type { ColorSpace, ContrastModel } from '../types'
+
 import { convertToP3, convertToRgb } from '../utils/culoriUtils'
 import { log } from '../utils/log'
 
@@ -10,8 +11,7 @@ export function colorToComps(
     colorSpace: ColorSpace,
 ): P3 | Rgb {
     if (
-        //
-        contrastModel === 'apca' &&
+        contrastModel === 'apca' && //
         colorSpace === 'p3'
     ) {
         log('culori > convertToP3 /// colorToComps')

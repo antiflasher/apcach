@@ -63,7 +63,11 @@ export function floatingPointToHex(float: number): string {
         .padStart(2, '0')
 }
 
-export function blendCompColors(fgCompColor, bgCompColor) {
+export function blendCompColors(
+    //
+    fgCompColor,
+    bgCompColor,
+) {
     if (fgCompColor.alpha === undefined || fgCompColor.alpha === 1) {
         return fgCompColor
     }

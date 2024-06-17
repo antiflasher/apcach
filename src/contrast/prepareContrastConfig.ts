@@ -1,9 +1,10 @@
 import type { ContrastConfig, ContrastConfig_PREPARED } from './contrastConfig'
+
 import { ColorSpace } from '../types'
-import { clampColorToSpace } from '../utils/clampColorToSpace'
+import { clampColorToSpace } from '../clamp/clampColorToSpace'
 import { colorToComps } from '../to-sort-somewhere/colorToComps'
 
-// Private
+// TODO: finish cleaning this function
 export function prepareContrastConfig(
     contrastConfig: ContrastConfig,
     colorSpace: ColorSpace,

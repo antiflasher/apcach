@@ -5,7 +5,7 @@ import { crToBg, crToFg } from '../contrast/crTo'
 import { convertToOklch_orThrow } from '../utils/culoriUtils'
 import { apcach } from '../index'
 import { calcContrast } from './calcContrast'
-import { clampColorToSpace } from '../utils/clampColorToSpace'
+import { clampColorToSpace } from '../clamp/clampColorToSpace'
 
 /**
  * The apcach format can be restored from color in CSS format

@@ -1,3 +1,4 @@
+import type { Color } from 'culori'
 import type { ContrastRatio, ContrastModel, SearchDirection, PreparedColor } from '../types'
 
 // 1. ------------------------------------------------------------
@@ -24,5 +25,5 @@ export type ContrastConfig_PREPARED = {
     searchDirection: SearchDirection
     // --------------------------
     /* ❓ */ apcachIsOnFg: boolean
-    /* ❓ */ colorAntagonist: PreparedColor
+    /* ❓ */ colorAntagonist: Color // PreparedColor
 }

@@ -1,6 +1,6 @@
 import type { ColorSpace, ColorInCSSFormat, ContrastModel } from '../types'
 import { calcContrastFromPreparedColors } from '../calc/calcContrastFromPreparedColors'
-import { clampColorToSpace } from '../utils/clampColorToSpace'
+import { clampColorToSpace } from '../clamp/clampColorToSpace'
 import { blendCompColors } from '../utils/misc'
 import { colorToComps } from '../to-sort-somewhere/colorToComps'
 
