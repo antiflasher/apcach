@@ -4,6 +4,16 @@ export const ASSERT_NUMBER = (x: unknown): number => {
   return x;
 };
 
+export const ASSERT_STRING = (x: unknown): string => {
+  if (typeof x !== "string") throw new Error("expected a string");
+  return x;
+};
+
+export const ASSERT_NOT_NULL = <T>(x: T): NonNullable<T> => {
+  if (x == null) throw new Error("expected a non-null value");
+  return x;
+};
+
 export const ASSERT_EXAUSTED = (
   /**
    * having never here allow to properly make sure we handle all cases
