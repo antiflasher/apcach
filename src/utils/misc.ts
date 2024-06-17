@@ -1,4 +1,4 @@
-import type { Oklch, P3, Rgb } from 'culori'
+import type { Oklch } from 'culori'
 import type { RGB_or_P3 } from '../types'
 
 /**
@@ -76,15 +76,28 @@ export function blendCompColors(
         return fgCompColor
     }
 
+    // prettier-ignore
+    /* 💊 */ if (
+    /* 💊 */     //
+    /* 💊 */     fgCompColor.r > 1 ||
+    /* 💊 */     bgCompColor.r > 1 ||
+    /* 💊 */     fgCompColor.g > 1 ||
+    /* 💊 */     bgCompColor.g > 1 ||
+    /* 💊 */     fgCompColor.b > 1 ||
+    /* 💊 */     bgCompColor.b > 1
+    /* 💊 */ ) {
+    /* 💊 */     console.log(`[🤠] `, fgCompColor, bgCompColor)
+    /* 💊 */ }
+
     // Blend color with the bg
     return {
-        b: blendChannel(fgCompColor.b, bgCompColor.b, fgCompColor.alpha),
-        g: blendChannel(fgCompColor.g, bgCompColor.g, fgCompColor.alpha),
-        r: blendChannel(fgCompColor.r, bgCompColor.r, fgCompColor.alpha),
+        b: _blendChannel(fgCompColor.b, bgCompColor.b, fgCompColor.alpha),
+        g: _blendChannel(fgCompColor.g, bgCompColor.g, fgCompColor.alpha),
+        r: _blendChannel(fgCompColor.r, bgCompColor.r, fgCompColor.alpha),
     }
 }
 
-export function blendChannel(
+function _blendChannel(
     //
     channelFg: number,
     channelBg: number,

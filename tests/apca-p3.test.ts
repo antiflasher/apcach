@@ -384,7 +384,6 @@ test('#16', () => {
     _assertSimilarOklch(
         apcachToCss(apcach(crToFg('oklch(90.06% 0 89.88)', 70, 'apca', 'lighter'), 0.14, 150, 100, 'p3')),
         'oklch(100% 0.14 150)',
-        1 /* 🔴 NEED TO INVESTIGATE */,
     )
 })
 

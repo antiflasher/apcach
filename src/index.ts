@@ -7,7 +7,6 @@ import { setHue } from './apcach/setHue'
 import { setChroma } from './apcach/setChroma'
 import { setContrast } from './apcach/setContrast'
 
-// TODO
 import { apcachToCss } from './convert/apcachToCss'
 import { cssToApcach } from './convert/cssToApcach'
 import { calcContrast } from './scoring/calcContrast'
