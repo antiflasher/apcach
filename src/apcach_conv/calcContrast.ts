@@ -1,5 +1,5 @@
-import type { ColorSpace, ColorInCSSFormat, ContrastModel } from '../types'
-import type { Color } from 'culori'
+import type { ColorSpace, ColorInCSSFormat, ContrastModel, RGB_or_P3 } from '../types'
+import type { Color, P3, Rgb } from 'culori'
 
 import { calcContrastFromPreparedColors } from '../calc/calcContrastFromPreparedColors'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
@@ -13,12 +13,12 @@ export function calcContrast(
     colorSpace: ColorSpace = 'p3',
 ) {
     // Background color
-    let bgColorClamped = clampColorToSpace(bgColor, colorSpace)
-    let bgColorComps = colorToComps(bgColorClamped, contrastModel, colorSpace)
+    let bgColorClamped: Color = clampColorToSpace(bgColor, colorSpace)
+    let bgColorComps: P3 | Rgb = colorToComps(bgColorClamped, contrastModel, colorSpace)
 
     // Foreground color
-    let fgColorClamped = clampColorToSpace(fgColor, colorSpace)
-    let fgColorComps = colorToComps(fgColorClamped, contrastModel, colorSpace)
+    let fgColorClamped: Color = clampColorToSpace(fgColor, colorSpace)
+    let fgColorComps: RGB_or_P3 = colorToComps(fgColorClamped, contrastModel, colorSpace)
     fgColorComps = blendCompColors(fgColorComps, bgColorComps)
 
     // Caclulate contrast

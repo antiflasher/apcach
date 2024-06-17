@@ -3,7 +3,7 @@
 import type { ContrastConfig } from './contrast/contrastConfig'
 
 export type Number0To1 = number
-export type PreparedColor = { r: Number0To1; g: Number0To1; b: Number0To1 }
+export type RGB_or_P3 = { r: number; g: number; b: number; alpha?: number }
 
 export type Maybe<T> = T | null | undefined
 export type ContrastModel = 'apca' | 'wcag'

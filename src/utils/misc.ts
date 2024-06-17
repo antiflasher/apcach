@@ -1,4 +1,5 @@
-import type { Oklch } from 'culori'
+import type { Oklch, P3, Rgb } from 'culori'
+import type { RGB_or_P3 } from '../types'
 
 /**
  * 1. ensure every oklch properties are set
@@ -65,11 +66,11 @@ export function floatingPointToHex(float: number): string {
 
 export function blendCompColors(
     //
-    fgCompColor,
-    bgCompColor,
-) {
+    fgCompColor: RGB_or_P3,
+    bgCompColor: RGB_or_P3,
+): RGB_or_P3 {
     if (
-        fgCompColor.alpha === undefined || //
+        fgCompColor.alpha == null || //
         fgCompColor.alpha === 1
     ) {
         return fgCompColor
