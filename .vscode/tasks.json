@@ -1,0 +1,20 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "👁 TSC",
+            "detail": "Get all typescript errors in problems pane",
+            "type": "process",
+            "options": { "env": { "NODE_OPTIONS": "--max-old-space-size=8192" } },
+            "command": "./node_modules/.bin/tsc",
+            "args": ["--watch", "--noEmit", "--preserveWatchOutput", "--incremental"],
+            "isBackground": true,
+            "problemMatcher": "$tsc-watch",
+            "presentation": { "reveal": "never" },
+            "group": { "kind": "build", "isDefault": true },
+            "runOptions": { "runOn": "folderOpen", "instanceLimit": 1 }
+        }
+    ]
+}
