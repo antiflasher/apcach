@@ -1,12 +1,12 @@
 import type { ContrastConfig, ContrastConfig_Ext } from '../contrast/contrastConfig'
-import type { ColorSpace, ChromaExpr, Maybe } from '../types'
+import type { ColorSpace } from '../types'
+import type { MaxChromaFn } from './maxChroma'
 
 import { contrastToConfig } from '../contrast/contrastToConfig'
 import { isValidContrast } from '../contrast/isValidContrast'
+import { prepareContrastConfig } from '../contrast/prepareContrastConfig'
 import { lightnessFromAntagonist } from '../light/lightnessFromAntagonist'
 import { calcLightness } from '../scoring/calcLightness'
-import { prepareContrastConfig } from '../contrast/prepareContrastConfig'
-import type { MaxChromaFn } from './maxChroma'
 
 export type Apcach = {
     lightness: number
