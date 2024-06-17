@@ -1,7 +1,7 @@
 import type { ColorSpace } from '../types'
 import type { ContrastConfig } from '../contrast/contrastConfig'
 import { apcach } from './apcach'
-import { inColorSpace } from '../to-sort-somewhere/inColorSpace'
+import { inColorSpace } from '../culori-utils/inColorSpace'
 
 export function maxChroma(chromaCap = 0.4) {
     return function (

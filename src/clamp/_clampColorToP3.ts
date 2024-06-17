@@ -1,6 +1,6 @@
 import type { Color } from 'culori'
 
-import { inP3, toP3 } from '../utils/culoriUtils'
+import { inP3, toP3 } from '../culori-utils/culoriUtils'
 import { log } from '../utils/log'
 
 export function clampColorToP3(

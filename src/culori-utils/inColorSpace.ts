@@ -2,10 +2,10 @@
 import { inGamut } from 'culori'
 
 import { Apcach } from '../apcach/apcach'
-import { convertToOklch_orThrow } from '../utils/culoriUtils'
+import { convertToOklch_orThrow } from './culoriUtils'
 import { log } from '../utils/log'
 import { isValidApcach } from '../apcach/isValidApcach'
-import { apcachToCss } from '../apcach_conv/apcachToCss'
+import { apcachToCss } from '../convert/apcachToCss'
 
 export function inColorSpace(
     //

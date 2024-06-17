@@ -4,7 +4,7 @@ import type { Color, P3, Rgb } from 'culori'
 import { calcContrastFromPreparedColors } from '../calc/calcContrastFromPreparedColors'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
 import { blendCompColors } from '../utils/misc'
-import { colorToComps } from '../to-sort-somewhere/colorToComps'
+import { colorToComps } from '../culori-utils/colorToComps'
 
 export function calcContrast(
     fgColor: Color,

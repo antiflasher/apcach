@@ -8,10 +8,10 @@ import { setChroma } from './apcach/setChroma'
 import { setContrast } from './apcach/setContrast'
 
 // TODO
-import { apcachToCss } from './apcach_conv/apcachToCss'
-import { cssToApcach } from './apcach_conv/cssToApcach'
-import { calcContrast } from './apcach_conv/calcContrast'
-import { inColorSpace } from './to-sort-somewhere/inColorSpace'
+import { apcachToCss } from './convert/apcachToCss'
+import { cssToApcach } from './convert/cssToApcach'
+import { calcContrast } from './scoring/calcContrast'
+import { inColorSpace } from './culori-utils/inColorSpace'
 
 export {
     apcach,

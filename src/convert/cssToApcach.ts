@@ -5,8 +5,8 @@ import { parse, type Color, type Oklch } from 'culori'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
 import { crToBg, crToFg } from '../contrast/crTo'
 import { apcach } from '../index'
-import { convertToOklch_orThrow } from '../utils/culoriUtils'
-import { calcContrast } from './calcContrast'
+import { convertToOklch_orThrow } from '../culori-utils/culoriUtils'
+import { calcContrast } from '../scoring/calcContrast'
 
 /**
  * The apcach format can be restored from color in CSS format

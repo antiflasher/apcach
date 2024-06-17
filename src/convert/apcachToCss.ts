@@ -1,7 +1,7 @@
 import { parse } from 'culori'
 import { formatCss, formatHex, formatRgb } from 'culori/fn'
 import { Apcach } from '../apcach/apcach'
-import { convertToP3 } from '../utils/culoriUtils'
+import { convertToP3 } from '../culori-utils/culoriUtils'
 import { log } from '../utils/log'
 import { floatingPointToHex } from '../utils/misc'
 

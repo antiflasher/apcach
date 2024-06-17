@@ -1,6 +1,6 @@
 import type { ContrastConfig_PREPARED } from '../contrast/contrastConfig'
 
-import { convertToOklch_orThrow } from '../utils/culoriUtils'
+import { convertToOklch_orThrow } from '../culori-utils/culoriUtils'
 import { log } from '../utils/log'
 
 export function antagonistColorLightness(contrastConfig: ContrastConfig_PREPARED) {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { clampColorToSpace } from './clampColorToSpace'
-import { convertToP3, inP3, inSrgb } from '../utils/culoriUtils'
+import { convertToP3, inP3, inSrgb } from '../culori-utils/culoriUtils'
 import { formatCss, parse } from 'culori'
-import { apcachToCss } from '../apcach_conv/apcachToCss'
+import { apcachToCss } from '../convert/apcachToCss'
 
 describe('apcach', () => {
     it('does something', () => {

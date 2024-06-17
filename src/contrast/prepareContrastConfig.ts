@@ -3,7 +3,7 @@ import { TO_FIND, type ContrastConfig, type ContrastConfig_PREPARED } from './co
 
 import { ColorSpace } from '../types'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
-import { colorToComps } from '../to-sort-somewhere/colorToComps'
+import { colorToComps } from '../culori-utils/colorToComps'
 
 // TODO: finish cleaning this function
 export function prepareContrastConfig(

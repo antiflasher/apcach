@@ -1,7 +1,7 @@
 import { parse, type Oklch } from 'culori'
 import type { ContrastRatio, ContrastModel, SearchDirection } from '../types'
 import { TO_FIND, type ContrastConfig } from './contrastConfig'
-import { convertToOklch_orThrow } from '../utils/culoriUtils'
+import { convertToOklch_orThrow } from '../culori-utils/culoriUtils'
 
 /** TODO */
 export function crToBg(

@@ -1,5 +1,5 @@
 import { clampChroma, type Color } from 'culori'
-import { convertToOklch_orThrow, inSrgb, toSrgb } from '../utils/culoriUtils'
+import { convertToOklch_orThrow, inSrgb, toSrgb } from '../culori-utils/culoriUtils'
 import { log } from '../utils/log'
 
 export function clampColorToSRGB(
