@@ -14,6 +14,7 @@ export function calcContrastFromPreparedColors(
     if (contrastModel === 'apca') {
         if (colorSpace === 'p3') return calcApcaP3(fgColor, bgColor)
         if (colorSpace === 'rgb') return calcApcaSrgb(fgColor, bgColor)
+        if (colorSpace === 'srgb') return calcApcaSrgb(fgColor, bgColor)
         return ASSERT_EXAUSTED(colorSpace, 'unknown colorSpace')
     }
 

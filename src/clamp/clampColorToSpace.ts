@@ -14,6 +14,7 @@ export function clampColorToSpace(
 ): Color /* | ColorInCSSFormat */ {
     if (colorSpace === 'p3') return clampColorToP3(colorInCssFormat)
     if (colorSpace === 'rgb') return clampColorToSRGB(colorInCssFormat)
+    if (colorSpace === 'srgb') return clampColorToSRGB(colorInCssFormat)
 
     return ASSERT_EXAUSTED(colorSpace, 'unknown colorSpace')
 }

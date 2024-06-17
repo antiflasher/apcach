@@ -2,7 +2,7 @@ import type { ContrastConfig, ContrastConfig_Ext } from '../contrast/contrastCon
 import type { ColorSpace, ChromaExpr, Maybe } from '../types'
 
 import { contrastToConfig } from '../contrast/contrastToConfig'
-import { isValidContrast } from '../contrast/contrastIsLegal'
+import { isValidContrast } from '../contrast/isValidContrast'
 import { lightnessFromAntagonist } from '../light/lightnessFromAntagonist'
 import { calcLightness } from '../scoring/calcLightness'
 import { prepareContrastConfig } from '../contrast/prepareContrastConfig'
@@ -37,27 +37,10 @@ export function apcach(
     if (typeof chroma === 'function') return chroma(contrastConfig, hue, alpha, colorSpace)
 
     // CASE B. Constant chroma case
-    let lightness
+    // APCA has a cut off at the value about 8, wcag has a cut off at 1
     const validContrast = isValidContrast(contrastConfig.cr, contrastConfig.contrastModel)
-    if (validContrast) {
-        lightness = calcLightness(prepareContrastConfig(contrastConfig, colorSpace), chroma, hue, colorSpace)
-    } else {
-        // APCA has a cut off at the value about 8
-        lightness = lightnessFromAntagonist(contrastConfig)
-    }
-
+    const lightness = validContrast
+        ? calcLightness(prepareContrastConfig(contrastConfig, colorSpace), chroma, hue, colorSpace)
+        : lightnessFromAntagonist(contrastConfig)
     return { lightness, chroma, hue, alpha, colorSpace, contrastConfig }
 }
-
-// function parseFloat2(val: Maybe<number | string>): number {
-//     if (val == null) {
-//         return 0
-//     } else if (typeof val === 'number') {
-//         if (isNaN(val)) {
-//             throw new Error('Invalid number: NaN')
-//         }
-//         return val
-//     } else {
-//         return parseFloat(val)
-//     }
-// }
