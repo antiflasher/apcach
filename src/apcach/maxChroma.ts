@@ -1,9 +1,17 @@
 import type { ColorSpace } from '../types'
 import type { ContrastConfig } from '../contrast/contrastConfig'
-import { apcach } from './apcach'
+import { apcach, type Apcach } from './apcach'
 import { inColorSpace } from '../culori-utils/inColorSpace'
 
-export function maxChroma(chromaCap = 0.4) {
+export type MaxChromaFn = (
+    //
+    contrastConfig: ContrastConfig,
+    hue: number,
+    alpha: number,
+    colorSpace: ColorSpace,
+) => Apcach
+
+export function maxChroma(chromaCap: number = 0.4) {
     return function (
         //
         contrastConfig: ContrastConfig,
@@ -13,16 +21,24 @@ export function maxChroma(chromaCap = 0.4) {
     ) {
         let checkingChroma = chromaCap
         let searchPatch = 0.4
-        let color
+        let color!: Apcach
         let colorIsValid = false
         let chromaFound = false
         let iteration = 0
+
         while (!chromaFound && iteration < 30) {
             iteration++
             let oldChroma = checkingChroma
             let newPatchedChroma = oldChroma + searchPatch
             checkingChroma = Math.max(Math.min(newPatchedChroma, chromaCap), 0)
-            color = apcach(contrastConfig, checkingChroma, hue, alpha, colorSpace)
+            color = apcach(
+                //
+                contrastConfig,
+                checkingChroma,
+                hue,
+                alpha,
+                colorSpace,
+            )
 
             // Check if the new color is valid
             let newColorIsValid = inColorSpace(color, colorSpace)

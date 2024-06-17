@@ -1,10 +1,12 @@
-import { type ContrastConfig, type ContrastConfig_Ext } from '../contrast/contrastConfig'
-import { contrastToConfig } from '../contrast/contrastToConfig'
+import type { ContrastConfig, ContrastConfig_Ext } from '../contrast/contrastConfig'
 import type { ColorSpace, ChromaExpr, Maybe } from '../types'
+
+import { contrastToConfig } from '../contrast/contrastToConfig'
 import { contrastIsLegal } from '../contrast/contrastIsLegal'
 import { lightnessFromAntagonist } from '../light/lightnessFromAntagonist'
 import { calcLightness } from '../scoring/calcLightness'
 import { prepareContrastConfig } from '../contrast/prepareContrastConfig'
+import type { MaxChromaFn } from './maxChroma'
 
 export type Apcach = {
     lightness: number
@@ -20,8 +22,8 @@ export type Apcach = {
 export function apcach(
     //
     contrast: ContrastConfig_Ext,
-    chroma: ChromaExpr,
-    hue?: Maybe<number | string>,
+    chroma: number | MaxChromaFn,
+    hue: number | string = 0,
     alpha: number = 100,
     colorSpace: ColorSpace = 'p3',
 ): Apcach {
@@ -35,12 +37,7 @@ export function apcach(
     // | probably better to only pass strings to it
 
     // Check for hue
-    hue =
-        hue == null //
-            ? 0
-            : typeof hue === 'number'
-            ? hue
-            : parseFloat(hue)
+    hue = typeof hue === 'number' ? hue : parseFloat(hue)
 
     // Compose contrast config
     const contrastConfig: ContrastConfig = contrastToConfig(contrast)
@@ -54,8 +51,8 @@ export function apcach(
         if (contrastIsLegal(contrastConfig.cr, contrastConfig.contrastModel)) {
             lightness = calcLightness(
                 prepareContrastConfig(contrastConfig, colorSpace),
-                parseFloat(chroma),
-                parseFloat(hue),
+                chroma, // parseFloat(chroma),
+                hue, // parseFloat(hue),
                 colorSpace,
             )
         } else {
@@ -75,3 +72,16 @@ export function apcach(
         }
     }
 }
+
+// function parseFloat2(val: Maybe<number | string>): number {
+//     if (val == null) {
+//         return 0
+//     } else if (typeof val === 'number') {
+//         if (isNaN(val)) {
+//             throw new Error('Invalid number: NaN')
+//         }
+//         return val
+//     } else {
+//         return parseFloat(val)
+//     }
+// }
