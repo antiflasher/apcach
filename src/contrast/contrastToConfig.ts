@@ -8,11 +8,12 @@ export function contrastToConfig(rawContrast: ContrastConfig_Ext): ContrastConfi
     throw new Error('Invalid contrast format')
 }
 
+// prettier-ignore
 function _isValidContrastConfig(el: object): el is ContrastConfig {
     return (
-        'bgColor' in el && //
-        'fgColor' in el &&
-        'cr' in el &&
+        'bgColor'       in el && //
+        'fgColor'       in el &&
+        'cr'            in el &&
         'contrastModel' in el
     )
 }

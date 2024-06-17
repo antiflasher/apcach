@@ -1,6 +1,6 @@
 import type { ContrastModel, ContrastRatio } from '../types'
 
-export function contrastIsLegal(
+export function isValidContrast(
     //
     cr: ContrastRatio,
     contrastModel: ContrastModel,

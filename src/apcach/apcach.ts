@@ -2,7 +2,7 @@ import type { ContrastConfig, ContrastConfig_Ext } from '../contrast/contrastCon
 import type { ColorSpace, ChromaExpr, Maybe } from '../types'
 
 import { contrastToConfig } from '../contrast/contrastToConfig'
-import { contrastIsLegal } from '../contrast/contrastIsLegal'
+import { isValidContrast } from '../contrast/contrastIsLegal'
 import { lightnessFromAntagonist } from '../light/lightnessFromAntagonist'
 import { calcLightness } from '../scoring/calcLightness'
 import { prepareContrastConfig } from '../contrast/prepareContrastConfig'
@@ -12,9 +12,7 @@ export type Apcach = {
     lightness: number
     chroma: number
     hue: number
-    //
     alpha: number
-    //
     contrastConfig: ContrastConfig
     colorSpace: ColorSpace
 }
@@ -33,35 +31,22 @@ export function apcach(
     // Compose contrast config
     const contrastConfig: ContrastConfig = contrastToConfig(contrast)
 
-    if (typeof chroma === 'function') {
-        // Max chroma case
-        return chroma(contrastConfig, hue, alpha, colorSpace)
-    } else {
-        // Constant chroma case
-        let lightness
-        if (contrastIsLegal(contrastConfig.cr, contrastConfig.contrastModel)) {
-            lightness = calcLightness(
-                prepareContrastConfig(contrastConfig, colorSpace),
-                chroma, // parseFloat(chroma),
-                hue, // parseFloat(hue),
-                colorSpace,
-            )
-        } else {
-            // APCA has a cut off at the value about 8
-            lightness = lightnessFromAntagonist(contrastConfig)
-        }
+    // CASE A. Max chroma case
+    // maxChroma() has been passed instead of a static value
+    // we need finding the most saturated color with given hue and contrast ratio
+    if (typeof chroma === 'function') return chroma(contrastConfig, hue, alpha, colorSpace)
 
-        return {
-            lightness,
-            chroma,
-            hue,
-            //
-            alpha,
-            //
-            colorSpace,
-            contrastConfig,
-        }
+    // CASE B. Constant chroma case
+    let lightness
+    const validContrast = isValidContrast(contrastConfig.cr, contrastConfig.contrastModel)
+    if (validContrast) {
+        lightness = calcLightness(prepareContrastConfig(contrastConfig, colorSpace), chroma, hue, colorSpace)
+    } else {
+        // APCA has a cut off at the value about 8
+        lightness = lightnessFromAntagonist(contrastConfig)
     }
+
+    return { lightness, chroma, hue, alpha, colorSpace, contrastConfig }
 }
 
 // function parseFloat2(val: Maybe<number | string>): number {
