@@ -27,16 +27,7 @@ export function apcach(
     alpha: number = 100,
     colorSpace: ColorSpace = 'p3',
 ): Apcach {
-    // 💬 2024-06-16 rvion:
-    // | checking if something is either null or undefined should be done
-    // | in one go by doing `hue == null` (two equal sign).
-    // | (almost the only case when one want to use `==` instead of `===`).
-
-    // 💬 2024-06-16 rvion:
-    // | not sure if parseFloat is guaranteed to accept number
-    // | probably better to only pass strings to it
-
-    // Check for hue
+    // normalize for hue
     hue = typeof hue === 'number' ? hue : parseFloat(hue)
 
     // Compose contrast config
