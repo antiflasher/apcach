@@ -9,9 +9,9 @@ import { clampColorToSRGB } from './_clampColorToSRGB'
 
 export function clampColorToSpace(
     //
-    colorInCssFormat: ColorInCSSFormat,
+    colorInCssFormat: Color, // | ColorInCSSFormat,
     colorSpace: ColorSpace,
-): Color | ColorInCSSFormat {
+): Color /* | ColorInCSSFormat */ {
     if (colorSpace === 'p3') return clampColorToP3(colorInCssFormat)
     if (colorSpace === 'rgb') return clampColorToSRGB(colorInCssFormat)
 

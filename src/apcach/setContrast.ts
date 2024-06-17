@@ -5,10 +5,10 @@ import { clipContrast } from '../utils/misc'
 
 export function setContrast(
     //
-    colorInApcach: Apcach,
+    apc: Apcach,
     cr: ContrastRatio | ((cr: number) => number),
 ) {
-    let newContrastConfig: ContrastConfig = colorInApcach.contrastConfig
+    let newContrastConfig: ContrastConfig = apc.contrastConfig
     if (typeof cr === 'number') {
         newContrastConfig.cr = clipContrast(cr)
     } else if (typeof cr === 'function') {
@@ -18,10 +18,11 @@ export function setContrast(
         throw new Error('Invalid format of contrast value')
     }
     return apcach(
+        //
         newContrastConfig,
-        colorInApcach.chroma,
-        colorInApcach.hue,
-        colorInApcach.alpha,
-        colorInApcach.colorSpace,
+        apc.chroma,
+        apc.hue,
+        apc.alpha,
+        apc.colorSpace,
     )
 }

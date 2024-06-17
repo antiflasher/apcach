@@ -1,4 +1,5 @@
-import type { ContrastConfig, ContrastConfig_PREPARED } from './contrastConfig'
+import type { Color, Oklch, P3, Rgb } from 'culori'
+import { TO_FIND, type ContrastConfig, type ContrastConfig_PREPARED } from './contrastConfig'
 
 import { ColorSpace } from '../types'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
@@ -9,31 +10,28 @@ export function prepareContrastConfig(
     contrastConfig: ContrastConfig,
     colorSpace: ColorSpace,
 ): ContrastConfig_PREPARED {
-    const apcachIsOnFg: boolean = contrastConfig.fgColor === 'apcach'
+    const { bgColor, fgColor, contrastModel, searchDirection } = contrastConfig
+    const apcachIsOnFg: boolean = fgColor === TO_FIND
 
-    const colorAntagonistOriginal: string = apcachIsOnFg ? contrastConfig.bgColor : contrastConfig.fgColor
-    const colorAntagonistClamped: any = clampColorToSpace(colorAntagonistOriginal, colorSpace)
-    const colorAntagonistPrepared = colorToComps(
-        colorAntagonistClamped,
-        contrastConfig.contrastModel,
-        colorSpace,
-    )
+    const colorAntagonistOriginal: Oklch = apcachIsOnFg //
+        ? (bgColor as Oklch)
+        : (fgColor as Oklch)
 
-    let config = {
-        contrastModel: contrastConfig.contrastModel,
-        cr: contrastConfig.cr,
-        apcachIsOnFg,
-    }
+    const colorAntagonistClamped: Color = clampColorToSpace(colorAntagonistOriginal, colorSpace)
+    const colorAntagonist: P3 | Rgb = colorToComps(colorAntagonistClamped, contrastModel, colorSpace)
 
     // Drop alpha if antagonist is on bg
-    if (config.apcachIsOnFg) {
-        colorAntagonistPrepared.alpha = 1
+    if (apcachIsOnFg) colorAntagonist.alpha = 1
+
+    const config: ContrastConfig_PREPARED = {
+        cr: contrastConfig.cr,
+        contrastModel,
+        searchDirection,
+        apcachIsOnFg,
+        colorAntagonist,
     }
 
     // 💬 2024-06-17 rvion: patching is a bit dangerous
     // we should probably return an other object here
-    let config_prepared = config as any as ContrastConfig_PREPARED
-    config_prepared.colorAntagonist = colorAntagonistPrepared
-    config_prepared.searchDirection = contrastConfig.searchDirection
-    return config_prepared
+    return config
 }

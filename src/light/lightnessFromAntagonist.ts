@@ -1,13 +1,13 @@
-import type { ContrastConfig } from '../contrast/contrastConfig'
+import { TO_FIND, type ContrastConfig } from '../contrast/contrastConfig'
 import type { Oklch } from 'culori'
 
 import { log } from '../utils/log'
 import { convertToOklch_orNull } from '../utils/culoriUtils'
 
 export function lightnessFromAntagonist(contrastConfig: ContrastConfig) {
-    const antagonist =
-        contrastConfig.fgColor === 'apcach' //
-            ? contrastConfig.bgColor
+    const antagonist: Oklch =
+        contrastConfig.fgColor === TO_FIND //
+            ? (contrastConfig.bgColor as Oklch)
             : contrastConfig.fgColor
 
     log('culori > convertToOklch /// lightnessFromAntagonist')

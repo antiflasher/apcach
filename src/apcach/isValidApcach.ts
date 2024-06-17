@@ -5,11 +5,13 @@ import { Apcach } from './apcach'
 // | we should really move toward using proper classes
 export function isValidApcach(el: Apcach | string): el is Apcach {
     if (typeof el === 'string') return false
+
+    // prettier-ignore
     return (
-        el.contrastConfig !== undefined &&
-        el.alpha !== undefined &&
-        el.chroma !== undefined &&
-        el.hue !== undefined &&
-        el.lightness !== undefined
+        el.contrastConfig != null &&
+        el.alpha          != null &&
+        el.chroma         != null &&
+        el.hue            != null &&
+        el.lightness      != null
     )
 }

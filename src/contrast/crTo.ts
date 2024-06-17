@@ -1,5 +1,7 @@
+import { parse, type Oklch } from 'culori'
 import type { ContrastRatio, ContrastModel, SearchDirection } from '../types'
-import type { ContrastConfig } from './contrastConfig'
+import { TO_FIND, type ContrastConfig } from './contrastConfig'
+import { convertToOklch_orThrow } from '../utils/culoriUtils'
 
 /** TODO */
 export function crToBg(
@@ -9,7 +11,7 @@ export function crToBg(
     searchDirection: SearchDirection = 'auto',
 ): ContrastConfig {
     return {
-        fgColor: 'apcach',
+        fgColor: TO_FIND,
         bgColor: _stringToColor(bgColor),
         cr,
         contrastModel,
@@ -25,7 +27,7 @@ export function crToFg(
 ): ContrastConfig {
     return {
         fgColor: _stringToColor(fgColor),
-        bgColor: 'apcach',
+        bgColor: TO_FIND,
         cr,
         contrastModel,
         searchDirection,
@@ -75,13 +77,17 @@ export function crToFgBlack(
     return crToFg('black', cr, contrastModel, searchDirection)
 }
 
-function _stringToColor(str: string): string {
+function _stringToColor(str: string): Oklch {
     switch (str) {
         case 'black':
-            return 'oklch(0 0 0)'
+            return { mode: 'oklch', l: 0, c: 0, h: 0 } // 'oklch(0 0 0)'
         case 'white':
-            return 'oklch(1 0 0)'
+            return { mode: 'oklch', l: 1, c: 0, h: 0 }
+        // 'oklch(1 0 0)'
         default:
-            return str
+            // return str
+            return convertToOklch_orThrow(str)
+        // parse(str)
+        // return ,
     }
 }

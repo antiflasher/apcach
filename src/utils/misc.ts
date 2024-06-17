@@ -68,7 +68,10 @@ export function blendCompColors(
     fgCompColor,
     bgCompColor,
 ) {
-    if (fgCompColor.alpha === undefined || fgCompColor.alpha === 1) {
+    if (
+        fgCompColor.alpha === undefined || //
+        fgCompColor.alpha === 1
+    ) {
         return fgCompColor
     }
 
@@ -80,6 +83,11 @@ export function blendCompColors(
     }
 }
 
-export function blendChannel(channelFg: number, channelBg: number, alpha: number): number {
+export function blendChannel(
+    //
+    channelFg: number,
+    channelBg: number,
+    alpha: number,
+): number {
     return channelBg + (channelFg - channelBg) * alpha
 }

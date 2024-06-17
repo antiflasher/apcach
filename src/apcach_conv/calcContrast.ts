@@ -1,12 +1,14 @@
 import type { ColorSpace, ColorInCSSFormat, ContrastModel } from '../types'
+import type { Color } from 'culori'
+
 import { calcContrastFromPreparedColors } from '../calc/calcContrastFromPreparedColors'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
 import { blendCompColors } from '../utils/misc'
 import { colorToComps } from '../to-sort-somewhere/colorToComps'
 
 export function calcContrast(
-    fgColor: ColorInCSSFormat,
-    bgColor: ColorInCSSFormat,
+    fgColor: Color,
+    bgColor: Color,
     contrastModel: ContrastModel = 'apca',
     colorSpace: ColorSpace = 'p3',
 ) {
@@ -20,5 +22,13 @@ export function calcContrast(
     fgColorComps = blendCompColors(fgColorComps, bgColorComps)
 
     // Caclulate contrast
-    return Math.abs(calcContrastFromPreparedColors(fgColorComps, bgColorComps, contrastModel, colorSpace))
+    const contrast = calcContrastFromPreparedColors(
+        //
+        fgColorComps,
+        bgColorComps,
+        contrastModel,
+        colorSpace,
+    )
+
+    return Math.abs(contrast)
 }

@@ -1,11 +1,12 @@
-import type { ColorSpace, ContrastModel } from '../types'
 import type { ContrastConfig } from '../contrast/contrastConfig'
+import type { ColorSpace, ContrastModel, Maybe, SearchDirection } from '../types'
 
-import { crToBg, crToFg } from '../contrast/crTo'
-import { convertToOklch_orThrow } from '../utils/culoriUtils'
-import { apcach } from '../index'
-import { calcContrast } from './calcContrast'
+import { parse, type Color, type Oklch } from 'culori'
 import { clampColorToSpace } from '../clamp/clampColorToSpace'
+import { crToBg, crToFg } from '../contrast/crTo'
+import { apcach } from '../index'
+import { convertToOklch_orThrow } from '../utils/culoriUtils'
+import { calcContrast } from './calcContrast'
 
 /**
  * The apcach format can be restored from color in CSS format
@@ -13,7 +14,7 @@ import { clampColorToSpace } from '../clamp/clampColorToSpace'
  */
 export function cssToApcach(
     /** color in CSS format that you want to convert to apcach format */
-    color: string,
+    colorStr: string,
 
     /** comparing color
      * if it's on the background position: { bg : comparingColor }
@@ -25,40 +26,42 @@ export function cssToApcach(
     colorSpace: ColorSpace = 'p3',
     contrastModel: ContrastModel = 'apca',
 ) {
-    // ensure color is defined
-    if (color == null) throw new Error('Color is undefined')
+    // ensure color is not null
+    if (colorStr == null) throw new Error('Color is undefined')
+
+    // enusre color is valid
+    const color: Maybe<Color> = parse(colorStr)
+    if (color == null) throw new Error('Color is invalid')
+
+    const fg_raw = antagonist.fg
+    const bg_raw = antagonist.bg
 
     // ensure antagonist is specified
-    if (antagonist.fg == null && antagonist.bg == null) throw new Error('antagonist color is not provided')
+    if (fg_raw == null && bg_raw == null) throw new Error('antagonist color is not provided')
 
     // ensure antagonist is either fg xor bg, not both
-    if (antagonist.fg != null && antagonist.bg != null) throw new Error("antagonist can't be both fb and bg")
+    if (fg_raw != null && bg_raw != null) throw new Error("antagonist can't be both fb and bg")
 
-    // fgcolor
-    let fgColor = antagonist.fg !== undefined ? antagonist.fg : color
-    fgColor = clampColorToSpace(fgColor, colorSpace)
+    const fg: Maybe<Color> = fg_raw != null ? parse(fg_raw) : undefined
+    const bg: Maybe<Color> = bg_raw != null ? parse(bg_raw) : undefined
 
-    // bgcolor
-    let bgColor = antagonist.bg !== undefined ? antagonist.bg : color
-    bgColor = clampColorToSpace(bgColor, colorSpace)
+    const fgColor: Color = clampColorToSpace(fg ?? color, colorSpace)
+    const bgColor: Color = clampColorToSpace(bg ?? color, colorSpace)
 
     // get the contrast function
-    const crFunction =
-        antagonist.fg !== undefined //
-            ? crToFg
-            : crToBg
+    const crFunction = fg != null ? crToFg : crToBg
 
     // get the antagonist color
-    const antagonistColor = antagonist.fg ?? antagonist.bg!
+    const antagonistColor = fg_raw ?? bg_raw!
 
     const contrast = calcContrast(fgColor, bgColor, contrastModel, colorSpace)
 
     // Compose apcach
-    const colorClamped = clampColorToSpace(color, colorSpace)
-    const colorComp = convertToOklch_orThrow(colorClamped)
-    const antagonistColorOklch = convertToOklch_orThrow(antagonistColor)
-    const isColorLighter = colorComp.l > antagonistColorOklch.l
-    const searchDirection = isColorLighter ? 'lighter' : 'darker'
+    const colorClamped: Color = clampColorToSpace(color, colorSpace)
+    const colorComp: Oklch = convertToOklch_orThrow(colorClamped)
+    const antagonistColorOklch: Oklch = convertToOklch_orThrow(antagonistColor)
+    const isColorLighter: boolean = colorComp.l > antagonistColorOklch.l
+    const searchDirection: SearchDirection = isColorLighter ? 'lighter' : 'darker'
 
     const contrastConfigXX: ContrastConfig = crFunction(
         antagonistColor,
@@ -67,5 +70,12 @@ export function cssToApcach(
         searchDirection,
     )
 
-    return apcach(contrastConfigXX, colorComp.c, colorComp.h ?? 0, colorComp.alpha ?? 1, colorSpace)
+    return apcach(
+        //
+        contrastConfigXX,
+        colorComp.c,
+        colorComp.h ?? 0,
+        colorComp.alpha ?? 1,
+        colorSpace,
+    )
 }

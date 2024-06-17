@@ -7,6 +7,7 @@ import { clampColorToSpace } from '../clamp/clampColorToSpace'
 import { log } from '../utils/log'
 import { signOf } from '../utils/misc'
 import { lightnessAndPatch } from '../light/lightnessAndPatch'
+import type { Oklch } from 'culori'
 
 /** 🟢 one of the main function ! */
 export function calcLightness(
@@ -46,7 +47,9 @@ export function calcLightness(
         newLightness = Math.max(Math.min(newLightness, chromaRange.upper), chromaRange.lower)
 
         // Compose color with the lightness to check
-        let checkingColor = 'oklch(' + newLightness + ' ' + chroma + ' ' + hue + ')'
+        // ❌ let checkingColor = 'oklch(' + newLightness + ' ' + chroma + ' ' + hue + ')'
+        let checkingColor: Oklch = { mode: 'oklch', l: newLightness, c: chroma, h: hue }
+
         let checkingColorClamped = clampColorToSpace(checkingColor, colorSpace)
 
         let checkingColorComps = colorToComps(checkingColorClamped, contrastConfig.contrastModel, colorSpace)
