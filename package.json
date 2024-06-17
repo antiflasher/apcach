@@ -15,6 +15,13 @@
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
+    "scripts": {
+        "test:lint": "eslint .",
+        "test:size": "size-limit",
+        "test:unit": "bun test",
+        "test:contrast": "bun test contrast.test.ts",
+        "test": "pnpm run /^test:/",
+        "start": "vite ./demo/",
     "dependencies": {
         "apca-w3": "^0.1.9",
         "culori": "^3.2.0",
@@ -42,14 +49,6 @@
   },
   "eslintConfig": {
     "extends": "@logux/eslint-config"
-  },
-  "scripts": {
-    "test:lint": "eslint .",
-    "test:size": "size-limit",
-    "test:unit": "uvu . '\\.test\\.(ts|js)$'",
-    "test:contrast": "uvu . 'contrast.test.js'",
-    "test": "pnpm run /^test:/",
-    "start": "vite ./demo/"
   },
   "size-limit": [
     {
