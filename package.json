@@ -31,12 +31,13 @@
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
+    "apcach": "link:",
     "culori": "^3.3.0",
     "wcag-contrast": "^3.0.0"
   },
   "devDependencies": {
     "@logux/eslint-config": "^53.5.1",
-    "@size-limit/preset-small-lib": "^8.2.6",
+    "@size-limit/preset-small-lib": "^11.1.6",
     "benchmark": "^2.1.4",
     "clean-publish": "^4.4.0",
     "eslint": "^9.19.0",
@@ -46,13 +47,13 @@
     "eslint-plugin-perfectionist": "^4.7.0",
     "eslint-plugin-prefer-let": "^4.0.0",
     "eslint-plugin-promise": "^7.2.1",
-    "size-limit": "^8.2.6",
+    "size-limit": "^11.1.6",
     "vite": "^6.0.11",
     "vitest": "^3.0.4"
   },
   "size-limit": [
     {
-      "limit": "19.46 kB"
+      "limit": "16.66 kB"
     }
   ]
 }
