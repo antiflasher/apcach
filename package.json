@@ -39,7 +39,7 @@
     "@logux/eslint-config": "^53.5.1",
     "@size-limit/preset-small-lib": "^11.1.6",
     "benchmark": "^2.1.4",
-    "clean-publish": "^4.4.0",
+    "clean-publish": "^5.1.0",
     "eslint": "^9.19.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.31.0",
