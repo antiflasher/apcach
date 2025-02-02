@@ -20,11 +20,12 @@
     "./package.json": "./package.json"
   },
  "scripts": {
-    "test:lint": "eslint .",
-    "test:size": "size-limit",
-    "test:unit": "uvu . '\\.test\\.(ts|js)$'",
-    "test:contrast": "uvu . 'contrast.test.js'",
-    "test": "pnpm run /^test:/",
+    "dev": "vitest -c config.vitest.mts",
+    "lint": "pnpm run --parallel --filter='.' /^lint:[^:]*$/",
+    "lint:lint": "eslint .",
+    "lint:size": "size-limit",
+    "test": "pnpm run --parallel --filter='.' /^test:[^:]*$/",
+    "test:unit": "vitest -c config.vitest.mts run",
     "start": "vite ./demo/"
   },
   "dependencies": {
@@ -45,8 +46,8 @@
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "size-limit": "^8.2.6",
-    "uvu": "^0.5.6",
-    "vite": "^4.4.9"
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
   },
   "eslintConfig": {
     "extends": "@logux/eslint-config"
@@ -56,6 +57,4 @@
       "limit": "25 kB"
     }
   ]
-  
- 
 }

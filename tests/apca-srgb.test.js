@@ -1,5 +1,4 @@
-import { test } from "uvu";
-import * as assert from "uvu/assert";
+import { test, assert } from "vitest";
 
 import {
   apcach,
@@ -16,12 +15,12 @@ import {
 
 // White bg, gray
 test("#0", () => {
-  assert.is(apcachToCss(apcach(5, 0, 0, 100, "srgb")), "oklch(100% 0 0)");
+  assert(apcachToCss(apcach(5, 0, 0, 100, "srgb")), "oklch(100% 0 0)");
 });
 
 // Black bg, low chroma
 test("#1", () => {
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("black", 5), 0.05, 200, 100, "srgb")),
     "oklch(0% 0.05 200)"
   );
@@ -29,7 +28,7 @@ test("#1", () => {
 
 // Gray fg, high chroma
 test("#2", () => {
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#7D7D7D", 5), 3, 100, 100, "srgb")),
     "oklch(58.97123297174118% 3 100)"
   );
@@ -37,7 +36,7 @@ test("#2", () => {
 
 // Colored fg, gray
 test("#3", () => {
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#00FF94", 5), 0, 70, 100, "srgb")),
     "oklch(87.82585371306136% 0 70)"
   );
@@ -49,7 +48,7 @@ test("#3", () => {
 
 // Implicit white bg
 test("#4", () => {
-  assert.is(
+  assert(
     apcachToCss(apcach(70, 0.15, 150, 100, "srgb")),
     "oklch(55.566405559494214% 0.15 150)"
   );
@@ -58,13 +57,13 @@ test("#4", () => {
 // Explicit white bg
 test("#5", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("white", 70), 0.15, 300, 100, "srgb")),
     "oklch(58.9843742670202% 0.15 300)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("white", 70, "apca", "auto"), 0.15, 300, 100, "srgb")
     ),
@@ -72,7 +71,7 @@ test("#5", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("white", 70, "apca", "darker"), 0.15, 300, 100, "srgb")
     ),
@@ -80,7 +79,7 @@ test("#5", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("white", 70, "apca", "lighter"), 0.15, 300, 100, "srgb")
     ),
@@ -91,13 +90,13 @@ test("#5", () => {
 // Black bg
 test("#6", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("black", 70), 0.2, 150, 100, "srgb")),
     "oklch(78.9794921875% 0.2 150)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("black", 70, "apca", "auto"), 0.2, 150, 100, "srgb")
     ),
@@ -105,7 +104,7 @@ test("#6", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("black", 70, "apca", "darker"), 0.2, 150, 100, "srgb")
     ),
@@ -113,7 +112,7 @@ test("#6", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("black", 70, "apca", "lighter"), 0.2, 150, 100, "srgb")
     ),
@@ -124,7 +123,7 @@ test("#6", () => {
 // Light gray bg
 test("#7", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("oklch(90.06% 0 89.88)", 70), 0.1, 150, 100, "srgb")
     ),
@@ -132,7 +131,7 @@ test("#7", () => {
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("oklch(90.06% 0 89.88)", 70, "apca", "auto"),
@@ -146,7 +145,7 @@ test("#7", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("oklch(90.06% 0 89.88)", 70, "apca", "darker"),
@@ -160,7 +159,7 @@ test("#7", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("oklch(90.06% 0 89.88)", 70, "apca", "lighter"),
@@ -177,13 +176,13 @@ test("#7", () => {
 // Dark gray bg
 test("#8", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("hsl(223.81 0% 18%)", 65), 0.1, 50, 100, "srgb")),
     "oklch(82.24642634799008% 0.1 50)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("hsl(223.81 0% 18%)", 65, "apca", "auto"),
@@ -197,7 +196,7 @@ test("#8", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("hsl(223.81 0% 18%)", 65, "apca", "darker"),
@@ -211,7 +210,7 @@ test("#8", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("hsl(223.81 0% 18%)", 65, "apca", "lighter"),
@@ -228,13 +227,13 @@ test("#8", () => {
 // Mid gray bg
 test("#9", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("#7D7D7D", 20), 0, 0, 100, "srgb")),
     "oklch(41.003435425663795% 0 0)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#7D7D7D", 20, "apca", "auto"), 0, 0, 100, "srgb")
     ),
@@ -242,7 +241,7 @@ test("#9", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#7D7D7D", 20, "apca", "darker"), 0, 0, 100, "srgb")
     ),
@@ -250,7 +249,7 @@ test("#9", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#7D7D7D", 20, "apca", "lighter"), 0, 0, 100, "srgb")
     ),
@@ -261,13 +260,13 @@ test("#9", () => {
 // Mid gray bg
 test("#10", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("#434343", 20), 0, 0, 100, "srgb")),
     "oklch(57.331842141992205% 0 0)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#434343", 20, "apca", "auto"), 0, 0, 100, "srgb")
     ),
@@ -275,7 +274,7 @@ test("#10", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#434343", 20, "apca", "darker"), 0, 0, 100, "srgb")
     ),
@@ -283,7 +282,7 @@ test("#10", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#434343", 20, "apca", "lighter"), 0, 0, 100, "srgb")
     ),
@@ -294,13 +293,13 @@ test("#10", () => {
 // Mid gray bg, high contrast
 test("#11", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("#7D7D7D", 70), 0, 0, 100, "srgb")),
     "oklch(98.6178617272248% 0 0)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#7D7D7D", 70, "apca", "auto"), 0, 0, 100, "srgb")
     ),
@@ -308,7 +307,7 @@ test("#11", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#7D7D7D", 70, "apca", "darker"), 0, 0, 100, "srgb")
     ),
@@ -316,7 +315,7 @@ test("#11", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#7D7D7D", 70, "apca", "lighter"), 0, 0, 100, "srgb")
     ),
@@ -327,13 +326,13 @@ test("#11", () => {
 // Colored bg
 test("#12", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("#03F59E", 70), 0.14, 300, 100, "srgb")),
     "oklch(39.500570508431956% 0.14 300)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#03F59E", 70, "apca", "auto"), 0.14, 300, 100, "srgb")
     ),
@@ -341,7 +340,7 @@ test("#12", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#03F59E", 70, "apca", "darker"), 0.14, 300, 100, "srgb")
     ),
@@ -349,7 +348,7 @@ test("#12", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#03F59E", 70, "apca", "lighter"), 0.14, 300, 100, "srgb")
     ),
@@ -360,13 +359,13 @@ test("#12", () => {
 // Colored dark bg
 test("#13", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("#5E4192", 70), 0.2, 120, 100, "srgb")),
     "oklch(88.46530873050969% 0.2 120)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#5E4192", 70, "apca", "auto"), 0.2, 120, 100, "srgb")
     ),
@@ -374,7 +373,7 @@ test("#13", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#5E4192", 70, "apca", "darker"), 0.2, 120, 100, "srgb")
     ),
@@ -382,7 +381,7 @@ test("#13", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#5E4192", 70, "apca", "lighter"), 0.2, 120, 100, "srgb")
     ),
@@ -393,13 +392,13 @@ test("#13", () => {
 // White fg
 test("#14", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("white", 65), 0.15, 150, 100, "srgb")),
     "oklch(62.890624218478486% 0.15 150)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("white", 65, "apca", "auto"), 0.15, 150, 100, "srgb")
     ),
@@ -407,7 +406,7 @@ test("#14", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("white", 65, "apca", "darker"), 0.15, 150, 100, "srgb")
     ),
@@ -415,7 +414,7 @@ test("#14", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("white", 65, "apca", "lighter"), 0.15, 150, 100, "srgb")
     ),
@@ -426,13 +425,13 @@ test("#14", () => {
 // Black fg
 test("#15", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("black", 70), 0.2, 150, 100, "srgb")),
     "oklch(78.41796875% 0.2 150)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("black", 70, "apca", "auto"), 0.2, 150, 100, "srgb")
     ),
@@ -440,7 +439,7 @@ test("#15", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("black", 70, "apca", "darker"), 0.2, 150, 100, "srgb")
     ),
@@ -448,7 +447,7 @@ test("#15", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("black", 70, "apca", "lighter"), 0.2, 150, 100, "srgb")
     ),
@@ -459,7 +458,7 @@ test("#15", () => {
 // Light gray fg
 test("#16", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("oklch(90.06% 0 89.88)", 70), 0.1, 150, 100, "srgb")
     ),
@@ -467,7 +466,7 @@ test("#16", () => {
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToFg("oklch(90.06% 0 89.88)", 70, "apca", "auto"),
@@ -481,7 +480,7 @@ test("#16", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToFg("oklch(90.06% 0 89.88)", 70, "apca", "darker"),
@@ -495,7 +494,7 @@ test("#16", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToFg("oklch(90.06% 0 89.88)", 70, "apca", "lighter"),
@@ -512,13 +511,13 @@ test("#16", () => {
 // Dark gray fg
 test("#17", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("hsl(223.81 0% 18%)", 65), 0.1, 50, 100, "srgb")),
     "oklch(82.24642634799008% 0.1 50)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToFg("hsl(223.81 0% 18%)", 65, "apca", "auto"),
@@ -532,7 +531,7 @@ test("#17", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToFg("hsl(223.81 0% 18%)", 65, "apca", "darker"),
@@ -546,7 +545,7 @@ test("#17", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToFg("hsl(223.81 0% 18%)", 65, "apca", "lighter"),
@@ -563,13 +562,13 @@ test("#17", () => {
 // Mid gray fg
 test("#18", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#7D7D7D", 20), 0, 0, 100, "srgb")),
     "oklch(41.003435425663795% 0 0)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#7D7D7D", 20, "apca", "auto"), 0, 0, 100, "srgb")
     ),
@@ -577,7 +576,7 @@ test("#18", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#7D7D7D", 20, "apca", "darker"), 0, 0, 100, "srgb")
     ),
@@ -585,7 +584,7 @@ test("#18", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#7D7D7D", 20, "apca", "lighter"), 0, 0, 100, "srgb")
     ),
@@ -596,13 +595,13 @@ test("#18", () => {
 // Mid gray fg
 test("#19", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#434343", 20), 0, 0, 100, "srgb")),
     "oklch(57.331842141992205% 0 0)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#434343", 20, "apca", "auto"), 0, 0, 100, "srgb")
     ),
@@ -610,7 +609,7 @@ test("#19", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#434343", 20, "apca", "darker"), 0, 0, 100, "srgb")
     ),
@@ -618,7 +617,7 @@ test("#19", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#434343", 20, "apca", "lighter"), 0, 0, 100, "srgb")
     ),
@@ -629,13 +628,13 @@ test("#19", () => {
 // Mid gray fg, high contrast
 test("#20", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#7D7D7D", 60), 0, 0, 100, "srgb")),
     "oklch(96.08394156047031% 0 0)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#7D7D7D", 60, "apca", "auto"), 0, 0, 100, "srgb")
     ),
@@ -643,7 +642,7 @@ test("#20", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#7D7D7D", 60, "apca", "darker"), 0, 0, 100, "srgb")
     ),
@@ -651,7 +650,7 @@ test("#20", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#7D7D7D", 60, "apca", "lighter"), 0, 0, 100, "srgb")
     ),
@@ -662,13 +661,13 @@ test("#20", () => {
 // Colored fg
 test("#21", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#03F59E", 70), 0.14, 300, 100, "srgb")),
     "oklch(41.83887066537931% 0.14 300)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#03F59E", 70, "apca", "auto"), 0.14, 300, 100, "srgb")
     ),
@@ -676,7 +675,7 @@ test("#21", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#03F59E", 70, "apca", "darker"), 0.14, 300, 100, "srgb")
     ),
@@ -684,7 +683,7 @@ test("#21", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#03F59E", 70, "apca", "lighter"), 0.14, 300, 100, "srgb")
     ),
@@ -695,13 +694,13 @@ test("#21", () => {
 // Colored dark fg
 test("#22", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToFg("#5E4192", 70), 0.2, 120, 100, "srgb")),
     "oklch(89.88019492594952% 0.2 120)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#5E4192", 70, "apca", "auto"), 0.2, 120, 100, "srgb")
     ),
@@ -709,7 +708,7 @@ test("#22", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#5E4192", 70, "apca", "darker"), 0.2, 120, 100, "srgb")
     ),
@@ -717,7 +716,7 @@ test("#22", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToFg("#5E4192", 70, "apca", "lighter"), 0.2, 120, 100, "srgb")
     ),
@@ -728,7 +727,7 @@ test("#22", () => {
 // High contrast
 test("#23", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(70, 0.4, 150, 100, "srgb")),
     "oklch(55.468749310707764% 0.4 150)"
   );
@@ -737,13 +736,13 @@ test("#23", () => {
 // White bg, maxChroma
 test("#24", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(apcach(crToBg("#FFFFFF", 70), maxChroma(), 200, 100, "srgb")),
     "oklch(56.15234338352428% 0.09531250000000001 200)"
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#FFFFFF", 70, "apca", "auto"),
@@ -757,7 +756,7 @@ test("#24", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#FFFFFF", 70, "apca", "darker"),
@@ -771,7 +770,7 @@ test("#24", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#FFFFFF", 70, "apca", "lighter"),
@@ -788,7 +787,7 @@ test("#24", () => {
 // White bg, maxChroma capped
 test("#25", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#000000", 70), maxChroma(0.1), 100, 100, "srgb")
     ),
@@ -796,7 +795,7 @@ test("#25", () => {
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#000000", 70, "apca", "auto"),
@@ -810,7 +809,7 @@ test("#25", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#000000", 70, "apca", "darker"),
@@ -824,7 +823,7 @@ test("#25", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#000000", 70, "apca", "lighter"),
@@ -841,7 +840,7 @@ test("#25", () => {
 // Almost too high contrast, maxChroma
 test("#26", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#A1A1A1", 50), maxChroma(0.2), 300, 100, "srgb")
     ),
@@ -849,7 +848,7 @@ test("#26", () => {
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#A1A1A1", 50, "apca", "auto"),
@@ -863,7 +862,7 @@ test("#26", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#A1A1A1", 50, "apca", "darker"),
@@ -877,7 +876,7 @@ test("#26", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#A1A1A1", 50, "apca", "lighter"),
@@ -894,7 +893,7 @@ test("#26", () => {
 // Too high contrast, maxChroma
 test("#27", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(
       apcach(crToBg("#A1A1A1", 60), maxChroma(0.2), 300, 100, "srgb")
     ),
@@ -902,7 +901,7 @@ test("#27", () => {
   );
 
   // AUTO
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#A1A1A1", 60, "apca", "auto"),
@@ -916,7 +915,7 @@ test("#27", () => {
   );
 
   // DARKER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#A1A1A1", 60, "apca", "darker"),
@@ -930,7 +929,7 @@ test("#27", () => {
   );
 
   // LIGHTER
-  assert.is(
+  assert(
     apcachToCss(
       apcach(
         crToBg("#A1A1A1", 60, "apca", "lighter"),
@@ -951,7 +950,7 @@ test("#27", () => {
 // Restore apcach
 test("#28", () => {
   // Implicit search direction
-  assert.is(
+  assert(
     apcachToCss(
       cssToApcach("#C9EB2B", { bg: "#5E4192" }, "srgb", "apca"),
       "hex"
@@ -960,4 +959,4 @@ test("#28", () => {
   );
 });
 
-test.run();
+
