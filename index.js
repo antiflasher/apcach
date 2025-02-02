@@ -245,6 +245,16 @@ function maxChroma(chromaCap = 0.4) {
 
 function apcachToCss(color, format) {
   switch (format) {
+    case "figma-p3": {
+      let p3Parsed = parse(apcachToCss(color, "p3"));
+      return (
+        floatingPointToHex(p3Parsed.r) +
+        floatingPointToHex(p3Parsed.g) +
+        floatingPointToHex(p3Parsed.b)
+      );
+    }
+    case "hex":
+      return formatHex(apcachToCss(color, "oklch"));
     case "oklch":
       return (
         "oklch(" +
@@ -255,22 +265,12 @@ function apcachToCss(color, format) {
         color.hue +
         ")"
       );
-    case "rgb":
-      return formatRgb(apcachToCss(color, "oklch"));
-    case "hex":
-      return formatHex(apcachToCss(color, "oklch"));
     case "p3": {
       log("culori > convertToP3 /// apcachToCss");
       return formatCss(convertToP3(apcachToCss(color, "oklch")));
     }
-    case "figma-p3": {
-      let p3Parsed = parse(apcachToCss(color, "p3"));
-      return (
-        floatingPointToHex(p3Parsed.r) +
-        floatingPointToHex(p3Parsed.g) +
-        floatingPointToHex(p3Parsed.b)
-      );
-    }
+    case "rgb":
+      return formatRgb(apcachToCss(color, "oklch"));
   }
   return apcachToCss(color, "oklch");
 }
@@ -404,7 +404,7 @@ function clapmColorToSpace(colorInCssFormat, colorSpace) {
       return toP3(oklch);
     }
   } else {
-    // eslint-disable-next-line no-lonely-if
+     
     log("culori > inSrgb /// clapmColorToSpace");
     if (inSrgb(colorInCssFormat)) {
       return colorInCssFormat;
@@ -695,13 +695,13 @@ function lightnessAndPatch(contrastConfig) {
       }
       break;
     }
-    case "lighter": {
-      lightness = 1;
+    case "darker": {
+      lightness = 0;
       lightnessPatch = (antagonistLightness - lightness) / 2;
       break;
     }
-    case "darker": {
-      lightness = 0;
+    case "lighter": {
+      lightness = 1;
       lightnessPatch = (antagonistLightness - lightness) / 2;
       break;
     }
@@ -785,6 +785,7 @@ function blendChannel(channelFg, channelBg, alpha) {
 
 function log(srt) {
   if (LOG_ON) {
+    // eslint-disable-next-line no-console
     console.log(srt);
   }
 }

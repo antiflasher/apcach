@@ -1,4 +1,4 @@
-import { test, assert } from "vitest";
+import { assert, test } from "vitest";
 
 import { apcach, apcachToCss, crToBg, crToFg, maxChroma } from "../index.js";
 

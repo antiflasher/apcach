@@ -1,19 +1,12 @@
 import {
-  setChroma,
-  setContrast,
-  setHue,
   apcach,
   apcachToCss,
-  crTo,
-  crToBg,
-  crToBlack,
-  crToFg,
-  crToFgBlack,
-  crToFgWhite,
   inP3,
   maxChroma,
   p3contrast,
-  cssToApcach,
+  setChroma,
+  setContrast,
+  setHue,
 } from "../index.js";
 
 const inputApcach = document.getElementById("inputApcach");
@@ -85,6 +78,8 @@ let color;
 
 function generateColor(rawApcach) {
   try {
+    // TODO: consider other options, since eval is quite unsafe
+    // eslint-disable-next-line no-eval
     color = eval(rawApcach);
     let colorCss = apcachToCss(color, "oklch");
     colorSlot.style.background = colorCss;
@@ -95,6 +90,7 @@ function generateColor(rawApcach) {
     contrastSlot.textContent =
       "contrast: " + color.contrastConfig.cr + " / fact: " + apca;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("An error occurred:", error.message);
   }
 }
