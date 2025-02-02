@@ -32,12 +32,13 @@
   "dependencies": {
     "apca-w3": "^0.1.9",
     "apcach": "link:",
-    "culori": "^3.3.0",
+    "culori": "^4.0.1",
     "wcag-contrast": "^3.0.0"
   },
   "devDependencies": {
     "@logux/eslint-config": "^53.5.1",
     "@size-limit/preset-small-lib": "^11.1.6",
+    "@types/culori": "^2.1.1",
     "benchmark": "^2.1.4",
     "clean-publish": "^5.1.0",
     "eslint": "^9.19.0",
@@ -53,7 +54,7 @@
   },
   "size-limit": [
     {
-      "limit": "16.66 kB"
+      "limit": "17.31 kB"
     }
   ]
 }
