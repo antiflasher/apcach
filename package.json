@@ -50,7 +50,9 @@
     "eslint-plugin-perfectionist": "^4.7.0",
     "eslint-plugin-prefer-let": "^4.0.0",
     "eslint-plugin-promise": "^7.2.1",
+    "nano-staged": "^0.8.0",
     "prettier": "^3.4.2",
+    "simple-git-hooks": "^2.11.1",
     "size-limit": "^11.1.6",
     "vite": "^6.0.11",
     "vitest": "^3.0.4"
@@ -59,5 +61,15 @@
     {
       "limit": "17.32 kB"
     }
-  ]
+  ],
+  "simple-git-hooks": {
+    "pre-commit": "./node_modules/.bin/nano-staged",
+    "pre-push": "pnpm typecheck"
+  },
+  "nano-staged": {
+    "*.{js,cjs,mjs,ts,mts}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
 }
