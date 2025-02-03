@@ -25,7 +25,7 @@
     "lint": "pnpm run --parallel --filter='.' /^lint:[^:]*$/",
     "lint:eslint": "eslint .",
     "lint:size": "size-limit",
-    "format": "pnpm run lint:eslint --fix",
+    "format": "pnpm run lint:eslint --fix && prettier --write '**/*.{ts,js,md,json}'",
     "test": "pnpm run --parallel --filter='.' /^test:[^:]*$/",
     "test:unit": "vitest -c config.vitest.mts run"
   },
@@ -50,6 +50,7 @@
     "eslint-plugin-perfectionist": "^4.7.0",
     "eslint-plugin-prefer-let": "^4.0.0",
     "eslint-plugin-promise": "^7.2.1",
+    "prettier": "^3.4.2",
     "size-limit": "^11.1.6",
     "vite": "^6.0.11",
     "vitest": "^3.0.4"
