@@ -27,7 +27,8 @@
     "lint:size": "size-limit",
     "format": "pnpm run lint:eslint --fix && prettier --write '**/*.{ts,js,md,json}'",
     "test": "pnpm run --parallel --filter='.' /^test:[^:]*$/",
-    "test:unit": "vitest -c config.vitest.mts run"
+    "test:unit": "vitest -c config.vitest.mts run",
+    "postinstall": "pnpm exec simple-git-hooks"
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
