@@ -11,26 +11,20 @@ test("#0", () => {
   // White over black, oklch
   assert(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0)", "apca", "p3"),
-    107.88472611509847
+    107.88472611509847,
   );
 
   // White over black, hex
-  assert(
-    calcContrast("#ffffff", "#000000", "apca", "p3"),
-    107.88472611509847
-  );
+  assert(calcContrast("#ffffff", "#000000", "apca", "p3"), 107.88472611509847);
 
   // Black over white, oklch
   assert(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0)", "apca", "p3"),
-    106.04066682868863
+    106.04066682868863,
   );
 
   // Black over white, hex
-  assert(
-    calcContrast("#000000", "#ffffff", "apca", "p3"),
-    106.04066682868863
-  );
+  assert(calcContrast("#000000", "#ffffff", "apca", "p3"), 106.04066682868863);
 });
 
 // APCA, SRGB
@@ -38,25 +32,25 @@ test("#1", () => {
   // White over black, oklch
   assert(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0)", "apca", "srgb"),
-    107.88473318309848
+    107.88473318309848,
   );
 
   // White over black, hex
   assert(
     calcContrast("#ffffff", "#000000", "apca", "srgb"),
-    107.88473318309848
+    107.88473318309848,
   );
 
   // Black over white, oklch
   assert(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0)", "apca", "srgb"),
-    106.04067321268862
+    106.04067321268862,
   );
 
   // Black over white, hex
   assert(
     calcContrast("#000000", "#ffffff", "apca", "srgb"),
-    106.04067321268862
+    106.04067321268862,
   );
 });
 
@@ -78,19 +72,13 @@ test("#2", () => {
 // WCAG, SRGB
 test("#3", () => {
   // White over black, oklch
-  assert(
-    calcContrast("oklch(100% 0 0)", "oklch(0% 0 0)", "wcag", "srgb"),
-    21
-  );
+  assert(calcContrast("oklch(100% 0 0)", "oklch(0% 0 0)", "wcag", "srgb"), 21);
 
   // White over black, hex
   assert(calcContrast("#ffffff", "#000000", "wcag", "srgb"), 21);
 
   // Black over white, oklch
-  assert(
-    calcContrast("oklch(0% 0 0)", "oklch(100% 0 0)", "wcag", "srgb"),
-    21
-  );
+  assert(calcContrast("oklch(0% 0 0)", "oklch(100% 0 0)", "wcag", "srgb"), 21);
 
   // Black over white, hex
   assert(calcContrast("#000000", "#ffffff", "wcag", "srgb"), 21);
@@ -105,7 +93,7 @@ test("#4", () => {
   // #0 Original oklch, only first color is in P3
   assert(
     calcContrast("oklch(40% 0.2 300)", "oklch(84% 0.25 162)", "apca", "p3"),
-    68.33018303187613
+    68.33018303187613,
   );
 
   // #1 Converted into display-p3 format
@@ -115,17 +103,14 @@ test("#4", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.0776 0.9594 0.6201)",
       "apca",
-      "p3"
+      "p3",
     ),
-    68.33405460235848
+    68.33405460235848,
   );
 
   // #3 Clamped to hex
   // Value must be different from #0
-  assert(
-    calcContrast("#5C11A0", "#00EEA5", "apca", "p3"),
-    66.25590425444918
-  );
+  assert(calcContrast("#5C11A0", "#00EEA5", "apca", "p3"), 66.25590425444918);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
@@ -138,9 +123,9 @@ test("#4", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.426 0.9195 0.6685)",
       "apca",
-      "p3"
+      "p3",
     ),
-    66.25920464580895
+    66.25920464580895,
   );
 });
 
@@ -149,7 +134,7 @@ test("#5", () => {
   // #0 Original oklch, only first color is in P3
   assert(
     calcContrast("oklch(40% 0.2 300)", "oklch(84% 0.25 162)", "apca", "srgb"),
-    66.4370292268889
+    66.4370292268889,
   );
 
   // #1 Converted into display-p3 format
@@ -159,25 +144,19 @@ test("#5", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.0776 0.9594 0.6201)",
       "apca",
-      "srgb"
+      "srgb",
     ),
-    66.4370292268889
+    66.4370292268889,
   );
 
   // #3 Clamped to hex
   // Value must be be close to #0
   // Hex is more rough format and loses some accuracy
-  assert(
-    calcContrast("#5C11A0", "#00EEA5", "apca", "srgb"),
-    66.4370292268889
-  );
+  assert(calcContrast("#5C11A0", "#00EEA5", "apca", "srgb"), 66.4370292268889);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#54189A", "#14F59E", "apca", "srgb"),
-    70.74731377064086
-  );
+  assert(calcContrast("#54189A", "#14F59E", "apca", "srgb"), 70.74731377064086);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly* equal to #3
@@ -186,9 +165,9 @@ test("#5", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.426 0.9195 0.6685)",
       "apca",
-      "srgb"
+      "srgb",
     ),
-    66.4370292268889
+    66.4370292268889,
   );
 });
 
@@ -197,7 +176,7 @@ test("#6", () => {
   // #0 Original oklch, only first color is in P3
   assert(
     calcContrast("oklch(40% 0.2 300)", "oklch(84% 0.25 162)", "wcag", "p3"),
-    7.261025780390085
+    7.261025780390085,
   );
 
   // #1 Converted into display-p3 format
@@ -207,24 +186,18 @@ test("#6", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.0776 0.9594 0.6201)",
       "wcag",
-      "p3"
+      "p3",
     ),
-    7.261025780390085
+    7.261025780390085,
   );
 
   // #3 Clamped to hex
   // Value must be different from #0
-  assert(
-    calcContrast("#5C11A0", "#00EEA5", "wcag", "p3"),
-    6.742102558845356
-  );
+  assert(calcContrast("#5C11A0", "#00EEA5", "wcag", "p3"), 6.742102558845356);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#54189A", "#14F59E", "wcag", "p3"),
-    7.387380536719613
-  );
+  assert(calcContrast("#54189A", "#14F59E", "wcag", "p3"), 7.387380536719613);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly* equal to #3
@@ -233,9 +206,9 @@ test("#6", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.426 0.9195 0.6685)",
       "wcag",
-      "p3"
+      "p3",
     ),
-    6.742102558845356
+    6.742102558845356,
   );
 });
 
@@ -244,7 +217,7 @@ test("#7", () => {
   // #0 Original oklch, only first color is in P3
   assert(
     calcContrast("oklch(40% 0.2 300)", "oklch(84% 0.25 162)", "wcag", "srgb"),
-    6.742102558845356
+    6.742102558845356,
   );
 
   // #1 Converted into display-p3 format
@@ -254,25 +227,19 @@ test("#7", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.0776 0.9594 0.6201)",
       "wcag",
-      "srgb"
+      "srgb",
     ),
-    6.742102558845356
+    6.742102558845356,
   );
 
   // #3 Clamped to hex
   // Value must be be close to #0
   // Hex is more rough format and loses some accuracy
-  assert(
-    calcContrast("#5C11A0", "#00EEA5", "wcag", "srgb"),
-    6.742102558845356
-  );
+  assert(calcContrast("#5C11A0", "#00EEA5", "wcag", "srgb"), 6.742102558845356);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#54189A", "#14F59E", "wcag", "srgb"),
-    7.387380536719613
-  );
+  assert(calcContrast("#54189A", "#14F59E", "wcag", "srgb"), 7.387380536719613);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly* equal to #3
@@ -281,9 +248,9 @@ test("#7", () => {
       "color(display-p3 0.3294 0.0942 0.603)",
       "color(display-p3 0.426 0.9195 0.6685)",
       "wcag",
-      "srgb"
+      "srgb",
     ),
-    6.742102558845356
+    6.742102558845356,
   );
 });
 
@@ -296,7 +263,7 @@ test("#8", () => {
   // #0 Original oklch, both colors are in P3
   assert(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "apca", "p3"),
-    63.94684474879767
+    63.94684474879767,
   );
 
   // #1 Converted into display-p3 format
@@ -306,24 +273,18 @@ test("#8", () => {
       "color(display-p3 0.9904 0.9543 0.0946)",
       "color(display-p3 0.0124 0.5535 0.1858)",
       "apca",
-      "p3"
+      "p3",
     ),
-    63.94357140219613
+    63.94357140219613,
   );
 
   // #3 Clamped to hex
   // Value must be different from #0
-  assert(
-    calcContrast("#FCF200", "#00893D", "apca", "p3"),
-    64.60734027280559
-  );
+  assert(calcContrast("#FCF200", "#00893D", "apca", "p3"), 64.60734027280559);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#FDF318", "#038D2F", "apca", "p3"),
-    63.82702945988926
-  );
+  assert(calcContrast("#FDF318", "#038D2F", "apca", "p3"), 63.82702945988926);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly* equal to #3
@@ -332,9 +293,9 @@ test("#8", () => {
       "color(display-p3 0.9814 0.9504 0.315)",
       "color(display-p3 0.2332 0.529 0.2731)",
       "apca",
-      "p3"
+      "p3",
     ),
-    64.60967876148806
+    64.60967876148806,
   );
 });
 
@@ -343,7 +304,7 @@ test("#9", () => {
   // #0 Original oklch, both colors are in P3
   assert(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "apca", "srgb"),
-    64.79416214814182
+    64.79416214814182,
   );
 
   // #1 Converted into display-p3 format
@@ -353,25 +314,19 @@ test("#9", () => {
       "color(display-p3 0.9904 0.9543 0.0946)",
       "color(display-p3 0.0124 0.5535 0.1858)",
       "apca",
-      "srgb"
+      "srgb",
     ),
-    64.79416214814182
+    64.79416214814182,
   );
 
   // #3 Clamped to hex
   // Value must be close to #0
   // Hex is more rough format and loses some accuracy
-  assert(
-    calcContrast("#FCF300", "#00893D", "apca", "srgb"),
-    64.79416214814182
-  );
+  assert(calcContrast("#FCF300", "#00893D", "apca", "srgb"), 64.79416214814182);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#FDF318", "#038D2F", "apca", "srgb"),
-    63.51967605276941
-  );
+  assert(calcContrast("#FDF318", "#038D2F", "apca", "srgb"), 63.51967605276941);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly* equal to #3
@@ -380,9 +335,9 @@ test("#9", () => {
       "color(display-p3 0.9814 0.9504 0.315)",
       "color(display-p3 0.2332 0.529 0.2731)",
       "apca",
-      "srgb"
+      "srgb",
     ),
-    64.32050759671479
+    64.32050759671479,
   );
 });
 
@@ -391,7 +346,7 @@ test("#10", () => {
   // #0 Original oklch, both colors are in P3
   assert(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "wcag", "p3"),
-    3.669016369740913
+    3.669016369740913,
   );
 
   // #1 Converted into display-p3 format
@@ -401,24 +356,18 @@ test("#10", () => {
       "color(display-p3 0.9904 0.9543 0.0946)",
       "color(display-p3 0.0124 0.5535 0.1858)",
       "wcag",
-      "p3"
+      "p3",
     ),
-    3.669016369740913
+    3.669016369740913,
   );
 
   // #3 Clamped to hex
   // Value must be different from #0
-  assert(
-    calcContrast("#FCF200", "#00893D", "wcag", "p3"),
-    3.840140228749543
-  );
+  assert(calcContrast("#FCF200", "#00893D", "wcag", "p3"), 3.840140228749543);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#FDF318", "#038D2F", "wcag", "p3"),
-    3.709668307286619
-  );
+  assert(calcContrast("#FDF318", "#038D2F", "wcag", "p3"), 3.709668307286619);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly equal to #3
@@ -427,9 +376,9 @@ test("#10", () => {
       "color(display-p3 0.9814 0.9504 0.315)",
       "color(display-p3 0.2332 0.529 0.2731)",
       "wcag",
-      "p3"
+      "p3",
     ),
-    3.840140228749543
+    3.840140228749543,
   );
 });
 
@@ -438,7 +387,7 @@ test("#11", () => {
   // #0 Original oklch, both colors are in P3
   assert(
     calcContrast("oklch(94% 0.23 107)", "oklch(55% 0.21 150)", "wcag", "srgb"),
-    3.865838374606475
+    3.865838374606475,
   );
 
   // #1 Converted into display-p3 format
@@ -448,25 +397,19 @@ test("#11", () => {
       "color(display-p3 0.9904 0.9543 0.0946)",
       "color(display-p3 0.0124 0.5535 0.1858)",
       "wcag",
-      "srgb"
+      "srgb",
     ),
-    3.865838374606475
+    3.865838374606475,
   );
 
   // #3 Clamped to hex
   // Value must be close to #0
   // Hex is more rough format and loses some accuracy
-  assert(
-    calcContrast("#FCF200", "#00893D", "wcag", "srgb"),
-    3.840140228749543
-  );
+  assert(calcContrast("#FCF200", "#00893D", "wcag", "srgb"), 3.840140228749543);
 
   // #2 Converted to figma-p3 hex
   // Value must be different from #0
-  assert(
-    calcContrast("#FDF318", "#038D2F", "wcag", "srgb"),
-    3.709668307286619
-  );
+  assert(calcContrast("#FDF318", "#038D2F", "wcag", "srgb"), 3.709668307286619);
 
   // #3 Clamped hex converted into display-p3 format
   // Value must be exactly equal to #3
@@ -475,9 +418,9 @@ test("#11", () => {
       "color(display-p3 0.9814 0.9504 0.315)",
       "color(display-p3 0.2332 0.529 0.2731)",
       "wcag",
-      "srgb"
+      "srgb",
     ),
-    3.840140228749543
+    3.840140228749543,
   );
 });
 
@@ -490,49 +433,49 @@ test("#12", () => {
   // Semitransparent White over Black, oklch
   assert(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "apca", "p3"),
-    34.52645905997656
+    34.52645905997656,
   );
 
   // Semitransparent White over Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255, 0.5)", "rgba(0, 0, 0)", "apca", "p3"),
-    34.52645905997656
+    34.52645905997656,
   );
 
   // Semitransparent Black over White, oklch
   assert(
     calcContrast("oklch(0% 0 0 / 50%)", "oklch(100% 0 0)", "apca", "p3"),
-    67.13321193532714
+    67.13321193532714,
   );
 
   // Semitransparent Black over White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255)", "apca", "p3"),
-    67.13321193532714
+    67.13321193532714,
   );
 
   // White over Semitransparent Black, oklch
   assert(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0 / 50%)", "apca", "p3"),
-    107.88472611509847
+    107.88472611509847,
   );
 
   // White over Semitransparent Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255)", "rgba(0, 0, 0, 0.5)", "apca", "p3"),
-    107.88472611509847
+    107.88472611509847,
   );
 
   // Black over Semitransparent White, oklch
   assert(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0 / 50%)", "apca", "p3"),
-    106.04066682868863
+    106.04066682868863,
   );
 
   // Black over Semitransparent White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0)", "rgba(255, 255, 255, 0.5)", "apca", "p3"),
-    106.04066682868863
+    106.04066682868863,
   );
 });
 
@@ -541,49 +484,49 @@ test("#13", () => {
   // Semitransparent White over Black, oklch
   assert(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "apca", "srgb"),
-    34.629082804578125
+    34.629082804578125,
   );
 
   // Semitransparent White over Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255, 0.5)", "rgba(0, 0, 0)", "apca", "srgb"),
-    34.76384483419958
+    34.76384483419958,
   );
 
   // Semitransparent Black over White, oklch
   assert(
     calcContrast("oklch(0% 0 0 / 50%)", "oklch(100% 0 0)", "apca", "srgb"),
-    67.03069788389881
+    67.03069788389881,
   );
 
   // Semitransparent Black over White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255)", "apca", "srgb"),
-    66.89610313180029
+    66.89610313180029,
   );
 
   // White over Semitransparent Black, oklch
   assert(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0 / 50%)", "apca", "srgb"),
-    107.88473318309848
+    107.88473318309848,
   );
 
   // White over Semitransparent Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255)", "rgba(0, 0, 0, 0.5)", "apca", "srgb"),
-    107.88473318309848
+    107.88473318309848,
   );
 
   // Black over Semitransparent White, oklch
   assert(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0 / 50%)", "apca", "srgb"),
-    106.04067321268862
+    106.04067321268862,
   );
 
   // Black over Semitransparent White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0)", "rgba(255, 255, 255, 0.5)", "apca", "srgb"),
-    106.04067321268862
+    106.04067321268862,
   );
 });
 
@@ -592,49 +535,49 @@ test("#14", () => {
   // Semitransparent White over Black, oklch
   assert(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "wcag", "p3"),
-    5.317210002277984
+    5.317210002277984,
   );
 
   // Semitransparent White over Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255, 0.5)", "rgba(0, 0, 0)", "wcag", "p3"),
-    5.317210002277984
+    5.317210002277984,
   );
 
   // Semitransparent Black over White, oklch
   assert(
     calcContrast("oklch(0% 0 0 / 50%)", "oklch(100% 0 0)", "wcag", "p3"),
-    3.9494396480491156
+    3.9494396480491156,
   );
 
   // Semitransparent Black over White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255)", "wcag", "p3"),
-    3.9494396480491156
+    3.9494396480491156,
   );
 
   // White over Semitransparent Black, oklch
   assert(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0 / 50%)", "wcag", "p3"),
-    21
+    21,
   );
 
   // White over Semitransparent Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255)", "rgba(0, 0, 0, 0.5)", "wcag", "p3"),
-    21
+    21,
   );
 
   // Black over Semitransparent White, oklch
   assert(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0 / 50%)", "wcag", "p3"),
-    21
+    21,
   );
 
   // Black over Semitransparent White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0)", "rgba(255, 255, 255, 0.5)", "wcag", "p3"),
-    21
+    21,
   );
 });
 
@@ -643,50 +586,48 @@ test("#15", () => {
   // Semitransparent White over Black, oklch
   assert(
     calcContrast("oklch(100% 0 0 / 50%)", "oklch(0% 0 0)", "wcag", "srgb"),
-    5.317210002277984
+    5.317210002277984,
   );
 
   // Semitransparent White over Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255, 0.5)", "rgba(0, 0, 0)", "wcag", "srgb"),
-    5.317210002277984
+    5.317210002277984,
   );
 
   // Semitransparent Black over White, oklch
   assert(
     calcContrast("oklch(0% 0 0 / 50%)", "oklch(100% 0 0)", "wcag", "srgb"),
-    3.9494396480491156
+    3.9494396480491156,
   );
 
   // Semitransparent Black over White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0, 0.5)", "rgba(255, 255, 255)", "wcag", "srgb"),
-    3.9494396480491156
+    3.9494396480491156,
   );
 
   // White over Semitransparent Black, oklch
   assert(
     calcContrast("oklch(100% 0 0)", "oklch(0% 0 0 / 50%)", "wcag", "srgb"),
-    21
+    21,
   );
 
   // White over Semitransparent Black, rgba
   assert(
     calcContrast("rgba(255, 255, 255)", "rgba(0, 0, 0, 0.5)", "wcag", "srgb"),
-    21
+    21,
   );
 
   // Black over Semitransparent White, oklch
   assert(
     calcContrast("oklch(0% 0 0)", "oklch(100% 0 0 / 50%)", "wcag", "srgb"),
-    21
+    21,
   );
 
   // Black over Semitransparent White, rgbs
   assert(
     calcContrast("rgba(0, 0, 0)", "rgba(255, 255, 255, 0.5)", "wcag", "srgb"),
-    21
+    21,
   );
 });
-
-

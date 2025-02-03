@@ -47,7 +47,7 @@ function apcach(contrast, chroma, hue, alpha = 100, colorSpace = "p3") {
         internalContrastConfig(contrastConfig, colorSpace),
         parseFloat(chroma),
         parseFloat(hue),
-        colorSpace
+        colorSpace,
       );
     } else {
       // APCA has a cut off at the value about 8
@@ -68,7 +68,7 @@ function cssToApcach(
   color,
   antagonist,
   colorSpace = "p3",
-  contrastModel = "apca"
+  contrastModel = "apca",
 ) {
   if (color === undefined) {
     throw new Error("Color is undefined");
@@ -97,7 +97,7 @@ function cssToApcach(
       colorComp.c,
       colorComp.h ?? 0,
       colorComp.alpha ?? 1,
-      colorSpace
+      colorSpace,
     );
   } else {
     throw new Error("antagonist color is not provided");
@@ -159,7 +159,7 @@ function setContrast(colorInApcach, cr) {
     colorInApcach.chroma,
     colorInApcach.hue,
     colorInApcach.alpha,
-    colorInApcach.colorSpace
+    colorInApcach.colorSpace,
   );
 }
 
@@ -178,7 +178,7 @@ function setChroma(colorInApcach, c) {
     newChroma,
     colorInApcach.hue,
     colorInApcach.alpha,
-    colorInApcach.colorSpace
+    colorInApcach.colorSpace,
   );
 }
 
@@ -197,7 +197,7 @@ function setHue(colorInApcach, h) {
     colorInApcach.chroma,
     newHue,
     colorInApcach.alpha,
-    colorInApcach.colorSpace
+    colorInApcach.colorSpace,
   );
 }
 
@@ -279,7 +279,7 @@ function calcContrast(
   fgColor,
   bgColor,
   contrastModel = "apca",
-  colorSpace = "p3"
+  colorSpace = "p3",
 ) {
   // Background color
   let bgColorClamped = clapmColorToSpace(bgColor, colorSpace);
@@ -296,8 +296,8 @@ function calcContrast(
       fgColorComps,
       bgColorComps,
       contrastModel,
-      colorSpace
-    )
+      colorSpace,
+    ),
   );
 }
 
@@ -331,12 +331,12 @@ function internalContrastConfig(contrastConfig, colorSpace) {
     : contrastConfig.fgColor;
   let colorAntagonistClamped = clapmColorToSpace(
     colorAntagonistOriginal,
-    colorSpace
+    colorSpace,
   );
   let colorAntagonistPrepared = colorToComps(
     colorAntagonistClamped,
     contrastConfig.contrastModel,
-    colorSpace
+    colorSpace,
   );
 
   // Drop alpha if antagonist is on bg
@@ -404,7 +404,6 @@ function clapmColorToSpace(colorInCssFormat, colorSpace) {
       return toP3(oklch);
     }
   } else {
-     
     log("culori > inSrgb /// clapmColorToSpace");
     if (inSrgb(colorInCssFormat)) {
       return colorInCssFormat;
@@ -436,8 +435,8 @@ function contrastFromConfig(color, contrastConfig, colorSpace) {
       fgColor,
       bgColor,
       contrastConfig.contrastModel,
-      colorSpace
-    )
+      colorSpace,
+    ),
   );
 }
 
@@ -445,7 +444,7 @@ function calcContrastFromPreparedColors(
   fgColor,
   bgColor,
   contrastModel,
-  colorSpace
+  colorSpace,
 ) {
   switch (contrastModel) {
     case "apca": {
@@ -459,7 +458,7 @@ function calcContrastFromPreparedColors(
       return calcWcag(fgColor, bgColor);
     default:
       throw new Error(
-        'Invalid contrast model. Suported models: "apca", "wcag"'
+        'Invalid contrast model. Suported models: "apca", "wcag"',
       );
   }
 }
@@ -550,7 +549,7 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
     // Cap new lightness
     newLightness = Math.max(
       Math.min(newLightness, chromaRange.upper),
-      chromaRange.lower
+      chromaRange.lower,
     );
 
     // Compose color with the lightness to check
@@ -561,14 +560,14 @@ function calcLightness(contrastConfig, chroma, hue, colorSpace) {
     let checkingColorComps = colorToComps(
       checkingColorClamped,
       contrastConfig.contrastModel,
-      colorSpace
+      colorSpace,
     );
 
     // Calculate contrast of this color
     let calcedContrast = contrastFromConfig(
       checkingColorComps,
       contrastConfig,
-      colorSpace
+      colorSpace,
     );
     let newDeltaContrast = contrastConfig.cr - calcedContrast;
 
@@ -707,7 +706,7 @@ function lightnessAndPatch(contrastConfig) {
     }
     default:
       throw new Error(
-        "Invalid lightness search region. Supported values: 'auto', 'lighter', 'darker'"
+        "Invalid lightness search region. Supported values: 'auto', 'lighter', 'darker'",
       );
   }
 

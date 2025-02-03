@@ -10,7 +10,7 @@ import { apcach, apcachToCss, crToBg, crToFg, maxChroma } from "../index.js";
 test("#0", () => {
   assert(
     apcachToCss(apcach(crToBg("white", 0.2, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(100% 0 0)"
+    "oklch(100% 0 0)",
   );
 });
 
@@ -18,7 +18,7 @@ test("#0", () => {
 test("#1", () => {
   assert(
     apcachToCss(apcach(crToBg("black", 0.2, "wcag"), 0.05, 200, 100, "srgb")),
-    "oklch(0% 0.05 200)"
+    "oklch(0% 0.05 200)",
   );
 });
 
@@ -26,7 +26,7 @@ test("#1", () => {
 test("#2", () => {
   assert(
     apcachToCss(apcach(crToFg("#7D7D7D", 0.2, "wcag"), 3, 100, 100, "srgb")),
-    "oklch(58.97123297174118% 3 100)"
+    "oklch(58.97123297174118% 3 100)",
   );
 });
 
@@ -34,7 +34,7 @@ test("#2", () => {
 test("#3", () => {
   assert(
     apcachToCss(apcach(crToBg("#00FF94", 0.2, "wcag"), 0, 70, 100, "srgb")),
-    "oklch(87.82585371306136% 0 70)"
+    "oklch(87.82585371306136% 0 70)",
   );
 });
 
@@ -46,7 +46,7 @@ test("#3", () => {
 test("#4", () => {
   assert(
     apcachToCss(apcach(crToBg("white", 4.5, "wcag"), 0.15, 150, 100, "srgb")),
-    "oklch(55.27343681313484% 0.15 150)"
+    "oklch(55.27343681313484% 0.15 150)",
   );
 });
 
@@ -55,31 +55,31 @@ test("#5", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("white", 4.5, "wcag"), 0.15, 300, 100, "srgb")),
-    "oklch(58.227538338925164% 0.15 300)"
+    "oklch(58.227538338925164% 0.15 300)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("white", 4.5, "wcag", "auto"), 0.15, 300, 100, "srgb")
+      apcach(crToBg("white", 4.5, "wcag", "auto"), 0.15, 300, 100, "srgb"),
     ),
-    "oklch(58.227538338925164% 0.15 300)"
+    "oklch(58.227538338925164% 0.15 300)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("white", 4.5, "wcag", "darker"), 0.15, 300, 100, "srgb")
+      apcach(crToBg("white", 4.5, "wcag", "darker"), 0.15, 300, 100, "srgb"),
     ),
-    "oklch(58.227538338925164% 0.15 300)"
+    "oklch(58.227538338925164% 0.15 300)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("white", 4.5, "wcag", "lighter"), 0.15, 300, 100, "srgb")
+      apcach(crToBg("white", 4.5, "wcag", "lighter"), 0.15, 300, 100, "srgb"),
     ),
-    "oklch(100% 0.15 300)"
+    "oklch(100% 0.15 300)",
   );
 });
 
@@ -88,31 +88,31 @@ test("#6", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("black", 4.5, "wcag"), 0.14, 150, 100, "srgb")),
-    "oklch(54.4921875% 0.14 150)"
+    "oklch(54.4921875% 0.14 150)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("black", 4.5, "wcag", "auto"), 0.14, 150, 100, "srgb")
+      apcach(crToBg("black", 4.5, "wcag", "auto"), 0.14, 150, 100, "srgb"),
     ),
-    "oklch(54.4921875% 0.14 150)"
+    "oklch(54.4921875% 0.14 150)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("black", 4.5, "wcag", "darker"), 0.14, 150, 100, "srgb")
+      apcach(crToBg("black", 4.5, "wcag", "darker"), 0.14, 150, 100, "srgb"),
     ),
-    "oklch(0% 0.14 150)"
+    "oklch(0% 0.14 150)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("black", 4.5, "wcag", "lighter"), 0.14, 150, 100, "srgb")
+      apcach(crToBg("black", 4.5, "wcag", "lighter"), 0.14, 150, 100, "srgb"),
     ),
-    "oklch(54.4921875% 0.14 150)"
+    "oklch(54.4921875% 0.14 150)",
   );
 });
 
@@ -126,10 +126,10 @@ test("#7", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(48.723867187500005% 0.1 150)"
+    "oklch(48.723867187500005% 0.1 150)",
   );
 
   // AUTO
@@ -140,10 +140,10 @@ test("#7", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(48.723867187500005% 0.1 150)"
+    "oklch(48.723867187500005% 0.1 150)",
   );
 
   // DARKER
@@ -154,10 +154,10 @@ test("#7", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(48.723867187500005% 0.1 150)"
+    "oklch(48.723867187500005% 0.1 150)",
   );
 
   // LIGHTER
@@ -168,10 +168,10 @@ test("#7", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(100% 0.1 150)"
+    "oklch(100% 0.1 150)",
   );
 });
 
@@ -180,9 +180,9 @@ test("#8", () => {
   // Implicit search direction
   assert(
     apcachToCss(
-      apcach(crToBg("hsl(223.81 0% 18%)", 4.5, "wcag"), 0.1, 50, 100, "srgb")
+      apcach(crToBg("hsl(223.81 0% 18%)", 4.5, "wcag"), 0.1, 50, 100, "srgb"),
     ),
-    "oklch(67.77043552404356% 0.1 50)"
+    "oklch(67.77043552404356% 0.1 50)",
   );
 
   // AUTO
@@ -193,10 +193,10 @@ test("#8", () => {
         0.1,
         50,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(67.77043552404356% 0.1 50)"
+    "oklch(67.77043552404356% 0.1 50)",
   );
 
   // DARKER
@@ -207,10 +207,10 @@ test("#8", () => {
         0.1,
         50,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(0% 0.1 50)"
+    "oklch(0% 0.1 50)",
   );
 
   // LIGHTER
@@ -221,10 +221,10 @@ test("#8", () => {
         0.1,
         50,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(67.77043552404356% 0.1 50)"
+    "oklch(67.77043552404356% 0.1 50)",
   );
 });
 
@@ -233,31 +233,31 @@ test("#9", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("#7D7D7D", 2, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(42.385573698438975% 0 0)"
+    "oklch(42.385573698438975% 0 0)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("#7D7D7D", 2, "wcag", "auto"), 0, 0, 100, "srgb")
+      apcach(crToBg("#7D7D7D", 2, "wcag", "auto"), 0, 0, 100, "srgb"),
     ),
-    "oklch(42.385573698438975% 0 0)"
+    "oklch(42.385573698438975% 0 0)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("#7D7D7D", 2, "wcag", "darker"), 0, 0, 100, "srgb")
+      apcach(crToBg("#7D7D7D", 2, "wcag", "darker"), 0, 0, 100, "srgb"),
     ),
-    "oklch(42.385573698438975% 0 0)"
+    "oklch(42.385573698438975% 0 0)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("#7D7D7D", 2, "wcag", "lighter"), 0, 0, 100, "srgb")
+      apcach(crToBg("#7D7D7D", 2, "wcag", "lighter"), 0, 0, 100, "srgb"),
     ),
-    "oklch(77.24185578901267% 0 0)"
+    "oklch(77.24185578901267% 0 0)",
   );
 });
 
@@ -266,31 +266,31 @@ test("#10", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("#434343", 2, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(54.92121175453411% 0 0)"
+    "oklch(54.92121175453411% 0 0)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("#434343", 2, "wcag", "auto"), 0, 0, 100, "srgb")
+      apcach(crToBg("#434343", 2, "wcag", "auto"), 0, 0, 100, "srgb"),
     ),
-    "oklch(54.92121175453411% 0 0)"
+    "oklch(54.92121175453411% 0 0)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("#434343", 2, "wcag", "darker"), 0, 0, 100, "srgb")
+      apcach(crToBg("#434343", 2, "wcag", "darker"), 0, 0, 100, "srgb"),
     ),
-    "oklch(14.357948280402544% 0 0)"
+    "oklch(14.357948280402544% 0 0)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("#434343", 2, "wcag", "lighter"), 0, 0, 100, "srgb")
+      apcach(crToBg("#434343", 2, "wcag", "lighter"), 0, 0, 100, "srgb"),
     ),
-    "oklch(54.92121175453411% 0 0)"
+    "oklch(54.92121175453411% 0 0)",
   );
 });
 
@@ -299,31 +299,31 @@ test("#11", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("#7D7D7D", 4.5, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(18.88922306126085% 0 0)"
+    "oklch(18.88922306126085% 0 0)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("#7D7D7D", 4.5, "wcag", "auto"), 0, 0, 100, "srgb")
+      apcach(crToBg("#7D7D7D", 4.5, "wcag", "auto"), 0, 0, 100, "srgb"),
     ),
-    "oklch(18.88922306126085% 0 0)"
+    "oklch(18.88922306126085% 0 0)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("#7D7D7D", 4.5, "wcag", "darker"), 0, 0, 100, "srgb")
+      apcach(crToBg("#7D7D7D", 4.5, "wcag", "darker"), 0, 0, 100, "srgb"),
     ),
-    "oklch(18.88922306126085% 0 0)"
+    "oklch(18.88922306126085% 0 0)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("#7D7D7D", 4.5, "wcag", "lighter"), 0, 0, 100, "srgb")
+      apcach(crToBg("#7D7D7D", 4.5, "wcag", "lighter"), 0, 0, 100, "srgb"),
     ),
-    "oklch(100% 0 0)"
+    "oklch(100% 0 0)",
   );
 });
 
@@ -332,31 +332,31 @@ test("#12", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("#03F59E", 4.5, "wcag"), 0.14, 300, 100, "srgb")),
-    "oklch(49.60536761524014% 0.14 300)"
+    "oklch(49.60536761524014% 0.14 300)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("#03F59E", 4.5, "wcag", "auto"), 0.14, 300, 100, "srgb")
+      apcach(crToBg("#03F59E", 4.5, "wcag", "auto"), 0.14, 300, 100, "srgb"),
     ),
-    "oklch(49.60536761524014% 0.14 300)"
+    "oklch(49.60536761524014% 0.14 300)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("#03F59E", 4.5, "wcag", "darker"), 0.14, 300, 100, "srgb")
+      apcach(crToBg("#03F59E", 4.5, "wcag", "darker"), 0.14, 300, 100, "srgb"),
     ),
-    "oklch(49.60536761524014% 0.14 300)"
+    "oklch(49.60536761524014% 0.14 300)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("#03F59E", 4.5, "wcag", "lighter"), 0.14, 300, 100, "srgb")
+      apcach(crToBg("#03F59E", 4.5, "wcag", "lighter"), 0.14, 300, 100, "srgb"),
     ),
-    "oklch(100% 0.14 300)"
+    "oklch(100% 0.14 300)",
   );
 });
 
@@ -365,31 +365,31 @@ test("#13", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("#5E4192", 4.5, "wcag"), 0.18, 120, 100, "srgb")),
-    "oklch(80.70364731552559% 0.18 120)"
+    "oklch(80.70364731552559% 0.18 120)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToBg("#5E4192", 4.5, "wcag", "auto"), 0.18, 120, 100, "srgb")
+      apcach(crToBg("#5E4192", 4.5, "wcag", "auto"), 0.18, 120, 100, "srgb"),
     ),
-    "oklch(80.70364731552559% 0.18 120)"
+    "oklch(80.70364731552559% 0.18 120)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToBg("#5E4192", 4.5, "wcag", "darker"), 0.18, 120, 100, "srgb")
+      apcach(crToBg("#5E4192", 4.5, "wcag", "darker"), 0.18, 120, 100, "srgb"),
     ),
-    "oklch(0% 0.18 120)"
+    "oklch(0% 0.18 120)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToBg("#5E4192", 4.5, "wcag", "lighter"), 0.18, 120, 100, "srgb")
+      apcach(crToBg("#5E4192", 4.5, "wcag", "lighter"), 0.18, 120, 100, "srgb"),
     ),
-    "oklch(80.70364731552559% 0.18 120)"
+    "oklch(80.70364731552559% 0.18 120)",
   );
 });
 
@@ -398,31 +398,31 @@ test("#14", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("white", 4.5, "wcag"), 0.15, 150, 100, "srgb")),
-    "oklch(55.27343681313484% 0.15 150)"
+    "oklch(55.27343681313484% 0.15 150)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("white", 4.5, "wcag", "auto"), 0.15, 150, 100, "srgb")
+      apcach(crToFg("white", 4.5, "wcag", "auto"), 0.15, 150, 100, "srgb"),
     ),
-    "oklch(55.27343681313484% 0.15 150)"
+    "oklch(55.27343681313484% 0.15 150)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("white", 4.5, "wcag", "darker"), 0.15, 150, 100, "srgb")
+      apcach(crToFg("white", 4.5, "wcag", "darker"), 0.15, 150, 100, "srgb"),
     ),
-    "oklch(55.27343681313484% 0.15 150)"
+    "oklch(55.27343681313484% 0.15 150)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("white", 4.5, "wcag", "lighter"), 0.15, 150, 100, "srgb")
+      apcach(crToFg("white", 4.5, "wcag", "lighter"), 0.15, 150, 100, "srgb"),
     ),
-    "oklch(100% 0.15 150)"
+    "oklch(100% 0.15 150)",
   );
 });
 
@@ -431,31 +431,31 @@ test("#15", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("black", 4.5, "wcag"), 0.14, 150, 100, "srgb")),
-    "oklch(54.4921875% 0.14 150)"
+    "oklch(54.4921875% 0.14 150)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("black", 4.5, "wcag", "auto"), 0.14, 150, 100, "srgb")
+      apcach(crToFg("black", 4.5, "wcag", "auto"), 0.14, 150, 100, "srgb"),
     ),
-    "oklch(54.4921875% 0.14 150)"
+    "oklch(54.4921875% 0.14 150)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("black", 4.5, "wcag", "darker"), 0.14, 150, 100, "srgb")
+      apcach(crToFg("black", 4.5, "wcag", "darker"), 0.14, 150, 100, "srgb"),
     ),
-    "oklch(0% 0.14 150)"
+    "oklch(0% 0.14 150)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("black", 4.5, "wcag", "lighter"), 0.14, 150, 100, "srgb")
+      apcach(crToFg("black", 4.5, "wcag", "lighter"), 0.14, 150, 100, "srgb"),
     ),
-    "oklch(54.4921875% 0.14 150)"
+    "oklch(54.4921875% 0.14 150)",
   );
 });
 
@@ -469,10 +469,10 @@ test("#16", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(48.723867187500005% 0.1 150)"
+    "oklch(48.723867187500005% 0.1 150)",
   );
 
   // AUTO
@@ -483,10 +483,10 @@ test("#16", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(48.723867187500005% 0.1 150)"
+    "oklch(48.723867187500005% 0.1 150)",
   );
 
   // DARKER
@@ -497,10 +497,10 @@ test("#16", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(48.723867187500005% 0.1 150)"
+    "oklch(48.723867187500005% 0.1 150)",
   );
 
   // LIGHTER
@@ -511,10 +511,10 @@ test("#16", () => {
         0.1,
         150,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(100% 0.1 150)"
+    "oklch(100% 0.1 150)",
   );
 });
 
@@ -523,9 +523,9 @@ test("#17", () => {
   // Implicit search direction
   assert(
     apcachToCss(
-      apcach(crToFg("hsl(223.81 0% 18%)", 4.5, "wcag"), 0.1, 50, 100, "srgb")
+      apcach(crToFg("hsl(223.81 0% 18%)", 4.5, "wcag"), 0.1, 50, 100, "srgb"),
     ),
-    "oklch(67.77043552404356% 0.1 50)"
+    "oklch(67.77043552404356% 0.1 50)",
   );
 
   // AUTO
@@ -536,10 +536,10 @@ test("#17", () => {
         0.1,
         50,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(67.77043552404356% 0.1 50)"
+    "oklch(67.77043552404356% 0.1 50)",
   );
 
   // DARKER
@@ -550,10 +550,10 @@ test("#17", () => {
         0.1,
         50,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(0% 0.1 50)"
+    "oklch(0% 0.1 50)",
   );
 
   // LIGHTER
@@ -564,10 +564,10 @@ test("#17", () => {
         0.1,
         50,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(67.77043552404356% 0.1 50)"
+    "oklch(67.77043552404356% 0.1 50)",
   );
 });
 
@@ -576,31 +576,31 @@ test("#18", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("#7D7D7D", 3, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(32.48024941021682% 0 0)"
+    "oklch(32.48024941021682% 0 0)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("#7D7D7D", 3, "wcag", "auto"), 0, 0, 100, "srgb")
+      apcach(crToFg("#7D7D7D", 3, "wcag", "auto"), 0, 0, 100, "srgb"),
     ),
-    "oklch(32.48024941021682% 0 0)"
+    "oklch(32.48024941021682% 0 0)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("#7D7D7D", 3, "wcag", "darker"), 0, 0, 100, "srgb")
+      apcach(crToFg("#7D7D7D", 3, "wcag", "darker"), 0, 0, 100, "srgb"),
     ),
-    "oklch(32.48024941021682% 0 0)"
+    "oklch(32.48024941021682% 0 0)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("#7D7D7D", 3, "wcag", "lighter"), 0, 0, 100, "srgb")
+      apcach(crToFg("#7D7D7D", 3, "wcag", "lighter"), 0, 0, 100, "srgb"),
     ),
-    "oklch(89.42227100052703% 0 0)"
+    "oklch(89.42227100052703% 0 0)",
   );
 });
 
@@ -609,31 +609,31 @@ test("#19", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("#434343", 2, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(54.92121175453411% 0 0)"
+    "oklch(54.92121175453411% 0 0)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("#434343", 2, "wcag", "auto"), 0, 0, 100, "srgb")
+      apcach(crToFg("#434343", 2, "wcag", "auto"), 0, 0, 100, "srgb"),
     ),
-    "oklch(54.92121175453411% 0 0)"
+    "oklch(54.92121175453411% 0 0)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("#434343", 2, "wcag", "darker"), 0, 0, 100, "srgb")
+      apcach(crToFg("#434343", 2, "wcag", "darker"), 0, 0, 100, "srgb"),
     ),
-    "oklch(14.357948280402544% 0 0)"
+    "oklch(14.357948280402544% 0 0)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("#434343", 2, "wcag", "lighter"), 0, 0, 100, "srgb")
+      apcach(crToFg("#434343", 2, "wcag", "lighter"), 0, 0, 100, "srgb"),
     ),
-    "oklch(54.92121175453411% 0 0)"
+    "oklch(54.92121175453411% 0 0)",
   );
 });
 
@@ -642,31 +642,31 @@ test("#20", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("#7D7D7D", 4, "wcag"), 0, 0, 100, "srgb")),
-    "oklch(23.957063394769854% 0 0)"
+    "oklch(23.957063394769854% 0 0)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("#7D7D7D", 4, "wcag", "auto"), 0, 0, 100, "srgb")
+      apcach(crToFg("#7D7D7D", 4, "wcag", "auto"), 0, 0, 100, "srgb"),
     ),
-    "oklch(23.957063394769854% 0 0)"
+    "oklch(23.957063394769854% 0 0)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("#7D7D7D", 4, "wcag", "darker"), 0, 0, 100, "srgb")
+      apcach(crToFg("#7D7D7D", 4, "wcag", "darker"), 0, 0, 100, "srgb"),
     ),
-    "oklch(23.957063394769854% 0 0)"
+    "oklch(23.957063394769854% 0 0)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("#7D7D7D", 4, "wcag", "lighter"), 0, 0, 100, "srgb")
+      apcach(crToFg("#7D7D7D", 4, "wcag", "lighter"), 0, 0, 100, "srgb"),
     ),
-    "oklch(99.0383882727752% 0 0)"
+    "oklch(99.0383882727752% 0 0)",
   );
 });
 
@@ -675,31 +675,31 @@ test("#21", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("#03F59E", 4.5, "wcag"), 0.14, 300, 100, "srgb")),
-    "oklch(49.60536761524014% 0.14 300)"
+    "oklch(49.60536761524014% 0.14 300)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("#03F59E", 4.5, "wcag", "auto"), 0.14, 300, 100, "srgb")
+      apcach(crToFg("#03F59E", 4.5, "wcag", "auto"), 0.14, 300, 100, "srgb"),
     ),
-    "oklch(49.60536761524014% 0.14 300)"
+    "oklch(49.60536761524014% 0.14 300)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("#03F59E", 4.5, "wcag", "darker"), 0.14, 300, 100, "srgb")
+      apcach(crToFg("#03F59E", 4.5, "wcag", "darker"), 0.14, 300, 100, "srgb"),
     ),
-    "oklch(49.60536761524014% 0.14 300)"
+    "oklch(49.60536761524014% 0.14 300)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("#03F59E", 4.5, "wcag", "lighter"), 0.14, 300, 100, "srgb")
+      apcach(crToFg("#03F59E", 4.5, "wcag", "lighter"), 0.14, 300, 100, "srgb"),
     ),
-    "oklch(100% 0.14 300)"
+    "oklch(100% 0.14 300)",
   );
 });
 
@@ -708,31 +708,31 @@ test("#22", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToFg("#5E4192", 4.5, "wcag"), 0.18, 120, 100, "srgb")),
-    "oklch(80.70364731552559% 0.18 120)"
+    "oklch(80.70364731552559% 0.18 120)",
   );
 
   // AUTO
   assert(
     apcachToCss(
-      apcach(crToFg("#5E4192", 4.5, "wcag", "auto"), 0.18, 120, 100, "srgb")
+      apcach(crToFg("#5E4192", 4.5, "wcag", "auto"), 0.18, 120, 100, "srgb"),
     ),
-    "oklch(80.70364731552559% 0.18 120)"
+    "oklch(80.70364731552559% 0.18 120)",
   );
 
   // DARKER
   assert(
     apcachToCss(
-      apcach(crToFg("#5E4192", 4.5, "wcag", "darker"), 0.18, 120, 100, "srgb")
+      apcach(crToFg("#5E4192", 4.5, "wcag", "darker"), 0.18, 120, 100, "srgb"),
     ),
-    "oklch(0% 0.18 120)"
+    "oklch(0% 0.18 120)",
   );
 
   // LIGHTER
   assert(
     apcachToCss(
-      apcach(crToFg("#5E4192", 4.5, "wcag", "lighter"), 0.18, 120, 100, "srgb")
+      apcach(crToFg("#5E4192", 4.5, "wcag", "lighter"), 0.18, 120, 100, "srgb"),
     ),
-    "oklch(80.70364731552559% 0.18 120)"
+    "oklch(80.70364731552559% 0.18 120)",
   );
 });
 
@@ -741,7 +741,7 @@ test("#23", () => {
   // Implicit search direction
   assert(
     apcachToCss(apcach(crToBg("white", 4.5, "wcag"), 0.4, 150, 100, "srgb")),
-    "oklch(55.175780564348386% 0.4 150)"
+    "oklch(55.175780564348386% 0.4 150)",
   );
 });
 
@@ -750,9 +750,9 @@ test("#24", () => {
   // Implicit search direction
   assert(
     apcachToCss(
-      apcach(crToBg("#FFFFFF", 4.5, "wcag"), maxChroma(), 200, 100, "srgb")
+      apcach(crToBg("#FFFFFF", 4.5, "wcag"), maxChroma(), 200, 100, "srgb"),
     ),
-    "oklch(55.5664058873484% 0.09375000000000001 200)"
+    "oklch(55.5664058873484% 0.09375000000000001 200)",
   );
 
   // AUTO
@@ -763,10 +763,10 @@ test("#24", () => {
         maxChroma(),
         200,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(55.5664058873484% 0.09375000000000001 200)"
+    "oklch(55.5664058873484% 0.09375000000000001 200)",
   );
 
   // DARKER
@@ -777,10 +777,10 @@ test("#24", () => {
         maxChroma(),
         200,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(55.5664058873484% 0.09375000000000001 200)"
+    "oklch(55.5664058873484% 0.09375000000000001 200)",
   );
 
   // LIGHTER
@@ -791,10 +791,10 @@ test("#24", () => {
         maxChroma(),
         200,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(100% 0 200)"
+    "oklch(100% 0 200)",
   );
 });
 
@@ -803,9 +803,9 @@ test("#25", () => {
   // Implicit search direction
   assert(
     apcachToCss(
-      apcach(crToBg("#000000", 4.5, "wcag"), maxChroma(0.1), 100, 100, "srgb")
+      apcach(crToBg("#000000", 4.5, "wcag"), maxChroma(0.1), 100, 100, "srgb"),
     ),
-    "oklch(55.76171875% 0.1 100)"
+    "oklch(55.76171875% 0.1 100)",
   );
 
   // AUTO
@@ -816,10 +816,10 @@ test("#25", () => {
         maxChroma(0.1),
         100,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(55.76171875% 0.1 100)"
+    "oklch(55.76171875% 0.1 100)",
   );
 
   // DARKER
@@ -830,10 +830,10 @@ test("#25", () => {
         maxChroma(0.1),
         100,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(0% 0 100)"
+    "oklch(0% 0 100)",
   );
 
   // LIGHTER
@@ -844,10 +844,10 @@ test("#25", () => {
         maxChroma(0.1),
         100,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(55.76171875% 0.1 100)"
+    "oklch(55.76171875% 0.1 100)",
   );
 });
 
@@ -856,9 +856,9 @@ test("#26", () => {
   // Implicit search direction
   assert(
     apcachToCss(
-      apcach(crToBg("#A1A1A1", 7, "wcag"), maxChroma(0.2), 300, 100, "srgb")
+      apcach(crToBg("#A1A1A1", 7, "wcag"), maxChroma(0.2), 300, 100, "srgb"),
     ),
-    "oklch(21.567710653875466% 0.11406250000000002 300)"
+    "oklch(21.567710653875466% 0.11406250000000002 300)",
   );
 
   // AUTO
@@ -869,10 +869,10 @@ test("#26", () => {
         maxChroma(0.2),
         300,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(21.567710653875466% 0.11406250000000002 300)"
+    "oklch(21.567710653875466% 0.11406250000000002 300)",
   );
 
   // DARKER
@@ -883,10 +883,10 @@ test("#26", () => {
         maxChroma(0.2),
         300,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(21.567710653875466% 0.11406250000000002 300)"
+    "oklch(21.567710653875466% 0.11406250000000002 300)",
   );
 
   // LIGHTER
@@ -897,10 +897,10 @@ test("#26", () => {
         maxChroma(0.1),
         300,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(91.81561209732307% 0.045312500000000006 300)"
+    "oklch(91.81561209732307% 0.045312500000000006 300)",
   );
 });
 
@@ -909,9 +909,9 @@ test("#27", () => {
   // Implicit search direction
   assert(
     apcachToCss(
-      apcach(crToBg("#A1A1A1", 14, "wcag"), maxChroma(0.2), 300, 100, "srgb")
+      apcach(crToBg("#A1A1A1", 14, "wcag"), maxChroma(0.2), 300, 100, "srgb"),
     ),
-    "oklch(0% 0 300)"
+    "oklch(0% 0 300)",
   );
 
   // AUTO
@@ -922,10 +922,10 @@ test("#27", () => {
         maxChroma(0.2),
         300,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(0% 0 300)"
+    "oklch(0% 0 300)",
   );
 
   // DARKER
@@ -936,10 +936,10 @@ test("#27", () => {
         maxChroma(0.2),
         300,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(0% 0 300)"
+    "oklch(0% 0 300)",
   );
 
   // LIGHTER
@@ -950,11 +950,9 @@ test("#27", () => {
         maxChroma(0.2),
         300,
         100,
-        "srgb"
-      )
+        "srgb",
+      ),
     ),
-    "oklch(100% 0 300)"
+    "oklch(100% 0 300)",
   );
 });
-
-
