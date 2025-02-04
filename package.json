@@ -15,45 +15,62 @@
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
-  "devDependencies": {
-    "@logux/eslint-config": "^51.0.1",
-    "@size-limit/preset-small-lib": "^8.2.6",
-    "benchmark": "^2.1.4",
-    "clean-publish": "^4.2.0",
-    "eslint": "^8.46.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.28.0",
-    "eslint-plugin-n": "^16.0.1",
-    "eslint-plugin-perfectionist": "^1.5.1",
-    "eslint-plugin-prefer-let": "^3.0.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "size-limit": "^8.2.6",
-    "uvu": "^0.5.6",
-    "vite": "^4.4.9"
-  },
-  "eslintConfig": {
-    "extends": "@logux/eslint-config"
-  },
-  "scripts": {
-    "test:lint": "eslint .",
-    "test:size": "size-limit",
-    "test:unit": "uvu . '\\.test\\.(ts|js)$'",
-    "test:contrast": "uvu . 'contrast.test.js'",
-    "test": "pnpm run /^test:/",
-    "start": "vite ./demo/"
-  },
-  "size-limit": [
-    {
-      "limit": "25 kB"
-    }
-  ],
-  "dependencies": {
-    "apca-w3": "^0.1.9",
-    "culori": "^3.2.0",
-    "wcag-contrast": "^3.0.0"
-  },
   "exports": {
     ".": "./index.js",
     "./package.json": "./package.json"
+  },
+  "scripts": {
+    "dev": "vitest -c config.vitest.mts",
+    "start": "vite ./demo/",
+    "lint": "pnpm run --parallel --filter='.' /^lint:[^:]*$/",
+    "lint:eslint": "eslint .",
+    "lint:size": "size-limit",
+    "format": "pnpm run lint:eslint --fix && prettier --write '**/*.{ts,js,md,json}'",
+    "test": "pnpm run --parallel --filter='.' /^test:[^:]*$/",
+    "test:unit": "vitest -c config.vitest.mts run",
+    "postinstall": "pnpm exec simple-git-hooks"
+  },
+  "dependencies": {
+    "apca-w3": "^0.1.9",
+    "apcach": "link:",
+    "culori": "^4.0.1",
+    "wcag-contrast": "^3.0.0"
+  },
+  "devDependencies": {
+    "@logux/eslint-config": "^53.5.1",
+    "@size-limit/preset-small-lib": "^11.1.6",
+    "@types/apca-w3": "^0.1.3",
+    "@types/culori": "^2.1.1",
+    "@types/wcag-contrast": "^3.0.3",
+    "benchmark": "^2.1.4",
+    "clean-publish": "^5.1.0",
+    "eslint": "^9.19.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-n": "^17.15.1",
+    "eslint-plugin-perfectionist": "^4.7.0",
+    "eslint-plugin-prefer-let": "^4.0.0",
+    "eslint-plugin-promise": "^7.2.1",
+    "nano-staged": "^0.8.0",
+    "prettier": "^3.4.2",
+    "simple-git-hooks": "^2.11.1",
+    "size-limit": "^11.1.6",
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
+  },
+  "size-limit": [
+    {
+      "limit": "17.32 kB"
+    }
+  ],
+  "simple-git-hooks": {
+    "pre-commit": "./node_modules/.bin/nano-staged",
+    "pre-push": "pnpm typecheck"
+  },
+  "nano-staged": {
+    "*.{js,cjs,mjs,ts,mts}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
