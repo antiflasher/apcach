@@ -11,9 +11,6 @@ importers:
       apca-w3:
         specifier: ^0.1.9
         version: 0.1.9
-      apcach:
-        specifier: 'link:'
-        version: 'link:'
       culori:
         specifier: ^4.0.1
         version: 4.0.1

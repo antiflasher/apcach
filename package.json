@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
-    "apcach": "link:",
     "culori": "^4.0.1",
     "wcag-contrast": "^3.0.0"
   },
