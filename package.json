@@ -16,11 +16,12 @@
   "license": "MIT",
   "sideEffects": false,
   "exports": {
-    ".": "./index.js",
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "vitest -c config.vitest.mts",
+    "build": "tsup",
     "start": "vite ./demo/",
     "lint": "pnpm run --parallel --filter='.' /^lint:[^:]*$/",
     "lint:eslint": "eslint .",
@@ -55,12 +56,15 @@
     "prettier": "^3.4.2",
     "simple-git-hooks": "^2.11.1",
     "size-limit": "^11.1.6",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3",
     "vite": "^6.0.11",
     "vitest": "^3.0.4"
   },
   "size-limit": [
     {
-      "limit": "17.32 kB"
+      "path": "src/*",
+      "limit": "17.35 kB"
     }
   ],
   "simple-git-hooks": {
