@@ -1,6 +1,6 @@
 import { assert, test } from "vitest";
 
-import { calcContrast } from "../index.js";
+import { calcContrast } from "../src/index";
 
 // ----------------------------------------
 // Black and white

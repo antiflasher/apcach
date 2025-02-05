@@ -1,6 +1,6 @@
 import { assert, test } from "vitest";
 
-import { apcach, apcachToCss, crToBg, crToFg, maxChroma } from "../index.js";
+import { apcach, apcachToCss, crToBg, crToFg, maxChroma } from "../src/index";
 
 // ----------------------------------------
 // CONTRAST BELOW THRESHOLD

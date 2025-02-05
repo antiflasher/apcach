@@ -7,7 +7,7 @@ import {
   crToFg,
   cssToApcach,
   maxChroma,
-} from "../index.js";
+} from "../src/index";
 
 // ----------------------------------------
 // CONTRAST BELOW THRESHOLD
