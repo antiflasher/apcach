@@ -32,6 +32,7 @@
     "lint": "pnpm run --parallel --filter='.' /^lint:[^:]*$/",
     "lint:eslint": "eslint .",
     "lint:size": "size-limit",
+    "typecheck": "tsc --noEmit",
     "format": "pnpm run lint:eslint --fix && prettier --write '**/*.{ts,js,md,json}'",
     "test": "pnpm run --parallel --filter='.' /^test:[^:]*$/",
     "test:unit": "vitest -c config.vitest.mts run",
